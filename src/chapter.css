@@ -229,3 +229,32 @@ html:has(.chapter) { scroll-padding-top: 64px; }
   .site-head nav ul { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
   .site-head nav a { white-space: nowrap; padding: 4px 2px; }
 }
+
+/* ——— رسوم الحكايات الجديدة ——— */
+.chapter { --theory: var(--c); }
+.urn-body { fill: var(--c-tint); stroke: var(--c); stroke-width: 2; }
+.peb.white { fill: #fffdf8; stroke: var(--ink); stroke-width: 1.5; }
+.peb.black { fill: var(--ink); }
+.pas { fill: #fffdf8; stroke: #968a74; stroke-width: 1.2; }
+.pas.last { stroke: var(--c); stroke-width: 1.8; }
+.pas.hl { fill: var(--c); stroke: var(--c); }
+.pas-t { font-family: var(--font); font-size: 13px; font-weight: 700; fill: var(--ink); }
+.pas-t.hl { fill: #fff; }
+.gap { stroke: var(--c); stroke-width: 3; stroke-linecap: round; opacity: .55; }
+.axis-l { stroke: var(--ink); stroke-width: 1.5; }
+.ev { fill: var(--c); stroke: var(--ink); stroke-width: 1; }
+.tl-t { font-family: var(--font); font-size: 13px; fill: var(--ink-2); }
+.stk { fill: var(--ink); }
+.stk.q { fill: #fffdf8; stroke: var(--c); stroke-width: 2; stroke-dasharray: 4 3; }
+.stk-t { font-family: var(--font); font-size: 12px; font-weight: 700; fill: #fff; }
+.stk-t.q { fill: var(--c); font-size: 16px; }
+.peg { fill: var(--ink-2); }
+.gbar { fill: var(--c); }
+.hk-chart .p-line { stroke: var(--ink); stroke-width: 1.5; stroke-dasharray: 6 4; }
+.hk-chart .p-label { fill: var(--ink); font-weight: 700; }
+.hk-chart .run-line { fill: none; stroke: var(--c); stroke-width: 2.5; }
+.chart .bar-curve { fill: none; stroke: var(--ink); stroke-width: 2.5; }
+.lg-run { height: 3px !important; background: var(--c); }
+.lg-p { height: 0 !important; border-top: 2px dashed var(--ink); }
+.lg-dia { width: 11px !important; height: 11px !important; border: 2px solid var(--ink); transform: rotate(45deg) scale(.8); background: var(--paper); }
+.lg-curve { height: 3px !important; background: var(--ink); }

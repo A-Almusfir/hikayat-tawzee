@@ -45,6 +45,7 @@ export function BarChart({
   ariaLabel,
   yLabel = 'الاحتمال',
   xLabel,
+  curve,
 }: {
   bars: Bar[];
   sim?: Bar[] | null;
@@ -52,6 +53,8 @@ export function BarChart({
   ariaLabel: string;
   yLabel?: string;
   xLabel: string;
+  /** منحنى مستمر يُرسم فوق الأعمدة (مثل تقريب طبيعي)، بالمقياس نفسه. */
+  curve?: ((x: number) => number) | null;
 }) {
   const uid = useId().replace(/:/g, '');
   const maxP = Math.max(...bars.map((b) => b.p), ...(sim ?? []).map((b) => b.p));
@@ -106,6 +109,16 @@ export function BarChart({
             </g>
           );
         })}
+        {curve && (
+          <path
+            className="bar-curve"
+            d={Array.from({ length: 121 }, (_, j) => {
+              const u = -0.5 + (n * j) / 120;
+              const xv = bars[0].x + u;
+              return `${j ? 'L' : 'M'} ${(M.l + slot * (u + 0.5)).toFixed(2)} ${y(Math.min(curve(xv), yMax)).toFixed(2)}`;
+            }).join(' ')}
+          />
+        )}
         <line x1={M.l} x2={W - M.r} y1={M.t + PH} y2={M.t + PH} className="axis" />
         {bars.map((b, i) =>
           i % every === 0 || i === n - 1 ? (

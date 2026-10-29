@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { choiceLabels, scenarios, type ChoiceId } from '../content/chooser';
 import { distById, distOrder, distributions } from '../content/distributions';
 import { references } from '../content/references';
+import { sources } from '../content/sources';
 import { relations } from '../content/relations';
 import type { DistId } from '../content/types';
 import { HomeTeaser, labs } from '../components/labs';
@@ -407,7 +408,7 @@ export function RefsPage() {
       <section className="section">
         <h2>كيف كُتب المحتوى؟</h2>
         <ul>
-          <li>الشروح والأمثلة مكتوبة بصياغة أصلية، والأمثلة كلها <strong>تعليمية مصطنعة</strong> (مصنع، مكتب مساعدة، آلة تعبئة…) وليست بيانات حقيقية.</li>
+          <li>الشروح مكتوبة بصياغة أصلية. الحكايات تاريخية موثقة بمصادرها، وبيانات ركلات الخيل حقيقية؛ أما أمثلة «بصيغة المقرر» والرسوم المولّدة من نماذج فهي <strong>تعليمية مصطنعة</strong> ومعلنة.</li>
           <li>كل رقم في الأمثلة المحلولة والأسئلة الحسابية يُعاد حسابه آليًا في اختبارات المشروع، ويُرفض البناء إن لم يطابق الحساب النص المعروض.</li>
           <li>الرسوم مبنية مباشرة من القوانين؛ والمحاكاة تستخدم مولّد أعداد عشوائية في المتصفح، ونتائجها تتغير من تشغيل لآخر.</li>
           <li>للتوزيع الطبيعي قدّمنا حدسًا وحقائق قابلة للإثبات، ولم نقدم «اشتقاقًا مبسطًا» لأنه يحتاج أدوات أعلى من المقرر التمهيدي.</li>
@@ -436,6 +437,17 @@ export function RefsPage() {
             <li key={r.url}>
               <a href={r.url} target="_blank" rel="noopener noreferrer" lang="en" dir="ltr">{r.title}</a>
               <Rich as="p" text={r.usedFor} />
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="section">
+        <h2>مصادر الحكايات</h2>
+        <p className="hint">كل جملة تاريخية في الفصول مربوطة بمصدر من هذه القائمة، واختبارات المشروع تفشل إن وُجدت جملة بلا مصدر.</p>
+        <ul className="ref-list">
+          {sources.map((s) => (
+            <li key={s.id}>
+              <a href={s.url} target="_blank" rel="noopener noreferrer">{s.cite}</a>
             </li>
           ))}
         </ul>

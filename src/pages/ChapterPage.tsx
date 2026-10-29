@@ -10,8 +10,9 @@ import { AnchorScene } from '../components/scenes/AnchorScene';
 import { BuildScene } from '../components/scenes/BuildScene';
 import { ExamScene } from '../components/scenes/ExamScene';
 import { FitLab } from '../components/scenes/FitLab';
+import { GaltonTry, LlnTry, MemoryTry, PointsTry, WaitsTry } from '../components/scenes/TryKinds';
 import { Cites, Scene, SCENES } from '../components/scenes/Scene';
-import { UnitGrid } from '../components/scenes/UnitGrid';
+import { ArtView } from '../components/scenes/Art';
 import { DistCardView, FormulaSection, Quiz } from '../components/sections';
 import { Rich } from '../components/Tex';
 import { href, scrollToId } from '../lib/router';
@@ -82,7 +83,7 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
         </ol>
       </nav>
 
-      <Scene n={1} title={ch.story.headline} art={<UnitGrid art={ch.story.art} />}>
+      <Scene n={1} title={ch.story.headline} art={<ArtView art={ch.story.art} />}>
         <ol className="claims">
           {ch.story.claims.map((c, i) => (
             <li key={i}>
@@ -106,14 +107,7 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
         </details>
       </Scene>
 
-      {ch.tryIt.kind === 'fit' ? (
-        <FitLab t={ch.tryIt} />
-      ) : (
-        <Scene n={2} title={ch.tryIt.headline}>
-          <Rich as="p" text={ch.tryIt.prompt} />
-          <Lab />
-        </Scene>
-      )}
+      <TryScene ch={ch} />
 
       <BuildScene id={ch.id} headline={ch.build.headline} law={ch.build.law} steps={ch.build.steps} note={ch.build.note} color={color} />
       <ExamScene headline={ch.exam.headline} problems={ch.exam.problems} tricks={ch.exam.tricks} />
@@ -155,4 +149,25 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
       </section>
     </article>
   );
+}
+
+/** المشهد ②: يختار التجربة حسب نوعها في المحتوى. */
+function TryScene({ ch }: { ch: Chapter }) {
+  const t = ch.tryIt;
+  const Lab = labs[ch.id];
+  switch (t.kind) {
+    case 'fit': return <FitLab t={t} />;
+    case 'lln': return <LlnTry t={t} />;
+    case 'points': return <PointsTry t={t} />;
+    case 'waits': return <WaitsTry t={t} />;
+    case 'memory': return <MemoryTry t={t} />;
+    case 'galton': return <GaltonTry t={t} />;
+    default:
+      return (
+        <Scene n={2} title={t.headline}>
+          <Rich as="p" text={t.prompt} />
+          <Lab />
+        </Scene>
+      );
+  }
 }

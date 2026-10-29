@@ -1,16 +1,16 @@
 import type { DistId } from './types';
 
-// هوية كل توزيع: لون + شكل يتكرران في كل مكان (الشجرة، الرسوم، العناوين).
+// هوية كل توزيع: لون محايد + شكل يتكرران في كل مكان (الشجرة، الرسوم، العناوين).
 // الشكل يحمل المعنى أيضًا حتى لا يعتمد التمييز على اللون وحده. التباين ≥ 4.5:1 مفحوص في الاختبارات.
 export type Shape = 'coin' | 'triangle' | 'steps' | 'dots' | 'decay' | 'bell';
 
 export const identity: Record<DistId, { color: string; shape: Shape }> = {
-  bernoulli: { color: '#9A4318', shape: 'coin' },
-  binomial: { color: '#2456A4', shape: 'triangle' },
-  geometric: { color: '#3E6A1F', shape: 'steps' },
-  poisson: { color: '#6F3A94', shape: 'dots' },
-  exponential: { color: '#0E6B6B', shape: 'decay' },
-  normal: { color: '#755800', shape: 'bell' },
+  bernoulli: { color: '#8A4B22', shape: 'coin' },
+  binomial: { color: '#2A5A8C', shape: 'triangle' },
+  geometric: { color: '#426A2E', shape: 'steps' },
+  poisson: { color: '#1E5F6E', shape: 'dots' },
+  exponential: { color: '#4D5966', shape: 'decay' },
+  normal: { color: '#6B5A1E', shape: 'bell' },
 };
 
 export const PAPER = '#fbf7f0';

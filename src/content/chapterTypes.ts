@@ -13,32 +13,40 @@ export interface Choice {
   options: { text: string; correct?: boolean; why: string }[];
 }
 
-/** رسم الحكاية يُولَّد من البيانات، ويكون هو نفسه رمز هوية التوزيع. */
-export type Art = {
-  kind: 'unit-grid';
-  /** counts[k] = عدد الوحدات التي وقع فيها k حدث */
-  counts: number[];
-  cols: number;
-  ariaLabel: string;
-  caption: string;
-};
+/** رسم الحكاية يُولَّد من البيانات أو من القانون، ويكون هو نفسه رمز هوية التوزيع. */
+type ArtBase = { ariaLabel: string; caption: string };
+export type Art = ArtBase &
+  (
+    | { kind: 'unit-grid'; counts: number[]; cols: number } // counts[k] = عدد الوحدات التي وقع فيها k حدث
+    | { kind: 'urn'; white: number; black: number; cols: number }
+    | { kind: 'pascal'; rows: number; highlightFrom: number } // يُبرز في الصف الأخير المعاملات من الموضع highlightFrom
+    | { kind: 'timeline'; times: number[]; span: number; unit: string }
+    | { kind: 'streak'; length: number }
+    | { kind: 'galton'; rows: number }
+  );
 
-/** المشهد ②: إما مطابقة القانون على بيانات حقيقية، أو المختبر التفاعلي المبسّط. */
-export type TryIt =
-  | {
-      kind: 'fit';
-      headline: string;
-      prompt: string;
-      observed: number[];
-      pmf: (k: number, theta: number) => number;
-      cdf: (k: number, theta: number) => number;
-      param: { symbol: string; label: string; min: number; max: number; step: number; start: number; best: number };
-      xLabel: string;
-      unitLabel: string;
-      reveal: string;
-      revealButton: string;
-    }
-  | { kind: 'lab'; headline: string; prompt: string };
+/** المشهد ②: أداة تحكم واحدة. النوع يحدد التجربة، والمحتوى يحدد معلماتها. */
+type TryBase = { headline: string; prompt: string };
+export type TryIt = TryBase &
+  (
+    | {
+        kind: 'fit';
+        observed: number[];
+        pmf: (k: number, theta: number) => number;
+        cdf: (k: number, theta: number) => number;
+        param: { symbol: string; label: string; min: number; max: number; step: number; start: number; best: number };
+        xLabel: string;
+        unitLabel: string;
+        reveal: string;
+        revealButton: string;
+      }
+    | { kind: 'lln'; p: number; successLabel: string; reveal: string }
+    | { kind: 'points'; aNeeds: number; bMin: number; bMax: number; bStart: number }
+    | { kind: 'waits'; lambda: { min: number; max: number; step: number; start: number }; unit: string; rateUnit: string }
+    | { kind: 'memory'; p: number; maxStreak: number; failLabel: string; successLabel: string }
+    | { kind: 'galton'; rows: { min: number; max: number; start: number }; balls: number }
+    | { kind: 'lab' }
+  );
 
 export interface BuildStep {
   story: string;

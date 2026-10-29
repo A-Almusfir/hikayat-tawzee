@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { fmt, poisson } from '../lib/dist';
+import { binomial, fmt, normal, poisson } from '../lib/dist';
 import { chapters } from './chapters';
 import type { Chapter } from './chapterTypes';
 import { edges } from './family';
@@ -110,5 +110,29 @@ describe('الشجرة والهوية والرحلة', () => {
   });
   it('حدود الخلايا الفارغة ≥ 3:1 (عنصر غير نصي)', () => {
     expect(contrast('#968a74', PAPER)).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe('أرقام مذكورة في نصوص الفصول الجديدة', () => {
+  it('الفصول الستة مسجلة بالترتيب', () => {
+    expect(Object.keys(chapters).sort()).toEqual([...journey].sort());
+  });
+  it('مسألة النقاط: 11 من 16 طريقًا، و2^4 = 16', () => {
+    expect([2, 3, 4].reduce((s, k) => s + binomial.pmf(k, 4, 0.5) * 16, 0)).toBeCloseTo(11, 10);
+  });
+  it('8 أسئلة صح/خطأ: 37/256', () => {
+    expect(1 - binomial.cdf(5, 8, 0.5)).toBeCloseTo(37 / 256, 12);
+  });
+  it('دي موافر: التقريب والقيمة الدقيقة لـ P(45 ≤ X ≤ 55) كلاهما ≈ 0.7287', () => {
+    const exact = binomial.cdf(55, 100, 0.5) - binomial.cdf(44, 100, 0.5);
+    expect(fmt(exact, 4)).toBe('0.7287');
+    expect(fmt(normal.interval(44.5, 55.5, 50, 5), 4)).toBe('0.7287');
+  });
+  it('الروليت: (19/37)^10 ≈ 0.0013، و37/18 ≈ 2.06', () => {
+    expect(fmt(Math.pow(19 / 37, 10), 4)).toBe('0.0013');
+    expect(fmt(37 / 18, 2)).toBe('2.06');
+  });
+  it('الطبيعي: ضمن μ ± 2σ ≈ 0.9545', () => {
+    expect(fmt(normal.interval(-2, 2, 0, 1), 4)).toBe('0.9545');
   });
 });

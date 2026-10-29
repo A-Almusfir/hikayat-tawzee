@@ -298,7 +298,7 @@ main:has(.exam-night) { max-width: 72rem; }
 .twin-tell { margin: .5rem 0 0; font-size: .92rem; border-top: 1px dashed var(--rule); padding-top: .4rem; }
 
 /* ——— التدريب المختلط ——— */
-.drill .scenario { font-size: 1.12rem; background: #fffdf8; border: 1.5px solid var(--ink); border-radius: 12px; padding: .9rem 1rem; }
+
 .drill-card .predict, .drill-card .predict-done { margin-top: .9rem; }
 .drill .pk { background: var(--ink); }
 
@@ -322,3 +322,50 @@ main:has(.exam-night) { max-width: 72rem; }
 .drill, .exam-night, .chooser { --c: var(--ink); --c-tint: #f1ede4; --c-tint2: #e6e1d6; }
 .twin-side .tex { display: block; overflow-x: auto; overflow-y: hidden; font-size: .9em; padding-bottom: 2px; }
 @media (max-width: 520px) { .twin-pair { grid-template-columns: 1fr; gap: 10px; } }
+/* المعادلة بجانب تسميتها في بطاقات الجوال، والتسمية لا تُقرأ مرتين */
+@media (max-width: 899px) {
+  .cheat td > .tex { justify-self: start; }
+  .cheat td::before { content: attr(data-label); content: attr(data-label) / ''; }
+}
+.drill-card .scenario { font-size: 1.12rem; background: #fffdf8; border: 1.5px solid var(--ink); border-radius: 12px; padding: .2rem 1rem; }
+.drill-card .scenario:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
+.btn[aria-disabled='true'] { opacity: .45; cursor: not-allowed; }
+
+/* طباعة ليلة الاختبار: جدول حقيقي بالعرض، دون صفحة أولى فارغة */
+@page exam { size: A4 landscape; margin: 10mm; }
+@media print {
+  .exam-night { page: exam; }
+  .exam-night section { break-inside: auto !important; }
+  .cheat { display: table !important; width: 100%; }
+  .cheat thead { display: table-header-group !important; position: static !important; width: auto !important; height: auto !important; overflow: visible !important; clip: auto !important; }
+  .cheat tbody { display: table-row-group !important; }
+  .cheat tr { display: table-row !important; border: none !important; padding: 0 !important; margin: 0 !important; background: none !important; }
+  .cheat th, .cheat td { display: table-cell !important; width: auto !important; padding: 3pt 4pt !important; border-bottom: 1px solid #999 !important; }
+  .cheat td::before { content: none !important; }
+  .cheat tbody th { border-inline-start: 4px solid var(--c) !important; }
+}
+.numeric label.pq { display: block; margin: .3rem 0; }
+.num-row { display: flex; gap: 8px; align-items: center; }
+.num-in { font: inherit; font-size: 1.15rem; width: 9rem; padding: .45rem .7rem; border: 2px solid var(--ink); border-radius: 10px; background: #fffdf8; color: var(--ink); min-height: 44px; }
+.num-in:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.num-err { color: var(--no); font-size: .9rem; margin: .3rem 0 0; }
+.fold { border-top: 1px solid var(--rule); margin-top: 1.2rem; }
+.fold > summary { cursor: pointer; list-style: none; display: flex; align-items: center; gap: 8px; min-height: 48px; }
+.fold > summary::-webkit-details-marker { display: none; }
+.fold > summary::before { content: '+'; display: inline-grid; place-items: center; width: 1.6rem; height: 1.6rem; border: 1.5px solid var(--ink); border-radius: 50%; font-weight: 700; flex: none; }
+.fold[open] > summary::before { content: '−'; }
+.fold > summary h2 { margin: .6rem 0; display: inline; }
+@media print {
+  .exam-night .decision { font-size: 8.5pt; overflow: visible; }
+  .exam-night .leaf-h { display: none; }
+  .exam-night .leaf { padding: 1pt 5pt; }
+  .exam-night .dnode li { margin: 1pt 0 2pt; }
+  .exam-night .dq { margin: 1pt 0; }
+  .exam-night .fold > summary::before { display: none; }
+  .exam-night .fold > summary h2 { font-size: 13pt; }
+  .exam-night .twins { grid-template-columns: 1fr 1fr 1fr 1fr; gap: 4pt; font-size: 8.5pt; }
+  .exam-night .twin-pair { grid-template-columns: 1fr; }
+  .exam-night .callout { margin: 3pt 0; padding: 3pt 6pt; }
+  main:has(.exam-night) + .site-foot { margin-top: 2mm; }
+}
+@media print { body:has(.exam-night) .site-foot { display: none; } }

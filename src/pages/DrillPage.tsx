@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Choice } from '../content/chapterTypes';
 import { chapters } from '../content/chapters';
 import { choiceLabels } from '../content/chooser';
@@ -6,8 +6,10 @@ import { hint, type Leaf } from '../content/decision';
 import { drill, type DrillItem } from '../content/drill';
 import { ChoiceCheck } from '../components/scenes/ChoiceCheck';
 import { Rich } from '../components/Tex';
+import { seededRng } from '../lib/dist';
 import { href } from '../lib/router';
-import { useProgress } from '../lib/storage';
+import { parseNumber } from '../lib/shuffle';
+import { progress, useProgress } from '../lib/storage';
 
 const ORDER: Leaf[] = ['bernoulli', 'binomial', 'geometric', 'poisson', 'exponential', 'normal', 'insufficient'];
 
@@ -23,13 +25,25 @@ function step1(item: DrillItem): Choice {
   };
 }
 
-const isDone = (it: DrillItem, quiz: Record<string, number>) => quiz[`${it.id}-${it.calc ? 3 : 1}`] !== undefined;
+const isDone = (it: DrillItem, quiz: Record<string, number>, prefix: string) => quiz[`${prefix}${it.id}-${it.calc ? 3 : 1}`] !== undefined;
+
+/** خلط فيشر–ييتس بمولّد ذي بذرة: نقي وغير متحيز. */
+function shuffle<T>(xs: T[], seed: number): T[] {
+  const a = [...xs], rng = seededRng(seed);
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
 
 export function DrillPage() {
   const quiz = useProgress().quiz;
   const [mode, setMode] = useState<'all' | 'review'>('all');
   const [idx, setIdx] = useState(0);
-  const [seed, setSeed] = useState(0);
+  // كل جولة مراجعة لها بذرة ومفاتيح حفظ مستقلة، فلا تظهر المسائل محلولة من جولة سابقة
+  const [seed, setSeed] = useState(() => Math.floor(Math.random() * 1e9));
+  const prefix = mode === 'review' ? `r${seed}:` : '';
 
   // الفصول المنتهية: أُجيب فيها عن سؤال استرجاع واحد على الأقل
   const finished = useMemo(
@@ -39,13 +53,18 @@ export function DrillPage() {
   const list = useMemo(() => {
     if (mode === 'all') return drill;
     const pool = drill.filter((d) => d.answer === 'insufficient' || finished.includes(d.answer));
-    // ثلاث مسائل عشوائية؛ seed يعيد الاختيار
-    return [...pool].sort(() => Math.random() - 0.5).slice(0, 3);
+    return shuffle(pool, seed).slice(0, 3);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mode, seed, finished.join()]);
   const i = Math.min(idx, Math.max(0, list.length - 1));
   const it = list[i];
-  const done = list.filter((d) => isDone(d, quiz)).length;
+  const done = list.filter((d) => isDone(d, quiz, prefix)).length;
+  // عند تغيّر المسألة: ينتقل التركيز إليها ويُعلن عنها
+  const moved = useRef(false);
+  useEffect(() => {
+    if (moved.current) document.querySelector<HTMLElement>('.drill-card .scenario')?.focus();
+    moved.current = true;
+  }, [i, seed, mode]);
 
   return (
     <article className="drill">
@@ -58,7 +77,7 @@ export function DrillPage() {
           كل المسائل ({drill.length})
         </button>
         <button type="button" className={`seg-tab ${mode === 'review' ? 'on' : ''}`} aria-pressed={mode === 'review'} onClick={() => (setMode('review'), setIdx(0), setSeed(seed + 1))}>
-          راجع اليوم: 3 مسائل من فصولك المنتهية
+          مراجعة سريعة: 3 مسائل من فصولك المنتهية
         </button>
       </div>
 
@@ -75,13 +94,13 @@ export function DrillPage() {
           <div className="progress-bar" role="progressbar" aria-label="التقدم" aria-valuemin={0} aria-valuemax={list.length} aria-valuenow={done}>
             <span style={{ width: `${(done / list.length) * 100}%` }} />
           </div>
-          <DrillCard key={it.id} it={it} />
+          <DrillCard key={prefix + it.id} it={it} prefix={prefix} n={i + 1} />
           <div className="pager">
-            <button type="button" className="btn" disabled={i === 0} onClick={() => setIdx(i - 1)}>→ السابقة</button>
+            <button type="button" className="btn" aria-disabled={i === 0} onClick={() => i > 0 && setIdx(i - 1)}>→ السابقة</button>
             {mode === 'review' && i === list.length - 1 ? (
               <button type="button" className="btn" onClick={() => (setSeed(seed + 1), setIdx(0))}>3 مسائل أخرى ←</button>
             ) : (
-              <button type="button" className="btn" disabled={i === list.length - 1} onClick={() => setIdx(i + 1)}>التالية ←</button>
+              <button type="button" className="btn" aria-disabled={i === list.length - 1} onClick={() => i < list.length - 1 && setIdx(i + 1)}>التالية ←</button>
             )}
           </div>
           <p className="hint">
@@ -93,17 +112,85 @@ export function DrillPage() {
   );
 }
 
-function DrillCard({ it }: { it: DrillItem }) {
+function DrillCard({ it, prefix, n }: { it: DrillItem; prefix: string; n: number }) {
   const quiz = useProgress().quiz;
-  const s1 = quiz[`${it.id}-1`] !== undefined;
-  const s2 = quiz[`${it.id}-2`] !== undefined;
+  const k = (step: number) => `${prefix}${it.id}-${step}`;
+  const s1 = quiz[k(1)] !== undefined;
+  const s2 = quiz[k(2)] !== undefined;
   return (
     <div className="drill-card">
-      <Rich as="p" className="scenario" text={it.text} />
-      <ChoiceCheck id={`${it.id}-1`} q={step1(it)} kicker="الخطوة 1 · أي توزيع؟" />
-      {s1 && it.param && <ChoiceCheck id={`${it.id}-2`} q={it.param} kicker="الخطوة 2 · المعلمات" />}
-      {s1 && s2 && it.calc && <ChoiceCheck id={`${it.id}-3`} q={it.calc} kicker="الخطوة 3 · الحساب" />}
+      <div className="scenario" tabIndex={-1} aria-label={`المسألة ${n}`}>
+        <Rich as="p" text={it.text} />
+      </div>
+      <ChoiceCheck id={k(1)} q={step1(it)} kicker="الخطوة 1 · أي توزيع؟" />
+      {s1 && it.param && <ChoiceCheck id={k(2)} q={it.param} kicker="الخطوة 2 · المعلمات" />}
+      {s1 && s2 && it.calc && <NumericStep id={k(3)} calc={it.calc} />}
       {s1 && !it.param && <p className="hint">هذه المسألة تنتهي عند الخطوة الأولى: الشروط لا تسمح باختيار أي من الستة.</p>}
+    </div>
+  );
+}
+
+/** الخطوة 3: يكتب الطالب الناتج رقمًا. إن طابق رقمًا من أخطاء شائعة نشرح ذلك الخطأ بعينه. */
+const TOL = 0.0006;
+const lastNumber = (t: string) => {
+  // آخر عدد عشري في نص الخيار هو الناتج (مثل «$e^{-2} \\approx 0.1353$»)
+  const m = t.match(/\d*\.\d+/g);
+  return m ? Number(m[m.length - 1]) : null;
+};
+
+function NumericStep({ id, calc }: { id: string; calc: NonNullable<DrillItem['calc']> }) {
+  const saved = useProgress().quiz[id];
+  const [txt, setTxt] = useState('');
+  const [err, setErr] = useState('');
+  const fb = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
+  const truth = calc.check.compute();
+  const correct = calc.options.find((o) => o.correct)!;
+  const answered = saved !== undefined;
+  const ok = answered && Math.abs(saved - truth) <= TOL;
+  const trap = answered && !ok ? calc.options.find((o) => !o.correct && (() => { const n = lastNumber(o.text); return n !== null && Math.abs(n - saved) <= TOL; })()) : undefined;
+  const check = () => {
+    const v = parseNumber(txt);
+    if (v === null) return setErr('اكتب رقمًا، مثل 0.4060');
+    setErr('');
+    progress.setQuiz(id, v);
+    window.setTimeout(() => fb.current?.focus(), 0);
+  };
+  const inputId = `${id}-in`;
+  return (
+    <div className="predict numeric">
+      <span className="pk">الخطوة 3 · الحساب</span>
+      <label htmlFor={inputId} className="pq"><Rich text={calc.prompt} /> <span className="hint">(اكتب الناتج بثلاث أو أربع منازل عشرية)</span></label>
+      {!answered ? (
+        <>
+          <div className="num-row">
+            <input
+              id={inputId}
+              ref={inputRef}
+              className="num-in"
+              inputMode="decimal"
+              dir="ltr"
+              autoComplete="off"
+              value={txt}
+              onChange={(e) => setTxt(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && check()}
+              aria-describedby={err ? `${inputId}-err` : undefined}
+            />
+            <button type="button" className="btn btn-c" onClick={check} disabled={!txt.trim()}>تحقّق</button>
+          </div>
+          {err && <p className="num-err" id={`${inputId}-err`} role="alert">{err}</p>}
+        </>
+      ) : (
+        <div className={`feedback ${ok ? 'ok' : 'no'}`} role="status" tabIndex={-1} ref={fb}>
+          <p><strong>{ok ? '✓ صحيح: ' : `✗ كتبت ${saved}. الصحيح: `}</strong><Rich text={correct.text} /> — <Rich text={correct.why} /></p>
+          {trap && <p><strong>من أين جاء رقمك؟ </strong><Rich text={trap.why} /></p>}
+          {!ok && (
+            <button type="button" className="link-btn" onClick={() => (progress.setQuiz(id, undefined), setTxt(''), window.setTimeout(() => inputRef.current?.focus(), 0))}>
+              أعد المحاولة
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }

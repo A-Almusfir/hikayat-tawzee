@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Choice } from '../../content/chapterTypes';
+import { displayOrder } from '../../lib/shuffle';
 import { progress, useProgress } from '../../lib/storage';
 import { Rich } from '../Tex';
 
@@ -16,6 +17,7 @@ export function ChoiceCheck({ id, q, kicker }: { id: string; q: Choice; kicker: 
   const retried = useRef(false);
   const justChecked = useRef(false);
   const ci = q.options.findIndex((o) => o.correct);
+  const order = displayOrder(id, q.options.length);
 
   useEffect(() => {
     if (!answered && retried.current) {
@@ -52,11 +54,11 @@ export function ChoiceCheck({ id, q, kicker }: { id: string; q: Choice; kicker: 
         <span className="pk">{kicker}</span>
         <Rich as="span" className="pq" text={q.prompt} />
       </legend>
-      <div className="options">
-        {q.options.map((o, i) => {
-          // بعد التحقق نُبقي اختيار الطالب والإجابة الصحيحة فقط، حتى لا يطول المشهد
-          // وإن كانت الإجابة صحيحة نُبقي الصحيحة وحدها
-          if (answered && i !== ci && (i !== saved || saved === ci)) return null;
+      <div className="options" hidden={answered}>
+        {order.map((i) => {
+          const o = q.options[i];
+          // بعد التحقق تختفي الخيارات: التغذية الراجعة تذكر اختيار الطالب والصحيح بنصّيهما
+          if (answered) return null;
           const st = !answered ? '' : i === ci ? 'is-correct' : 'is-wrong';
           return (
             <label key={i} className={`option ${st}`}>
@@ -73,15 +75,13 @@ export function ChoiceCheck({ id, q, kicker }: { id: string; q: Choice; kicker: 
         </button>
       ) : (
         <div className={`feedback ${saved === ci ? 'ok' : 'no'}`} role="status" tabIndex={-1} ref={fb}>
-          {saved !== ci && (
-            <p>
-              <strong>اختيارك: </strong>
-              <Rich text={q.options[saved].why} />
-            </p>
-          )}
           <p>
-            <strong>{saved === ci ? '✓ صحيح. ' : 'الصحيح: '}</strong>
-            <Rich text={q.options[ci].why} />
+            <strong>✗ اخترت: </strong>
+            <Rich text={q.options[saved].text} /> — <Rich text={q.options[saved].why} />
+          </p>
+          <p>
+            <strong>✓ الصحيح: </strong>
+            <Rich text={q.options[ci].text} /> — <Rich text={q.options[ci].why} />
           </p>
           <button type="button" className="link-btn" onClick={() => ((retried.current = true), progress.setQuiz(id, undefined), setPick(null))}>
             أعد المحاولة

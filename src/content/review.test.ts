@@ -14,10 +14,9 @@ describe('مخطط القرار', () => {
 });
 
 describe('التدريب المختلط', () => {
-  it('8 إلى 12 مسألة، تغطي الستة وفيها «الشروط غير كافية»', () => {
-    expect(drill.length).toBeGreaterThanOrEqual(8);
-    expect(drill.length).toBeLessThanOrEqual(12);
-    for (const d of journey) expect(drill.some((x) => x.answer === d)).toBe(true);
+  it('ثلاث مسائل على الأقل لكل توزيع، وفيها «الشروط غير كافية»، ولا تذكر اسم التوزيع في نصها', () => {
+    for (const d of journey) expect(drill.filter((x) => x.answer === d).length, d).toBeGreaterThanOrEqual(3);
+    for (const x of drill) expect(x.text, x.id).not.toMatch(/برنولي|ذو الحدين|ذي الحدين|بواسون|الأسي|الهندسي|الطبيعي|N\(/);
     expect(drill.some((x) => x.answer === 'insufficient')).toBe(true);
   });
   it('أقرب فخ يختلف عن الإجابة، ولكل خيار تفسير', () => {

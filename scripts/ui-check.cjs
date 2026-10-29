@@ -101,6 +101,7 @@ async function texOverflow(page, tag, route) {
         if (sw > 0) fail(`[mobile] ${ch} بعد الكشف: تمرير أفقي ${sw}px`);
         const after = await heights();
         console.log(`${ch.padEnd(12)} قبل: ${before.join(' | ')}   بعد: ${after.join(' | ')}`);
+        // أسوأ حالة: إجابات خاطئة (تغذية راجعة أطول) — الحد شاشتان
         after.forEach((v, i) => v > 2 && fail(`[mobile] ${ch} المشهد ${i + 1}: ${v} شاشة بعد الكشف (الحد 2)`));
       }
     }

@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import { decisionNote, decisionTree, hint, type DecisionNode, type Leaf } from '../content/decision';
 import { choiceLabels } from '../content/chooser';
 import { distById } from '../content/distributions';
@@ -23,38 +23,38 @@ export function ExamNightPage() {
 
       <section aria-labelledby="sum-h">
         <h2 id="sum-h">الجدول</h2>
-        <table className="cheat">
-          <thead>
-            <tr>
-              <th scope="col">التوزيع</th>
-              <th scope="col">ماذا يسأل؟</th>
-              <th scope="col">المعلمات</th>
-              <th scope="col">مجال X</th>
-              <th scope="col">القانون</th>
-              <th scope="col">المتوسط</th>
-              <th scope="col">التباين</th>
-              <th scope="col">الفخ الشائع</th>
+        <table className="cheat" role="table">
+          <thead role="rowgroup">
+            <tr role="row">
+              <th scope="col" role="columnheader">التوزيع</th>
+              <th scope="col" role="columnheader">ماذا يسأل؟</th>
+              <th scope="col" role="columnheader">المعلمات</th>
+              <th scope="col" role="columnheader">مجال X</th>
+              <th scope="col" role="columnheader">القانون</th>
+              <th scope="col" role="columnheader">المتوسط</th>
+              <th scope="col" role="columnheader">التباين</th>
+              <th scope="col" role="columnheader">الفخ الشائع</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody role="rowgroup">
             {journey.map((id) => {
               const d = distById[id];
               const c = d.card;
               return (
-                <tr key={id} style={{ '--c': identity[id].color } as CSSProperties}>
-                  <th scope="row">
+                <tr key={id} role="row" style={{ '--c': identity[id].color } as CSSProperties}>
+                  <th scope="row" role="rowheader">
                     <a href={href.dist(id)}>
                       <Glyph id={id} size={22} /> {d.nameAr}
                     </a>
                     <span className="tag">{d.type === 'discrete' ? 'متقطع' : 'مستمر'}</span>
                   </th>
-                  <td data-label="ماذا يسأل؟">{d.question}</td>
-                  <td data-label="المعلمات"><Tex tex={c.params.map((p) => p.tex).join(',\\ ')} /></td>
-                  <td data-label="مجال X"><Tex tex={c.support} /></td>
-                  <td data-label="القانون"><Tex tex={c.fnTex} /></td>
-                  <td data-label="المتوسط"><Tex tex={c.mean} /></td>
-                  <td data-label="التباين"><Tex tex={c.variance} /></td>
-                  <td data-label="الفخ الشائع"><Rich text={c.mistake} /></td>
+                  <td role="cell" data-label="ماذا يسأل؟">{d.question}</td>
+                  <td role="cell" data-label="المعلمات"><Tex tex={c.params.map((p) => p.tex).join(',\\ ')} /></td>
+                  <td role="cell" data-label="مجال X"><Tex tex={c.support} /></td>
+                  <td role="cell" data-label="القانون"><Tex tex={c.fnTex} /></td>
+                  <td role="cell" data-label="المتوسط"><Tex tex={c.mean} /></td>
+                  <td role="cell" data-label="التباين"><Tex tex={c.variance} /></td>
+                  <td role="cell" data-label="الفخ الشائع"><Rich text={c.mistake} /></td>
                 </tr>
               );
             })}
@@ -62,17 +62,15 @@ export function ExamNightPage() {
         </table>
       </section>
 
-      <section aria-labelledby="dec-h">
-        <h2 id="dec-h">أي توزيع؟ مخطط القرار</h2>
+      <Fold title="أي توزيع؟ مخطط القرار">
         <p className="hint">اسأل عن بنية الموقف لا عن كلمة مفتاحية.</p>
         <div className="decision">
           <Node n={decisionTree} />
         </div>
         <Rich as="p" className="callout" text={decisionNote} />
-      </section>
+      </Fold>
 
-      <section aria-labelledby="tw-h">
-        <h2 id="tw-h">التوائم: لا تخلط بينها</h2>
+      <Fold title="التوائم: لا تخلط بينها">
         <div className="twins">
           {twins.map((t) => (
             <div key={t.a + t.b} className="twin">
@@ -90,7 +88,7 @@ export function ExamNightPage() {
             </div>
           ))}
         </div>
-      </section>
+      </Fold>
     </article>
   );
 }
@@ -117,5 +115,21 @@ function Node({ n }: { n: DecisionNode }) {
         ))}
       </ul>
     </div>
+  );
+}
+
+/** قسم قابل للطي: مفتوح على الحاسوب، مطوي على الجوال لتبقى الصفحة قصيرة، ويُفتح عند الطباعة. */
+function Fold({ title, children }: { title: string; children: ReactNode }) {
+  const [open, setOpen] = useState(() => typeof window === 'undefined' || window.matchMedia('(min-width: 900px)').matches);
+  useEffect(() => {
+    const on = () => setOpen(true);
+    window.addEventListener('beforeprint', on);
+    return () => window.removeEventListener('beforeprint', on);
+  }, []);
+  return (
+    <details className="fold" open={open} onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
+      <summary><h2>{title}</h2></summary>
+      {children}
+    </details>
   );
 }

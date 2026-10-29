@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { PART_COLORS } from '../content/distributions';
 import type { DistContent, QuizQuestion } from '../content/types';
+import { displayOrder } from '../lib/shuffle';
 import { progress, useProgress } from '../lib/storage';
 import { Rich, Tex } from './Tex';
 import { Callout, RichList } from './ui';
@@ -200,7 +201,8 @@ function QuizItem({ q, index }: { q: QuizQuestion; index: number }) {
         <Rich as="span" className="q-prompt" text={q.prompt} />
       </legend>
       <div className="options">
-        {q.options.map((o, i) => {
+        {displayOrder(q.id, q.options.length).map((i) => {
+          const o = q.options[i];
           const state = !answered ? '' : i === correctIdx ? 'is-correct' : i === chosen ? 'is-wrong' : '';
           return (
             <label key={i} className={`option ${state}`}>

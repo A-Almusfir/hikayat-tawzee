@@ -1,6 +1,7 @@
 import type { CSSProperties } from 'react';
 import { distById } from '../content/distributions';
-import { identity, journey, newChapters } from '../content/identity';
+import { chapters } from '../content/chapters';
+import { identity, journey } from '../content/identity';
 import { scenarios } from '../content/chooser';
 import { FamilyTree } from '../components/FamilyTree';
 import { Glyph } from '../components/Glyph';
@@ -29,7 +30,7 @@ export function HomePage() {
         <ol>
           {journey.map((id, i) => {
             const d = distById[id];
-            const isNew = newChapters.includes(id);
+            const isNew = !!chapters[id];
             return (
               <li key={id} style={{ '--c': identity[id].color } as CSSProperties}>
                 <a href={href.dist(id)}>

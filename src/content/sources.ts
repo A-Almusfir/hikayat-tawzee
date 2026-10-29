@@ -39,6 +39,12 @@ export const sources: Source[] = [
     verified: 'multiple-search-snippets',
   },
   {
+    id: 'stigler1982',
+    cite: 'S. M. Stigler (1982), Poisson on the Poisson distribution, Statistics & Probability Letters 1(1): 33–35 — ترجمة نص بواسون 1837 مع إشارة إلى عمل دي موافر السابق',
+    url: 'https://ideas.repec.org/a/eee/stapro/v1y1982i1p33-35.html',
+    verified: 'multiple-search-snippets',
+  },
+  {
     id: 'poisson-eom',
     cite: 'Encyclopedia of Mathematics — Poisson, Siméon-Denis',
     url: 'https://encyclopediaofmath.org/wiki/Poisson,_Simeon-Denis',
@@ -46,7 +52,7 @@ export const sources: Source[] = [
   },
   {
     id: 'lecam',
-    cite: "Le Cam's inequality: Σ_k |P(S=k) − e^{−λ}λ^k/k!| ≤ 2 Σ p_i² (e.g. The Poisson binomial distribution — Old & New, arXiv:1908.10024)",
+    cite: 'The Poisson binomial distribution — Old & New (arXiv:1908.10024): متباينة لو كام',
     url: 'https://arxiv.org/pdf/1908.10024',
     verified: 'multiple-search-snippets',
   },

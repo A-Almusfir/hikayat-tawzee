@@ -9,22 +9,24 @@ import { GlyphPaths } from './Glyph';
 import { Rich, Tex } from './Tex';
 
 // المحور السيني LTR داخل SVG؛ النصوص العربية تُرسم بـ direction="rtl".
-const POS: Record<DistId, { x: number; y: number }> = {
-  bernoulli: { x: 210, y: 52 },
-  geometric: { x: 80, y: 178 },
-  binomial: { x: 290, y: 178 },
-  exponential: { x: 80, y: 334 },
-  poisson: { x: 210, y: 334 },
-  normal: { x: 352, y: 334 },
+const POS: Record<DistId, { x: number; y: number; name: 'above' | 'below' | 'left' | 'right' }> = {
+  bernoulli: { x: 250, y: 72, name: 'above' },
+  geometric: { x: 120, y: 198, name: 'left' },
+  binomial: { x: 330, y: 198, name: 'right' },
+  exponential: { x: 120, y: 354, name: 'below' },
+  poisson: { x: 270, y: 354, name: 'below' },
+  normal: { x: 404, y: 354, name: 'below' },
 };
+// مواضع التسميات بعيدًا عن الخطوط والأسماء (يفحص سكربت الواجهة عدم تقاطعها)
 const LABEL: Record<string, { x: number; y: number }> = {
-  'bern-bin': { x: 274, y: 106 },
-  'bern-geo': { x: 120, y: 106 },
-  'bin-poi': { x: 226, y: 258 },
-  'bin-norm': { x: 352, y: 258 },
-  'geo-exp': { x: 80, y: 258 },
-  'poi-exp': { x: 145, y: 320 },
+  'bern-bin': { x: 318, y: 128 },
+  'bern-geo': { x: 152, y: 128 },
+  'bin-poi': { x: 270, y: 280 },
+  'bin-norm': { x: 404, y: 280 },
+  'geo-exp': { x: 92, y: 282 },
+  'poi-exp': { x: 195, y: 430 },
 };
+const NAME_OFFSET = { above: [0, -42], below: [0, 50], left: [-70, 6], right: [76, 6] } as const;
 const R = 30;
 
 export function FamilyTree({ initial = 'bin-poi' }: { initial?: string }) {
@@ -32,7 +34,7 @@ export function FamilyTree({ initial = 'bin-poi' }: { initial?: string }) {
   const e = edges.find((x) => x.id === sel)!;
   return (
     <div className="tree">
-      <svg viewBox="0 0 420 400" className="tree-svg" role="group" aria-label="شجرة التوزيعات: اضغط على سهم لترى العلاقة وشرطها، أو على توزيع لتفتح فصله" direction="ltr">
+      <svg viewBox="0 0 460 444" className="tree-svg" role="group" aria-label="شجرة التوزيعات: اضغط على سهم لترى العلاقة وشرطها، أو على توزيع لتفتح فصله" direction="ltr">
         <defs>
           <marker id="tarr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
             <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
@@ -78,7 +80,7 @@ export function FamilyTree({ initial = 'bin-poi' }: { initial?: string }) {
               <svg x={p.x - 15} y={p.y - 15} width="30" height="30" viewBox="0 0 24 24" fill={identity[id].color} stroke={identity[id].color} aria-hidden="true">
                 <GlyphPaths id={id} />
               </svg>
-              <text x={p.x} y={p.y + R + 20} textAnchor="middle" direction="rtl" className="t-name" fill={identity[id].color}>
+              <text x={p.x + NAME_OFFSET[p.name][0]} y={p.y + NAME_OFFSET[p.name][1]} textAnchor="middle" direction="rtl" className="t-name" fill={identity[id].color}>
                 {distById[id].nameAr}
               </text>
             </a>
@@ -98,15 +100,21 @@ export function FamilyTree({ initial = 'bin-poi' }: { initial?: string }) {
           <strong>الشرط: </strong>
           <Rich text={e.condition} />
         </p>
-        {e.src && (
-          <p className="tree-src">
-            المصدر:{' '}
-            {e.src.map((s) => (
-              <a key={s} href={sourceById[s].url} target="_blank" rel="noopener noreferrer" dir="ltr" lang="en">
-                {sourceById[s].cite}
-              </a>
-            ))}
-          </p>
+        {(e.detail || e.src) && (
+          <details className="tree-more">
+            <summary>للمزيد</summary>
+            {e.detail && <Rich as="p" text={e.detail} />}
+            {e.src && (
+              <p className="tree-src">
+                المصدر:{' '}
+                {e.src.map((s) => (
+                  <a key={s} href={sourceById[s].url} target="_blank" rel="noopener noreferrer">
+                    {sourceById[s].cite}
+                  </a>
+                ))}
+              </p>
+            )}
+          </details>
         )}
         <p className="tree-note">هذه شجرة منطقية لا تاريخية: الأسهم تبيّن العلاقات الرياضية، لا من سبق من زمنيًا.</p>
       </div>

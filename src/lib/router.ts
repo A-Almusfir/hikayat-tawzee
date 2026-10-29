@@ -13,7 +13,7 @@ export type Route =
 export function parse(hash: string): Route {
   const path = hash.replace(/^#/, '').replace(/\/+$/, '') || '/';
   if (path === '/' || path === '') return { name: 'home' };
-  const m = path.match(/^\/d\/([a-z]+)(?:\/([1-9]))?$/);
+  const m = path.match(/^\/d\/([a-z]+)(?:\/([1-5]))?$/);
   if (m) return { name: 'dist', id: m[1], scene: m[2] ? Number(m[2]) : undefined };
   if (path === '/choose') return { name: 'choose' };
   if (path === '/cards') return { name: 'cards' };
@@ -47,6 +47,6 @@ export function scrollToId(id: string) {
   if (!el) return;
   const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   el.scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
-  const h = el.querySelector<HTMLElement>('h2, h3');
-  h?.focus({ preventScroll: true });
+  const target = el.tabIndex >= 0 || el.hasAttribute('tabindex') ? el : el.querySelector<HTMLElement>('h2, h3');
+  target?.focus({ preventScroll: true });
 }

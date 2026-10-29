@@ -1,12 +1,12 @@
 import { useEffect, useState } from 'react';
 import { href, useRoute } from './lib/router';
 import { progress } from './lib/storage';
-import { poissonChapter } from './content/chapters/poisson';
+import { chapters } from './content/chapters';
+import type { DistId } from './content/types';
 import { ChapterPage } from './pages/ChapterPage';
 import { HomePage } from './pages/HomePage';
 import { CardsPage, ChooserPage, DistPage, NotFound, RefsPage } from './pages/pages';
 
-const CHAPTERS = { poisson: poissonChapter } as const;
 
 const NAV = [
   { to: href.home, label: 'الرئيسية', match: 'home' },
@@ -21,13 +21,13 @@ export default function App() {
 
   const pageKey = route.name === 'dist' ? `dist:${route.id}` : route.name;
   useEffect(() => {
-    // التنقل بين مشاهد الفصل نفسه لا يعيد الصفحة إلى أعلاها
-    if (route.name === 'dist' && route.scene) return;
-    window.scrollTo(0, 0);
-    document.querySelector<HTMLElement>('main h1')?.focus({ preventScroll: true });
     const titles: Record<string, string> = { choose: 'أي توزيع أختار؟', cards: 'بطاقات المراجعة', map: 'خريطة العلاقات', refs: 'المراجع والمنهج' };
     const h1 = document.querySelector('main h1')?.textContent;
     document.title = route.name === 'home' ? 'حكاية توزيع — افهم الحكاية… يثبت القانون' : `${titles[route.name] ?? h1 ?? ''} · حكاية توزيع`;
+    // رابط مشهد مباشر: الفصل يتولى التمرير إلى المشهد، فلا نعيد الصفحة إلى أعلاها
+    if (route.name === 'dist' && route.scene) return;
+    window.scrollTo(0, 0);
+    document.querySelector<HTMLElement>('main h1')?.focus({ preventScroll: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageKey]);
 
@@ -35,7 +35,7 @@ export default function App() {
     switch (route.name) {
       case 'home': return <HomePage />;
       case 'dist': {
-        const ch = CHAPTERS[route.id as keyof typeof CHAPTERS];
+        const ch = chapters[route.id as DistId];
         return ch ? <ChapterPage key={route.id} ch={ch} scene={route.scene} /> : <DistPage key={route.id} id={route.id} />;
       }
       case 'choose': return <ChooserPage />;

@@ -49,7 +49,7 @@ main:has(.chapter), main:has(.home2) { max-width: 72rem; }
 .more-item { margin-bottom: .7rem; }
 .hk-art { margin: 0; }
 .hk-art svg { width: 100%; height: auto; display: block; }
-.hk-cell { fill: #fffdf8; stroke: #d9cfbf; stroke-width: 1; }
+.hk-cell { fill: #fffdf8; stroke: #968a74; stroke-width: 1; }
 .hk-cell.hit { fill: var(--c-tint2); stroke: var(--c); }
 .hk-dot { fill: var(--c); }
 .hk-art figcaption { font-size: .88rem; color: var(--ink-2); margin-top: .4rem; }
@@ -179,3 +179,44 @@ main:has(.chapter), main:has(.home2) { max-width: 72rem; }
 .build-range { margin: -.3rem 0 .4rem; color: var(--ink-2); }
 .scene-art .one-control { margin-top: 0; }
 @media (min-width: 640px) { .predict .options { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); } }
+
+/* ——— إصلاحات المراجعة ——— */
+html:has(.chapter) { scroll-padding-top: 64px; }
+@media (max-width: 520px) {
+  .chapter .tex-block .katex { font-size: 1em; }
+  .chapter .build-art .tex-block .katex { font-size: 1.15em; }
+  .build-steps > li { padding-inline-start: 2.3rem; }
+}
+.cite { vertical-align: baseline; font-size: .85rem; padding: 2px 4px; }
+.feedback:focus-visible, .reveal-box:focus-visible, .steps li:focus-visible, .ch-sources li:focus-visible { outline: 3px solid var(--focus); outline-offset: 3px; }
+.feedback:focus:not(:focus-visible), .reveal-box:focus:not(:focus-visible), .steps li:focus:not(:focus-visible) { outline: none; }
+.check-btn { margin-top: .5rem; }
+.seg-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: .7rem; }
+.seg-tab { font: inherit; font-size: .92rem; border: 1.5px solid var(--c); background: #fffdf8; color: var(--c); border-radius: 999px; padding: .35rem .9rem; min-height: 44px; cursor: pointer; }
+.seg-tab.on { background: var(--c); color: #fff; font-weight: 700; }
+.compose { background: #fffdf8; border: 1.5px solid var(--rule); border-radius: 16px; padding: .8rem 1rem; margin-bottom: 1rem; }
+.compose .pk { margin: 0; }
+.compose .pq { margin: .2rem 0 0; }
+.slots, .tiles { display: flex; flex-wrap: wrap; gap: 6px; margin: .5rem 0; }
+.slot { font: inherit; font-size: .9rem; border: 1.5px dashed var(--ink-2); background: var(--paper); color: var(--ink); border-radius: 10px; padding: .3rem .7rem; min-height: 44px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.slot.on { border-style: solid; border-color: var(--c); box-shadow: 0 0 0 2px var(--c-tint2); }
+.slot.ok { border-color: var(--ok); border-style: solid; }
+.slot.no { border-color: var(--no); }
+.tile { font: inherit; border: 1.5px solid var(--c); background: var(--c-tint); color: var(--ink); border-radius: 10px; min-width: 56px; min-height: 44px; padding: .2rem .7rem; cursor: pointer; }
+.tile:hover { background: var(--c-tint2); }
+.compose .feedback ul { margin: .2rem 0 0; padding-inline-start: 1.1rem; }
+.recall { margin-bottom: .5rem; }
+.recall .btn-row { margin-top: .4rem; }
+.tree-more { margin-top: .3rem; }
+.tree-more summary { cursor: pointer; font-weight: 700; min-height: 40px; padding: .4rem 0; }
+.tree-src a { word-break: break-word; }
+.link-btn { font: inherit; font-size: .9rem; background: none; border: none; color: var(--ink-2); text-decoration: underline; cursor: pointer; padding: .4rem 0; min-height: 36px; }
+.compose.done ul { margin: .2rem 0; padding-inline-start: 1.1rem; }
+.predict-done { margin: .5rem 0; padding: .45rem .9rem; }
+.predict-done p { margin: .2rem 0 0; }
+@media (max-width: 520px) {
+  .build-steps > li { padding-bottom: .5rem; }
+  .build-steps .tex-block { margin: .2rem 0; padding: .2rem 0; }
+  .build-art { padding: .7rem .8rem; }
+  .build-art .hint { margin: .3rem 0 0; }
+}

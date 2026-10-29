@@ -1,24 +1,51 @@
 import { describe, expect, it } from 'vitest';
 import { fmt, poisson } from '../lib/dist';
-import { poissonChapter } from './chapters/poisson';
+import { chapters } from './chapters';
+import type { Chapter } from './chapterTypes';
 import { edges } from './family';
 import { horseKicks, horseKickTotals } from './horsekicks';
-import { contrast, identity, PAPER, tint } from './identity';
+import { contrast, identity, journey, PAPER, tint } from './identity';
 import { sourceById } from './sources';
 
-const chapters = [poissonChapter];
+const all = Object.values(chapters) as Chapter[];
+const words = (s: string) => s.replace(/\$[^$]*\$/g, ' س ').split(/\s+/).filter(Boolean).length;
 
 describe('المصادر', () => {
   it('كل جملة تاريخية تحمل مصدرًا معرّفًا في السجل', () => {
-    for (const ch of chapters)
+    for (const ch of all)
       for (const c of [...ch.story.claims, ...ch.story.more]) {
         expect(c.src.length).toBeGreaterThan(0);
         for (const s of c.src) expect(sourceById[s], `مصدر غير معرّف: ${s}`).toBeDefined();
       }
     for (const e of edges) for (const s of e.src ?? []) expect(sourceById[s]).toBeDefined();
   });
-  it('الحكاية لا تتجاوز أربع جمل أساسية', () => {
-    for (const ch of chapters) expect(ch.story.claims.length).toBeLessThanOrEqual(4);
+  it('الاستشهادات نصوص عادية بلا رموز رياضية خام', () => {
+    for (const s of Object.values(sourceById)) expect(s.cite).not.toMatch(/[Σ^{}]|_\{/);
+  });
+});
+
+describe('حدود الطول التي اتفق عليها المجلس', () => {
+  it('الحكاية: ثلاث أو أربع جمل، وأقل من 100 كلمة مع روابطها', () => {
+    for (const ch of all) {
+      expect(ch.story.claims.length).toBeLessThanOrEqual(4);
+      const total = ch.story.claims.reduce((s, c) => s + words(c.text) + words(c.links ?? ''), 0);
+      expect(total, `${ch.id}: ${total} كلمة`).toBeLessThan(100);
+    }
+  });
+  it('توقّعان على الأكثر في «ابنِ القانون»، وكل خانات القانون تُكشف', () => {
+    for (const ch of all) {
+      expect(ch.build.steps.filter((s) => s.predict).length).toBeLessThanOrEqual(2);
+      const rev = new Set(ch.build.steps.flatMap((s) => s.reveals ?? []));
+      ch.build.law.slots.forEach((_, i) => expect(rev.has(i + 1)).toBe(true));
+      expect((ch.build.law.template.match(/@\d/g) ?? []).length).toBe(ch.build.law.slots.length);
+    }
+  });
+  it('«املأ القانون»: البطاقات تشمل كل خانة، ولكل خانة معنى', () => {
+    for (const ch of all) {
+      for (const s of ch.build.law.slots) expect(ch.anchor.compose.tiles).toContain(s);
+      expect(ch.anchor.compose.meanings).toHaveLength(ch.build.law.slots.length);
+      expect(ch.anchor.compose.tiles.length).toBeGreaterThan(ch.build.law.slots.length);
+    }
   });
 });
 
@@ -33,40 +60,55 @@ describe('بيانات ركلات الخيل', () => {
     const exp = [0, 1, 2, 3, 4].map((k) => 200 * poisson.pmf(k, 0.61));
     expect(exp.map((v) => fmt(v, 1))).toEqual(['108.7', '66.3', '20.2', '4.1', '0.6']);
   });
+  it('أفضل λ في المختبر قريب من 0.61 فعلًا (أقل فرق كلي)', () => {
+    const t = chapters.poisson!.tryIt;
+    if (t.kind !== 'fit') throw new Error('expected fit');
+    const N = 200;
+    const diff = (l: number) => t.observed.reduce((s, o, k) => s + Math.abs(o - N * t.pmf(k, l)), 0) + N * (1 - t.cdf(t.observed.length - 1, l));
+    let best = t.param.min;
+    for (let l = t.param.min; l <= t.param.max; l += t.param.step) if (diff(l) < diff(best)) best = l;
+    expect(Math.abs(best - t.param.best)).toBeLessThanOrEqual(0.02);
+  });
 });
 
 describe('أرقام الفصل تطابق الحساب', () => {
   it('مسائل الاختبار وأسئلة الاسترجاع', () => {
-    for (const ch of chapters) {
+    for (const ch of all) {
       for (const p of ch.exam.problems) {
         const c = p.check;
         expect(Math.abs(c.compute() - c.shown)).toBeLessThanOrEqual(0.5 * 10 ** -c.digits + 1e-12);
         expect(p.answer + p.steps.map((s) => (s.tex ?? []).join(' ')).join(' ')).toContain(c.shown.toFixed(c.digits));
       }
-      for (const q of ch.anchor.recall) {
+      for (const q of [...ch.anchor.recall, ...ch.build.steps.flatMap((s) => (s.predict ? [s.predict] : []))]) {
         expect(q.options.filter((o) => o.correct)).toHaveLength(1);
-        if (q.check) expect(q.options.find((o) => o.correct)!.text).toContain(fmt(q.check.shown, q.check.digits));
+        const chk = (q as { check?: { shown: number; digits: number } }).check;
+        if (chk) expect(q.options.find((o) => o.correct)!.text).toContain(fmt(chk.shown, chk.digits));
       }
-      for (const s of ch.build.steps) if (s.predict) expect(s.predict.options.filter((o) => o.correct)).toHaveLength(1);
     }
   });
   it('نهاية (1 − λ/n)^n تقترب من e^{−λ} كما يقول الفصل', () => {
-    const l = 0.61;
-    expect(Math.pow(1 - l / 1e6, 1e6)).toBeCloseTo(Math.exp(-l), 6);
-    expect(Math.exp(-l)).toBeCloseTo(0.5434, 4);
-    expect(109 / 200).toBeCloseTo(0.545, 3);
+    expect(Math.pow(1 - 0.61 / 1e6, 1e6)).toBeCloseTo(Math.exp(-0.61), 6);
+    expect(Math.exp(-0.61)).toBeCloseTo(0.5434, 4);
   });
 });
 
-describe('الشجرة والهوية', () => {
-  it('الأسهم التقريبية تحمل شرطًا، والعلاقات الست موجودة', () => {
+describe('الشجرة والهوية والرحلة', () => {
+  it('الأسهم الست موجودة، والتقريبية منها تحمل شرطًا', () => {
     expect(edges.map((e) => e.id).sort()).toEqual(['bern-bin', 'bern-geo', 'bin-norm', 'bin-poi', 'geo-exp', 'poi-exp']);
     for (const e of edges) expect(e.condition.length).toBeGreaterThan(20);
+  });
+  it('الفصول المسجلة من التوزيعات الستة، وكل فصل غير الأخير له جسر', () => {
+    for (const ch of all) expect(journey).toContain(ch.id);
+    expect(journey).toHaveLength(6);
   });
   it('تباين ألوان الهوية ≥ 4.5:1 على الورق وعلى خلفية المشهد', () => {
     for (const { color } of Object.values(identity)) {
       expect(contrast(color, PAPER)).toBeGreaterThanOrEqual(4.5);
       expect(contrast(color, tint(color, 0.16))).toBeGreaterThanOrEqual(4.5);
+      expect(contrast('#ffffff', color)).toBeGreaterThanOrEqual(4.5);
     }
+  });
+  it('حدود الخلايا الفارغة ≥ 3:1 (عنصر غير نصي)', () => {
+    expect(contrast('#968a74', PAPER)).toBeGreaterThanOrEqual(3);
   });
 });

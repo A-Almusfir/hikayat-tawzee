@@ -38,5 +38,3 @@ export function contrast(a: string, b: string) {
 /** ترتيب الفصول في الرحلة (منطقي لا تاريخي). */
 export const journey: DistId[] = ['bernoulli', 'binomial', 'poisson', 'exponential', 'geometric', 'normal'];
 
-/** الفصول المكتملة بالتصميم الجديد. البقية تعرض النسخة السابقة مؤقتًا. */
-export const newChapters: DistId[] = ['poisson'];

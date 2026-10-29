@@ -67,4 +67,5 @@ scripts/ui-check.cjs          فحص الواجهة
 
 ## الإعداد
 
-© 2026 Abdullah Almusfir — Statistics Student.
+عبدالله المسفر (Abdullah Almusfir) — طالب إحصاء.
+© 2026 · 95% من الحقوق تعود إلى Claude، و5% لعبدالله (±5%).

@@ -86,11 +86,12 @@ export default function App() {
           <button type="button" className="btn btn-quiet" onClick={clear}>امسح التقدم</button>
           <span role="status" aria-live="polite">{cleared ? 'تم مسح التقدم.' : ''}</span>
         </div>
-        <div className="signature" lang="en" dir="ltr">
-          <p className="sig-by">Designed &amp; built by</p>
-          <p className="sig-name">Abdullah Almusfir</p>
-          <p className="sig-role">Statistics Student</p>
-          <p className="sig-copy">© {new Date().getFullYear()} Abdullah Almusfir. All rights reserved.</p>
+        <div className="signature">
+          <p className="sig-name">عبدالله المسفر</p>
+          <p className="sig-role">طالب إحصاء</p>
+          <p className="sig-copy">
+            <bdi dir="ltr">© {new Date().getFullYear()}</bdi> · <bdi dir="ltr">95%</bdi> من الحقوق تعود إلى Claude، و<bdi dir="ltr">5%</bdi> لعبدالله <bdi dir="ltr">(±5%)</bdi>
+          </p>
         </div>
       </footer>
     </>

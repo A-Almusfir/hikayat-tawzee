@@ -3,6 +3,7 @@ import { distById } from '../content/distributions';
 import { chapters } from '../content/chapters';
 import { identity, journey } from '../content/identity';
 import { scenarios } from '../content/chooser';
+import { sheet } from '../content/sheet';
 import { FamilyTree } from '../components/FamilyTree';
 import { Glyph } from '../components/Glyph';
 import { href } from '../lib/router';
@@ -53,7 +54,7 @@ export function HomePage() {
         <h2 id="t-h">أدوات المراجعة</h2>
         <ul>
           <li>
-            <a href={href.exam}>ليلة الاختبار</a> <span>الستة في جدول واحد، ومخطط لتحديد التوزيع، و«التوائم» التي يُخلط بينها.</span>
+            <a href={href.exam}>ليلة الاختبار</a> <span>ورقة القوانين كاملة ({sheet.filter((s) => !s.extra).length} توزيعًا) مع تنبيهات على ما ينقصها، ومخطط لتحديد التوزيع، و«التوائم» التي يُخلط بينها.</span>
           </li>
           <li>
             <a href={href.drill}>تدريب مختلط</a> <span>مسائل من الستة معًا: اختر التوزيع، ثم المعلمات، ثم احسب.</span>

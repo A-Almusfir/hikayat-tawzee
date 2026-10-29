@@ -371,3 +371,45 @@ main:has(.exam-night) { max-width: 72rem; }
 @media print { body:has(.exam-night) .site-foot { display: none; } }
 @media print { .exam-night .fold > summary { break-after: avoid; } .exam-night .fold { break-inside: auto; } }
 @media print { .exam-night details::details-content { content-visibility: visible; display: block; } }
+
+/* ——— ليلة الاختبار: جدولا ورقة القوانين ——— */
+.sheet-table td > .tex { display: block; text-align: right; margin: .25rem 0; }
+.sheet-table .sub { display: block; color: var(--ink-2); font-size: .85em; }
+.sheet-note .tex { white-space: normal; }
+.sheet-table tbody th { white-space: normal; min-width: 8.5rem; }
+.sheet-name { display: flex; flex-direction: column; gap: 2px; }
+.sheet-name a, .sheet-name .nolink { color: var(--ink); font-weight: 700; text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
+.sheet-name a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
+.sheet-name .en { font-size: .8rem; color: var(--ink-2); font-weight: 400; }
+.sheet-marks { display: flex; flex-wrap: wrap; gap: 4px; margin-top: .3rem; align-items: center; }
+.fix-mark { font: inherit; font-size: .78rem; font-weight: 700; min-width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--no); color: var(--no); background: #fffdf8; cursor: pointer; padding: 0 4px; }
+.fix-mark:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.sheet-note { display: block; font-size: .86rem; color: var(--ink-2); }
+.sheet-note strong { color: var(--ink); }
+.sheet-fixes ol { padding-inline-start: 1.4rem; }
+.sheet-fixes li { margin: .45rem 0; line-height: 1.75; }
+.sheet-fixes li:focus { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+.fix-kind { display: inline-block; font-size: .75rem; font-weight: 700; border-radius: 6px; padding: 0 .4rem; border: 1px solid currentColor; }
+.fix-kind.fix { color: var(--no); }
+.fix-kind.missing { color: var(--ink); }
+.fix-kind.notation { color: var(--ink-2); }
+.symbols > div { display: grid; grid-template-columns: 6rem 1fr; gap: .6rem; padding: .35rem 0; border-top: 1px dotted var(--rule); }
+.symbols dt { direction: ltr; text-align: end; }
+.symbols dd { margin: 0; }
+.traps { list-style: none; padding: 0; display: grid; gap: 8px; }
+@media (min-width: 900px) { .traps { grid-template-columns: 1fr 1fr; } }
+.traps li { border-inline-start: 5px solid var(--c); padding: .2rem .7rem; background: #fffdf8; border-radius: 8px; }
+.traps a { color: var(--ink); font-weight: 700; display: inline-flex; gap: 6px; align-items: center; }
+.trap-q { display: block; color: var(--ink-2); font-size: .9rem; }
+.traps p { margin: .25rem 0; font-size: .92rem; }
+@media (max-width: 899px) {
+  .sheet-table td { display: block; padding: .3rem .7rem; }
+  .sheet-table td::before { display: block; font-size: .75rem; }
+  .sheet-table tbody th { flex-direction: column; align-items: flex-start; gap: 2px; }
+}
+@media print {
+  .sheet-table { font-size: 8pt; }
+  .fix-mark { border-width: 1px; min-width: 0; height: auto; padding: 0 3pt; }
+  .sheet-fixes { font-size: 9pt; }
+  .sheet-fixes li { margin: 1pt 0; line-height: 1.4; }
+}

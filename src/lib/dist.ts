@@ -1,4 +1,4 @@
-// الحسابات الرياضية للتوزيعات الستة. لا يعتمد هذا الملف على الواجهة.
+// الحسابات الرياضية لتوزيعات الموقع وورقة القوانين. لا يعتمد هذا الملف على الواجهة.
 
 export type Rng = () => number;
 
@@ -112,6 +112,113 @@ export const normal = {
     Math.max(0, normal.cdf(b, mu, sigma) - normal.cdf(a, mu, sigma)),
   mean: (mu: number) => mu,
   variance: (sigma: number) => sigma * sigma,
+};
+
+// ———————— دالتا غاما وبيتا (لتوزيعات ورقة القوانين المستمرة) ————————
+
+const LANCZOS = [
+  0.99999999999980993, 676.5203681218851, -1259.1392167224028, 771.32342877765313, -176.61502916214059,
+  12.507343278686905, -0.13857109526572012, 9.9843695780195716e-6, 1.5056327351493116e-7,
+];
+
+/** ln Γ(x) بتقريب لانكزوس (g = 7) — دقة نسبية نحو 1e-15 للقيم الموجبة. */
+export function lgamma(x: number): number {
+  if (x < 0.5) return Math.log(Math.PI / Math.abs(Math.sin(Math.PI * x))) - lgamma(1 - x);
+  const y = x - 1;
+  let a = LANCZOS[0];
+  const t = y + 7.5;
+  for (let i = 1; i < 9; i++) a += LANCZOS[i] / (y + i);
+  return 0.5 * Math.log(2 * Math.PI) + (y + 0.5) * Math.log(t) - t + Math.log(a);
+}
+
+export const gammaFn = (x: number) => Math.exp(lgamma(x));
+export const betaFn = (a: number, b: number) => Math.exp(lgamma(a) + lgamma(b) - lgamma(a + b));
+
+// القيم غير الموجودة (مثل متوسط t عند v ≤ 1) تُعاد NaN.
+
+// ———————— ذو الحدين السالب: X = عدد المحاولات حتى النجاح رقم r (كما في ورقة المقرر) ————————
+export const negbin = {
+  pmf: (x: number, r: number, p: number) =>
+    Number.isInteger(x) && x >= r ? choose(x - 1, r - 1) * Math.pow(p, r) * Math.pow(1 - p, x - r) : 0,
+  mean: (r: number, p: number) => r / p,
+  variance: (r: number, p: number) => (r * (1 - p)) / (p * p),
+};
+
+// ———————— فوق الهندسي: N مجتمع فيه k «نجاحات»، نسحب n دون إرجاع ————————
+export const hypergeometric = {
+  /** مجال X الدقيق: max(0, n − (N − k)) ≤ x ≤ min(n, k). */
+  support: (N: number, k: number, n: number): [number, number] => [Math.max(0, n - (N - k)), Math.min(n, k)],
+  pmf: (x: number, N: number, k: number, n: number) => {
+    const [lo, hi] = hypergeometric.support(N, k, n);
+    if (!Number.isInteger(x) || x < lo || x > hi) return 0;
+    return (choose(k, x) * choose(N - k, n - x)) / choose(N, n);
+  },
+  mean: (N: number, k: number, n: number) => (n * k) / N,
+  variance: (N: number, k: number, n: number) => n * (k / N) * (1 - k / N) * ((N - n) / (N - 1)),
+};
+
+// ———————— المنتظم على (a, b) ————————
+export const uniform = {
+  pdf: (x: number, a: number, b: number) => (x >= a && x <= b ? 1 / (b - a) : 0),
+  cdf: (x: number, a: number, b: number) => (x <= a ? 0 : x >= b ? 1 : (x - a) / (b - a)),
+  mean: (a: number, b: number) => (a + b) / 2,
+  variance: (a: number, b: number) => (b - a) ** 2 / 12,
+};
+
+// ———————— غاما: α شكل، β معدل (كما في ورقة المقرر) ————————
+export const gammaDist = {
+  pdf: (x: number, alpha: number, beta: number) =>
+    x <= 0 ? 0 : Math.exp(alpha * Math.log(beta) - lgamma(alpha) + (alpha - 1) * Math.log(x) - beta * x),
+  mean: (alpha: number, beta: number) => alpha / beta,
+  variance: (alpha: number, beta: number) => alpha / (beta * beta),
+};
+
+// ———————— مربع كاي بدرجات حرية v ————————
+export const chiSquare = {
+  pdf: (x: number, v: number) =>
+    x <= 0 ? 0 : Math.exp(-(v / 2) * Math.LN2 - lgamma(v / 2) + (v / 2 - 1) * Math.log(x) - x / 2),
+  mean: (v: number) => v,
+  variance: (v: number) => 2 * v,
+};
+
+// ———————— ويبل بصيغة الورقة: f(x) = αβ x^{β−1} e^{−α x^β} ————————
+export const weibull = {
+  pdf: (x: number, alpha: number, beta: number) =>
+    x <= 0 ? 0 : alpha * beta * Math.pow(x, beta - 1) * Math.exp(-alpha * Math.pow(x, beta)),
+  cdf: (x: number, alpha: number, beta: number) => (x <= 0 ? 0 : 1 - Math.exp(-alpha * Math.pow(x, beta))),
+  mean: (alpha: number, beta: number) => Math.pow(alpha, -1 / beta) * gammaFn(1 + 1 / beta),
+  variance: (alpha: number, beta: number) =>
+    Math.pow(alpha, -2 / beta) * (gammaFn(1 + 2 / beta) - gammaFn(1 + 1 / beta) ** 2),
+};
+
+// ———————— t بدرجات حرية v ————————
+export const studentT = {
+  pdf: (x: number, v: number) =>
+    Math.exp(lgamma((v + 1) / 2) - lgamma(v / 2) - 0.5 * Math.log(v * Math.PI) - ((v + 1) / 2) * Math.log1p((x * x) / v)),
+  mean: (v: number) => (v > 1 ? 0 : NaN),
+  variance: (v: number) => (v > 2 ? v / (v - 2) : NaN),
+};
+
+// ———————— بيتا على (0, 1) ————————
+export const betaDist = {
+  pdf: (x: number, a: number, b: number) =>
+    x <= 0 || x >= 1 ? 0 : Math.exp((a - 1) * Math.log(x) + (b - 1) * Math.log1p(-x) - lgamma(a) - lgamma(b) + lgamma(a + b)),
+  mean: (a: number, b: number) => a / (a + b),
+  variance: (a: number, b: number) => (a * b) / ((a + b + 1) * (a + b) ** 2),
+  /** العزم E(X^r) = B(a + r, b) / B(a, b) — وهو ما يظهر في عمود M_X(t) في الورقة. */
+  moment: (r: number, a: number, b: number) => betaFn(a + r, b) / betaFn(a, b),
+};
+
+// ———————— F بدرجتي حرية r (البسط) وv (المقام) ————————
+export const fisherF = {
+  pdf: (x: number, r: number, v: number) =>
+    x <= 0
+      ? 0
+      : Math.exp(
+          (r / 2) * Math.log(r / v) + (r / 2 - 1) * Math.log(x) - ((r + v) / 2) * Math.log1p((r / v) * x) - Math.log(betaFn(r / 2, v / 2)),
+        ),
+  mean: (_r: number, v: number) => (v > 2 ? v / (v - 2) : NaN),
+  variance: (r: number, v: number) => (v > 4 ? (2 * v * v * (r + v - 2)) / (r * (v - 2) ** 2 * (v - 4)) : NaN),
 };
 
 // ———————— محاكاة (تقبل مولّدًا عشوائيًا قابلًا للتمرير لأجل الاختبار) ————————

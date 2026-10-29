@@ -4,7 +4,6 @@ import {
 } from './dist';
 import { distributions } from '../content/distributions';
 import { scenarios, choiceLabels } from '../content/chooser';
-import { relations } from '../content/relations';
 import { RANGES } from './ranges';
 
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
@@ -214,8 +213,5 @@ describe('اتساق المحتوى مع الحسابات', () => {
     expect(pairs.has('bernoulli|binomial')).toBe(true);
     expect(pairs.has('binomial|geometric')).toBe(true);
     expect(pairs.has('exponential|poisson')).toBe(true);
-  });
-  it('خريطة العلاقات: العلاقات الثلاث المطلوبة', () => {
-    expect(relations.map((r) => `${r.from}>${r.to}`)).toEqual(['bernoulli>binomial', 'bernoulli>geometric', 'poisson>exponential']);
   });
 });

@@ -316,7 +316,7 @@ export function ExponentialLab() {
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="المعدل" symbol="\lambda" value={lambda} onChange={setLambda} {...RANGES.expLambda} unit="طلب/ساعة" digits={1} />
+        <Slider label="المعدل" symbol="\theta" value={lambda} onChange={setLambda} {...RANGES.expLambda} unit="طلب/ساعة" digits={1} />
         <Slider label="الزمن" symbol="t" value={t} onChange={setT} min={0.05} max={3} step={0.05} unit="ساعة" />
       </div>
       <fieldset className="seg">
@@ -347,7 +347,7 @@ export function ExponentialLab() {
         <Rich text={`$t = ${fmt(t)}$ ساعة = ${fmt(t * 60, 1)} دقيقة. المساحة المظللة هي الاحتمال.`} />
       </p>
       <p className="trunc-note">
-        <Rich text={`الرسم يتوقف عند $x \\approx ${fmt(xMax, 2)}$ ساعة؛ المساحة بعدها $\\approx ${fmt(1 - exponential.cdf(xMax, lambda), 4)}$ غير معروضة لكنها محسوبة في الاحتمالات. ارتفاع المنحنى كثافة لا احتمال: عند $\\lambda > 1$ تتجاوز $f(0) = \\lambda$ القيمة 1 دون أي تناقض.`} />
+        <Rich text={`الرسم يتوقف عند $x \\approx ${fmt(xMax, 2)}$ ساعة؛ المساحة بعدها $\\approx ${fmt(1 - exponential.cdf(xMax, lambda), 4)}$ غير معروضة لكنها محسوبة في الاحتمالات. ارتفاع المنحنى كثافة لا احتمال: عند $\\theta > 1$ تتجاوز $f(0) = \\theta$ القيمة 1 دون أي تناقض.`} />
       </p>
       <SimButtons onOne={() => add(1)} oneLabel="انتظر الطلب التالي" onBatch={() => add(SIM_BATCH)} batchLabel={`ولّد ${SIM_BATCH} زمن انتظار`} onClear={() => (setWaits([]), setOne(null))} full={full} hasData={waits.length > 0} />
       {one !== null && (
@@ -360,7 +360,7 @@ export function ExponentialLab() {
       )}
       {beyond > 0 && <p className="trunc-note">أزمنة في المحاكاة تجاوزت نطاق الرسم ولا تظهر في المدرج: {beyond}.</p>}
       <SimNote count={waits.length} max={SIM_MAX} />
-      <Stats mean={exponential.mean(lambda)} variance={exponential.variance(lambda)} meanTex="\tfrac{1}{\lambda}" varTex="\tfrac{1}{\lambda^2}" sim={enough(stats)} unit="ساعة" />
+      <Stats mean={exponential.mean(lambda)} variance={exponential.variance(lambda)} meanTex="\tfrac{1}{\theta}" varTex="\tfrac{1}{\theta^2}" sim={enough(stats)} unit="ساعة" />
     </div>
   );
 }
@@ -419,45 +419,3 @@ export const labs = {
   exponential: ExponentialLab,
   normal: NormalLab,
 };
-
-// ———————— تجربة الصفحة الرئيسية ————————
-export function HomeTeaser() {
-  const [m, setM] = useState(4);
-  const n = 10;
-  const p = 1 / m;
-  const [one, setOne] = useState<number[] | null>(null);
-  useEffect(() => setOne(null), [m]);
-  const got = one ? one.reduce((x, y) => x + y, 0) : null;
-  const bars = range(0, n).map((x) => ({ x, p: binomial.pmf(x, n, p) }));
-  return (
-    <div className="teaser">
-      <p className="teaser-q">
-        لو خمّنت إجابات <strong>10 أسئلة</strong> اختيار من متعدد عشوائيًا، كم إجابة صحيحة تتوقع؟
-      </p>
-      <Slider label="عدد الخيارات في كل سؤال" symbol="m" value={m} onChange={setM} min={2} max={5} step={1} digits={0} />
-      <BarChart
-        bars={bars}
-        highlight={got !== null ? (x) => x === got : undefined}
-        ariaLabel={`احتمالات عدد الإجابات الصحيحة من 10 عند ${m} خيارات لكل سؤال`}
-        xLabel="عدد الإجابات الصحيحة"
-      />
-      <div className="btn-row">
-        <button type="button" className="btn" onClick={() => setOne(sample.binomialTrials(n, p))}>
-          ▶ خمّن اختبارًا الآن
-        </button>
-      </div>
-      {one && (
-        <>
-          <TrialStrip trials={one} successWord="صحيحة" failWord="خاطئة" />
-          <p className="result-line" aria-live="polite">
-            حصلت على {got} من 10 في هذه المرة. احتمال هذه النتيجة نظريًا <Tex tex={fmt(binomial.pmf(got!, n, p), 4)} />. جرّب مرة أخرى: النتيجة تتغير، أما الأعمدة فلا.
-          </p>
-        </>
-      )}
-      <p className="hint">
-        <Rich text={`المتوسط $np = 10 \\times \\tfrac{1}{${m}} = ${fmt(n * p, 2)}$. هذه حكاية توزيع **ذي الحدين**.`} />
-      </p>
-    </div>
-  );
-}
-

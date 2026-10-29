@@ -1,20 +1,23 @@
 import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
+import type { DistId } from '../content/types';
 import { decisionNote, decisionTree, hint, type DecisionNode, type Leaf } from '../content/decision';
 import { choiceLabels } from '../content/chooser';
 import { distById } from '../content/distributions';
+import { chapters } from '../content/chapters';
 import { identity, journey } from '../content/identity';
+import { sheet, sheetFixes, symbols, type SheetRow } from '../content/sheet';
 import { twins } from '../content/twins';
 import { Glyph } from '../components/Glyph';
 import { Rich, Tex } from '../components/Tex';
-import { href } from '../lib/router';
+import { href, scrollToId } from '../lib/router';
 
-// كل ما في هذه الصفحة يُقرأ من بطاقات التوزيعات ومخطط القرار (مصدر واحد للحقيقة).
+// كل ما في هذه الصفحة يُقرأ من ورقة القوانين (sheet.ts) وبطاقات التوزيعات ومخطط القرار (مصدر واحد للحقيقة).
 export function ExamNightPage() {
   return (
     <article className="exam-night">
       <header className="page-head">
         <h1 tabIndex={-1}>ليلة الاختبار</h1>
-        <p className="lead">الستة في صفحة واحدة: ماذا يسأل كل توزيع، وقانونه، ومتوسطه وتباينه، والفخ الذي يقع فيه الطلاب. ثم مخطط يحدد التوزيع من نص المسألة.</p>
+        <p className="lead">ورقة القوانين كاملة بترتيبها وأعمدتها: {sheet.filter((s) => !s.extra).length} توزيعًا، ومعها تنبيهات على ما ينقص الورقة أو يحتاج تصحيحًا. ثم قاموس الرموز، ومخطط يحدد التوزيع من نص المسألة.</p>
         <div className="btn-row no-print">
           <button
             type="button"
@@ -31,46 +34,46 @@ export function ExamNightPage() {
         </div>
       </header>
 
-      <section aria-labelledby="sum-h">
-        <h2 id="sum-h">الجدول</h2>
-        <table className="cheat" role="table">
-          <thead role="rowgroup">
-            <tr role="row">
-              <th scope="col" role="columnheader">التوزيع</th>
-              <th scope="col" role="columnheader">ماذا يسأل؟</th>
-              <th scope="col" role="columnheader">المعلمات</th>
-              <th scope="col" role="columnheader">مجال X</th>
-              <th scope="col" role="columnheader">القانون</th>
-              <th scope="col" role="columnheader">المتوسط</th>
-              <th scope="col" role="columnheader">التباين</th>
-              <th scope="col" role="columnheader">الفخ الشائع</th>
-            </tr>
-          </thead>
-          <tbody role="rowgroup">
-            {journey.map((id) => {
-              const d = distById[id];
-              const c = d.card;
-              return (
-                <tr key={id} role="row" style={{ '--c': identity[id].color } as CSSProperties}>
-                  <th scope="row" role="rowheader">
-                    <a href={href.dist(id)}>
-                      <Glyph id={id} size={22} /> {d.nameAr}
-                    </a>
-                    <span className="tag">{d.type === 'discrete' ? 'متقطع' : 'مستمر'}</span>
-                  </th>
-                  <td role="cell" data-label="ماذا يسأل؟">{d.question}</td>
-                  <td role="cell" data-label="المعلمات"><Tex tex={c.params.map((p) => p.tex).join(',\\ ')} /></td>
-                  <td role="cell" data-label="مجال X"><Tex tex={c.support} /></td>
-                  <td role="cell" data-label="القانون"><Tex tex={c.fnTex} /></td>
-                  <td role="cell" data-label="المتوسط"><Tex tex={c.mean} /></td>
-                  <td role="cell" data-label="التباين"><Tex tex={c.variance} /></td>
-                  <td role="cell" data-label="الفخ الشائع"><Rich text={c.mistake} /></td>
-                </tr>
-              );
-            })}
-          </tbody>
-        </table>
+      <SheetTable group="discrete" title="المتقطعة" />
+      <SheetTable group="continuous" title="المستمرة" />
+
+      <section aria-labelledby="fix-h" className="sheet-fixes">
+        <h2 id="fix-h">تنبيهات على ورقة القوانين</h2>
+        <p className="hint">ما ينقص الورقة أو يحتاج تصحيحًا. الأرقام نفسها تظهر بجانب اسم التوزيع في الجدولين.</p>
+        <ol>
+          {sheetFixes.map((f) => (
+            <li key={f.id} id={`fix-${f.id}`} tabIndex={-1}>
+              <span className={`fix-kind ${f.kind}`}>{FIX_KIND[f.kind]}</span> <Rich text={f.text} />
+            </li>
+          ))}
+        </ol>
       </section>
+
+      <Fold title="قاموس الرموز">
+        <dl className="symbols">
+          {symbols.map((s) => (
+            <div key={s.sym}>
+              <dt><Tex tex={s.sym} /></dt>
+              <dd><Rich text={s.meaning} /></dd>
+            </div>
+          ))}
+        </dl>
+      </Fold>
+
+      <Fold title="الستة: ماذا يسأل كل توزيع، والفخ الشائع">
+        <ul className="traps">
+          {journey.map((id) => {
+            const d = distById[id];
+            return (
+              <li key={id} style={{ '--c': identity[id].color } as CSSProperties}>
+                <a href={href.dist(id)}><Glyph id={id} size={20} /> {d.nameAr}</a>
+                <span className="trap-q">{d.question}</span>
+                <Rich as="p" text={d.card.mistake} />
+              </li>
+            );
+          })}
+        </ul>
+      </Fold>
 
       <Fold title="أي توزيع؟ مخطط القرار">
         <p className="hint">اسأل عن بنية الموقف لا عن كلمة مفتاحية.</p>
@@ -100,6 +103,86 @@ export function ExamNightPage() {
         </div>
       </Fold>
     </article>
+  );
+}
+
+const FIX_KIND = { fix: 'تصحيح', missing: 'ناقص', notation: 'ترميز' } as const;
+const fixNumbers = (id: SheetRow['id']) => sheetFixes.flatMap((f, i) => (f.rows.includes(id) ? [{ n: i + 1, id: f.id }] : []));
+const isDist = (id: string): id is DistId => id in identity;
+
+/** جدول بأعمدة ورقة المقرر نفسها. الرابط إلى الفصل يظهر فقط إن كان الفصل منشورًا. */
+function SheetTable({ group, title }: { group: SheetRow['group']; title: string }) {
+  const rows = sheet.filter((s) => s.group === group);
+  const cont = group === 'continuous';
+  return (
+    <section aria-labelledby={`sheet-${group}`}>
+      <h2 id={`sheet-${group}`}>{title}</h2>
+      <table className="cheat sheet-table" role="table">
+        <thead role="rowgroup">
+          <tr role="row">
+            <th scope="col" role="columnheader">التوزيع</th>
+            <th scope="col" role="columnheader">{cont ? <Tex tex="f(x)" /> : <Tex tex="f(x) = P(X = x)" />}</th>
+            <th scope="col" role="columnheader">المتوسط والتباين</th>
+            <th scope="col" role="columnheader"><Tex tex="M_X(t)" /></th>
+            {cont && <th scope="col" role="columnheader"><Tex tex="F(x)" /></th>}
+          </tr>
+        </thead>
+        <tbody role="rowgroup">
+          {rows.map((s) => {
+            const dist = isDist(s.id) ? s.id : undefined;
+            const name = (
+              <>
+                {dist && <Glyph id={dist} size={20} />} {s.nameAr}
+              </>
+            );
+            return (
+              <tr key={s.id} role="row" style={{ '--c': dist ? identity[dist].color : 'var(--ink-2)' } as CSSProperties}>
+                <th scope="row" role="rowheader">
+                  <span className="sheet-name">
+                    {dist && chapters[dist] ? <a href={href.dist(dist)}>{name}</a> : <span className="nolink">{name}</span>}
+                    <span className="en" lang="en" dir="ltr">{s.nameEn}</span>
+                  </span>
+                  <span className="sheet-marks">
+                    {s.extra && <span className="tag">ليس في الورقة</span>}
+                    {fixNumbers(s.id).map((f) => (
+                      <button key={f.id} type="button" className="fix-mark" aria-label={`تنبيه ${f.n}`} onClick={() => scrollToId(`fix-${f.id}`)}>
+                        {f.n}
+                      </button>
+                    ))}
+                  </span>
+                </th>
+                <td role="cell" data-label="القانون">
+                  <Tex tex={s.f} />
+                  <span className="sub"><Tex tex={s.support} /></span>
+                  <Rich className="sub" text={s.params} />
+                </td>
+                <td role="cell" data-label="المتوسط والتباين">
+                  <Tex tex={s.mean} />
+                  <Tex tex={s.variance} />
+                </td>
+                <td role="cell" data-label="الدالة المولدة">
+                  {s.mgf.kind === 'closed' ? (
+                    <>
+                      <Tex tex={s.mgf.tex} />
+                      <Rich className="sub" text={s.mgf.domain} />
+                    </>
+                  ) : (
+                    <span className="sheet-note">
+                      <strong>{s.mgf.kind === 'none' ? 'غير موجودة' : 'بلا صيغة بسيطة'}</strong> <Rich text={s.mgf.note} />
+                    </span>
+                  )}
+                </td>
+                {cont && (
+                  <td role="cell" data-label="التراكمي">
+                    {!s.cdf ? null : s.cdf.kind === 'closed' ? <Tex tex={s.cdf.tex} /> : <span className="sheet-note"><Rich text={s.cdf.note} /></span>}
+                  </td>
+                )}
+              </tr>
+            );
+          })}
+        </tbody>
+      </table>
+    </section>
   );
 }
 

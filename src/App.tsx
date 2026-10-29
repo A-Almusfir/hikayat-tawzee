@@ -7,7 +7,7 @@ import { ChapterPage } from './pages/ChapterPage';
 import { DrillPage } from './pages/DrillPage';
 import { ExamNightPage } from './pages/ExamNightPage';
 import { HomePage } from './pages/HomePage';
-import { CardsPage, ChooserPage, DistPage, NotFound, RefsPage } from './pages/pages';
+import { CardsPage, ChooserPage, NotFound, RefsPage } from './pages/pages';
 
 
 const NAV = [
@@ -40,7 +40,7 @@ export default function App() {
       case 'home': return <HomePage />;
       case 'dist': {
         const ch = chapters[route.id as DistId];
-        return ch ? <ChapterPage key={route.id} ch={ch} scene={route.scene} /> : <DistPage key={route.id} id={route.id} />;
+        return ch ? <ChapterPage key={route.id} ch={ch} scene={route.scene} /> : <NotFound />;
       }
       case 'choose': return <ChooserPage />;
       case 'cards': return <CardsPage />;

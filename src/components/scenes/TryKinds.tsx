@@ -139,7 +139,7 @@ export function WaitsTry({ t }: { t: Of<'waits'> }) {
           xMin={0}
           xMax={xMax}
           hist={hist}
-          markers={[{ x: 1 / lambda, label: '1/λ' }]}
+          markers={[{ x: 1 / lambda, label: '1/θ' }]}
           ariaLabel={`كثافة الانتظار بمعدل ${lambda} ${t.rateUnit}`}
           xLabel={`زمن الانتظار (${t.unit})`}
         />
@@ -148,7 +148,7 @@ export function WaitsTry({ t }: { t: Of<'waits'> }) {
       <Rich as="p" text={t.prompt} />
       <div className="one-control">
         <label htmlFor="w-l">
-          المعدل <Tex tex="\lambda" /> ({t.rateUnit})
+          المعدل <Tex tex="\theta" /> ({t.rateUnit})
         </label>
         <div className="slider-row">
           <input id="w-l" type="range" min={t.lambda.min} max={t.lambda.max} step={t.lambda.step} value={lambda} onChange={(e) => setLambda(Number(e.target.value))} dir="ltr" />
@@ -161,7 +161,7 @@ export function WaitsTry({ t }: { t: Of<'waits'> }) {
         </button>
       </div>
       <p className="fit" aria-live="polite">
-        متوسط الانتظار نظريًا <Tex tex={`\\tfrac{1}{\\lambda} = ${fmt(1 / lambda, 3)}`} /> {t.unit}
+        متوسط الانتظار نظريًا <Tex tex={`\\tfrac{1}{\\theta} = ${fmt(1 / lambda, 3)}`} /> {t.unit}
         {mean !== null && (
           <>
             ، وفي المحاكاة <strong className="num" dir="ltr">≈ {fmt(mean, 3)}</strong>

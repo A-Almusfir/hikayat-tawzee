@@ -27,12 +27,12 @@ export const exponentialChapter: Chapter = {
       {
         text: 'وفي ورقته الأولى (1909) أظهر أن عدد المكالمات الواصلة عشوائيًا يتبع توزيع بواسون.',
         src: ['erlang-mactutor', 'erlang-plus'],
-        links: r`عدد المكالمات في زمن $t$: بواسون بمتوسط $\lambda t$.`,
+        links: r`عدد المكالمات في زمن $t$: بواسون بمتوسط $\theta t$.`,
       },
       {
         text: 'والسؤال المقابل: كم ننتظر حتى المكالمة التالية؟ جوابه نتيجة رياضية لعدّ بواسون نفسه: التوزيع الأسي.',
         src: ['poisson-process-libretexts'],
-        links: r`$X$ = زمن الانتظار (مستمر)، و$\lambda$ = المعدل.`,
+        links: r`$X$ = زمن الانتظار (مستمر)، و$\theta$ = المعدل (هو $\lambda$ لكل وحدة زمن في بواسون).`,
       },
     ],
     more: [
@@ -56,38 +56,38 @@ export const exponentialChapter: Chapter = {
   },
   build: {
     headline: 'الانتظار هو عدّ بواسون صفرًا',
-    law: { template: r`f(x) = @1 \, @2`, slots: [r`\lambda`, r`e^{-\lambda x}`], range: r`x \ge 0` },
+    law: { template: r`f(x) = @1 \, @2`, slots: [r`\theta`, r`e^{-\theta x}`], range: r`x \ge 0` },
     steps: [
       {
-        story: 'الانتظار أطول من $x$ دقيقة يعني: لا مكالمة واحدة في الفترة $[0, x]$. وعدد المكالمات فيها بواسوني بمتوسط $\\lambda x$.',
-        tex: [r`P(X > x) = P\big(N(x) = 0\big) = e^{-\lambda x}`],
+        story: 'الانتظار أطول من $x$ دقيقة يعني: لا مكالمة واحدة في الفترة $[0, x]$. وعدد المكالمات فيها بواسوني بمتوسط $\\theta x$.',
+        tex: [r`P(X > x) = P\big(N(x) = 0\big) = e^{-\theta x}`],
         reveals: [2],
         predict: {
           prompt: 'ما احتمال ألا تصل أي مكالمة في $[0, x]$؟',
           options: [
-            { text: '$e^{-\\lambda x}$', correct: true, why: 'في بواسون بمتوسط $\\lambda x$: احتمال الصفر $e^{-\\lambda x}$.' },
-            { text: '$1 - e^{-\\lambda x}$', why: 'هذا احتمال وصول مكالمة واحدة على الأقل.' },
-            { text: '$\\lambda x$', why: 'هذا متوسط عدد المكالمات، لا احتمال.' },
-            { text: '$e^{-\\lambda}$', why: 'هذا لفترة طولها وحدة واحدة فقط؛ الفترة هنا $x$.' },
+            { text: '$e^{-\\theta x}$', correct: true, why: 'في بواسون بمتوسط $\\theta x$: احتمال الصفر $e^{-\\theta x}$.' },
+            { text: '$1 - e^{-\\theta x}$', why: 'هذا احتمال وصول مكالمة واحدة على الأقل.' },
+            { text: '$\\theta x$', why: 'هذا متوسط عدد المكالمات، لا احتمال.' },
+            { text: '$e^{-\\theta}$', why: 'هذا لفترة طولها وحدة واحدة فقط؛ الفترة هنا $x$.' },
           ],
         },
       },
       {
-        story: 'الكثافة هي مشتقة دالة التوزيع التراكمية $F(x) = P(X \\le x) = 1 - e^{-\\lambda x}$.',
-        tex: [r`f(x) = F'(x) = \lambda e^{-\lambda x}`],
+        story: 'الكثافة هي مشتقة دالة التوزيع التراكمية $F(x) = P(X \\le x) = 1 - e^{-\\theta x}$.',
+        tex: [r`f(x) = F'(x) = \theta e^{-\theta x}`],
         reveals: [1],
         predict: {
-          prompt: 'ما مشتقة $1 - e^{-\\lambda x}$ بالنسبة إلى $x$؟',
+          prompt: 'ما مشتقة $1 - e^{-\\theta x}$ بالنسبة إلى $x$؟',
           options: [
-            { text: '$\\lambda e^{-\\lambda x}$', correct: true, why: 'مشتقة $e^{-\\lambda x}$ هي $-\\lambda e^{-\\lambda x}$، والسالب يلغي سالب الطرح.' },
-            { text: '$e^{-\\lambda x}$', why: 'نسي ضرب مشتقة الأس الداخلي $-\\lambda$.' },
-            { text: '$-\\lambda e^{-\\lambda x}$', why: 'نسي أن أمامها إشارة طرح؛ والكثافة لا تكون سالبة.' },
-            { text: '$\\tfrac{1}{\\lambda}$', why: 'هذا متوسط الانتظار، لا الكثافة.' },
+            { text: '$\\theta e^{-\\theta x}$', correct: true, why: 'مشتقة $e^{-\\theta x}$ هي $-\\theta e^{-\\theta x}$، والسالب يلغي سالب الطرح.' },
+            { text: '$e^{-\\theta x}$', why: 'نسي ضرب مشتقة الأس الداخلي $-\\theta$.' },
+            { text: '$-\\theta e^{-\\theta x}$', why: 'نسي أن أمامها إشارة طرح؛ والكثافة لا تكون سالبة.' },
+            { text: '$\\tfrac{1}{\\theta}$', why: 'هذا متوسط الانتظار، لا الكثافة.' },
           ],
         },
       },
     ],
-    note: 'الاشتقاق يفترض عملية بواسون متجانسة: معدل ثابت. وارتفاع الكثافة ليس احتمالًا: عند $\\lambda > 1$ تتجاوز $f(0) = \\lambda$ الواحد دون تناقض.',
+    note: 'الاشتقاق يفترض عملية بواسون متجانسة: معدل ثابت. وارتفاع الكثافة ليس احتمالًا: عند $\\theta > 1$ تتجاوز $f(0) = \\theta$ الواحد دون تناقض. وورقة المقرر تكتب المعدل $\\theta$، وهو نفسه $\\lambda$ لكل وحدة زمن في فصل بواسون.',
   },
   exam: {
     headline: 'مسألة الاختبار',
@@ -107,7 +107,7 @@ export const exponentialChapter: Chapter = {
         label: 'بصيغة المقرر',
         given: 'زمن خدمة عميل يتبع التوزيع الأسي بمتوسط 4 دقائق. ما احتمال أن تستغرق الخدمة بين 2 و6 دقائق؟',
         steps: [
-          { title: 'من المتوسط إلى المعدل', body: '', tex: [r`E[X] = \tfrac{1}{\lambda} = 4 \;\Rightarrow\; \lambda = \tfrac14`] },
+          { title: 'من المتوسط إلى المعدل', body: '', tex: [r`E[X] = \tfrac{1}{\theta} = 4 \;\Rightarrow\; \theta = \tfrac14`] },
           { title: 'احتمال فترة = فرق ذيلين', body: '', tex: [r`P(2 < X < 6) = e^{-2/4} - e^{-6/4}`] },
           { title: 'احسب', body: '', tex: [r`= e^{-0.5} - e^{-1.5}`, r`\approx 0.3834`] },
         ],
@@ -116,27 +116,27 @@ export const exponentialChapter: Chapter = {
       },
     ],
     tricks: [
-      'أُعطيت المتوسط؟ المعدل مقلوبه: $\\lambda = 1/E[X]$.',
-      '$P(X > t) = e^{-\\lambda t}$ مباشرة، و$P(a < X < b) = e^{-\\lambda a} - e^{-\\lambda b}$.',
+      'أُعطيت المتوسط؟ المعدل مقلوبه: $\\theta = 1/E[X]$.',
+      '$P(X > t) = e^{-\\theta t}$ مباشرة، و$P(a < X < b) = e^{-\\theta a} - e^{-\\theta b}$.',
       'وحّد الوحدات: إن كان المعدل لكل دقيقة فالزمن بالدقائق.',
     ],
   },
   anchor: {
     headline: 'ثبّت الحكاية',
-    hook: '$\\lambda$ معدل، و$1/\\lambda$ متوسط الانتظار. وما انتظرته لا يغيّر ما بقي.',
-    hookTex: r`P(X > t) = e^{-\lambda t},\qquad E[X] = \tfrac{1}{\lambda}`,
+    hook: '$\\theta$ معدل، و$1/\\theta$ متوسط الانتظار. وما انتظرته لا يغيّر ما بقي.',
+    hookTex: r`P(X > t) = e^{-\theta t},\qquad E[X] = \tfrac{1}{\theta}`,
     hookNote: 'بمعدل مكالمتين في الدقيقة: متوسط الانتظار نصف دقيقة.',
     compose: {
-      tiles: [r`\lambda`, r`e^{-\lambda x}`, r`e^{\lambda x}`, r`\tfrac{1}{\lambda}`, r`x`, r`1-e^{-\lambda x}`],
+      tiles: [r`\theta`, r`e^{-\theta x}`, r`e^{\theta x}`, r`\tfrac{1}{\theta}`, r`x`, r`1-e^{-\theta x}`],
       meanings: ['المعدل: ارتفاع الكثافة عند الصفر', 'احتمال ألا يقع حدث في $[0, x]$'],
       interchangeable: [[1, 2]],
     },
     recall: [
       {
         id: 'ch-exp-r1',
-        prompt: 'زمن انتظار أسي متوسطه 10 دقائق. ما المعدل $\\lambda$؟',
+        prompt: 'زمن انتظار أسي متوسطه 10 دقائق. ما المعدل $\\theta$؟',
         options: [
-          { text: '$0.1$ لكل دقيقة', correct: true, why: '$\\lambda = 1/E[X] = 1/10$.' },
+          { text: '$0.1$ لكل دقيقة', correct: true, why: '$\\theta = 1/E[X] = 1/10$.' },
           { text: '$10$ لكل دقيقة', why: 'هذا المتوسط نفسه، والمعدل مقلوبه.' },
           { text: '$100$', why: 'هذا مربع المتوسط، وهو التباين.' },
           { text: '$0.01$', why: 'هذا مقلوب التباين لا المتوسط.' },
@@ -147,7 +147,7 @@ export const exponentialChapter: Chapter = {
         id: 'ch-exp-r2',
         prompt: 'انتظرت 5 دقائق ولم تصل مكالمة (عملية بواسون متجانسة). ما أثر ذلك على ما بقي من الانتظار؟',
         options: [
-          { text: 'لا أثر: توزيع ما بقي هو التوزيع الأصلي نفسه (انعدام الذاكرة).', correct: true, why: '$P(X > s + t \\mid X > s) = e^{-\\lambda t} = P(X > t)$.' },
+          { text: 'لا أثر: توزيع ما بقي هو التوزيع الأصلي نفسه (انعدام الذاكرة).', correct: true, why: '$P(X > s + t \\mid X > s) = e^{-\\theta t} = P(X > t)$.' },
           { text: 'صار أقصر حتمًا لأن المكالمة «تأخرت».', why: 'هذه مغالطة المقامر في صورة مستمرة.' },
           { text: 'صار أطول حتمًا.', why: 'لا يتغير التوزيع في أي اتجاه.' },
           { text: 'صار التوزيع منتظمًا.', why: 'يبقى أسيًا بالمعدل نفسه.' },
@@ -157,10 +157,10 @@ export const exponentialChapter: Chapter = {
         id: 'ch-exp-r3',
         prompt: 'أي سؤال جوابه بواسون لا الأسي؟',
         options: [
-          { text: 'كم مكالمة تصل في 10 دقائق؟', correct: true, why: 'عدّ أحداث في فترة: بواسون بمتوسط $10\\lambda$.' },
+          { text: 'كم مكالمة تصل في 10 دقائق؟', correct: true, why: 'عدّ أحداث في فترة: بواسون بمتوسط $10\\theta$.' },
           { text: 'كم ننتظر حتى المكالمة التالية؟', why: 'زمن انتظار مستمر: الأسي.' },
           { text: 'ما احتمال أن ننتظر أكثر من دقيقة؟', why: 'سؤال عن زمن: الأسي.' },
-          { text: 'ما متوسط الزمن بين مكالمتين؟', why: 'زمن بين حدثين: الأسي، ومتوسطه $1/\\lambda$.' },
+          { text: 'ما متوسط الزمن بين مكالمتين؟', why: 'زمن بين حدثين: الأسي، ومتوسطه $1/\\theta$.' },
         ],
       },
     ],

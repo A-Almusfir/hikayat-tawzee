@@ -1,43 +1,9 @@
-import { useState } from 'react';
 import { PART_COLORS } from '../content/distributions';
 import type { DistContent, QuizQuestion } from '../content/types';
 import { displayOrder } from '../lib/shuffle';
 import { progress, useProgress } from '../lib/storage';
 import { Rich, Tex } from './Tex';
-import { Callout, RichList } from './ui';
-
-export function StorySection({ d }: { d: DistContent }) {
-  const s = d.story;
-  return (
-    <div className="story">
-      <h3 className="story-title">{s.title}</h3>
-      <Rich as="p" className="lead" text={s.scene} />
-      <dl className="story-facts">
-        <div>
-          <dt>التجربة</dt>
-          <dd><Rich text={s.experiment} /></dd>
-        </div>
-        <div>
-          <dt>المتغير العشوائي <Tex tex="X" /></dt>
-          <dd><Rich text={s.variable} /></dd>
-        </div>
-        <div>
-          <dt>القيم الممكنة</dt>
-          <dd><Rich text={s.values} /></dd>
-        </div>
-        <div>
-          <dt>الافتراضات</dt>
-          <dd><RichList items={s.assumptions} className="checks" /></dd>
-        </div>
-      </dl>
-      {s.note && (
-        <Callout title="انتبه">
-          <Rich as="p" text={s.note} />
-        </Callout>
-      )}
-    </div>
-  );
-}
+import { RichList } from './ui';
 
 export function FormulaSection({ d }: { d: DistContent }) {
   const f = d.formula;
@@ -74,71 +40,6 @@ export function FormulaSection({ d }: { d: DistContent }) {
           <Rich key={i} as="p" text={t} />
         ))}
       </details>
-    </div>
-  );
-}
-
-const STEP_TITLES = ['تعريف المتغير X', 'لماذا هذا التوزيع؟', 'التعويض', 'النتيجة وتفسيرها'];
-
-export function WorkedExample({ d }: { d: DistContent }) {
-  const e = d.example;
-  const [shown, setShown] = useState(0);
-  const total = STEP_TITLES.length;
-  return (
-    <div className="example">
-      <h3>{e.title}</h3>
-      <div className="given">
-        <strong>المعطيات</strong>
-        <RichList items={e.given} />
-        <Rich as="p" className="ask" text={e.ask} />
-      </div>
-      <p className="hint">حاول الحل بنفسك أولًا، ثم اكشف الخطوات واحدة تلو الأخرى.</p>
-      <ol className="steps" aria-live="polite">
-        {shown >= 1 && (
-          <li>
-            <strong>{STEP_TITLES[0]}</strong>
-            <Rich as="p" text={e.defineX} />
-          </li>
-        )}
-        {shown >= 2 && (
-          <li>
-            <strong>{STEP_TITLES[1]}</strong>
-            <Rich as="p" text={e.why} />
-          </li>
-        )}
-        {shown >= 3 && (
-          <li>
-            <strong>{STEP_TITLES[2]}</strong>
-            {e.substitute.map((t, i) => (
-              <Tex key={i} tex={t} display />
-            ))}
-          </li>
-        )}
-        {shown >= 4 && (
-          <li>
-            <strong>{STEP_TITLES[3]}</strong>
-            <Rich as="p" text={e.result} />
-            <Rich as="p" text={e.interpretation} />
-          </li>
-        )}
-      </ol>
-      <div className="btn-row">
-        {shown < total && (
-          <button type="button" className="btn" onClick={() => setShown(shown + 1)}>
-            اكشف الخطوة التالية: {STEP_TITLES[shown]}
-          </button>
-        )}
-        {shown < total && (
-          <button type="button" className="btn btn-quiet" onClick={() => setShown(total)}>
-            اكشف الحل كاملًا
-          </button>
-        )}
-        {shown > 0 && (
-          <button type="button" className="btn btn-quiet" onClick={() => setShown(0)}>
-            أخفِ الحل
-          </button>
-        )}
-      </div>
     </div>
   );
 }

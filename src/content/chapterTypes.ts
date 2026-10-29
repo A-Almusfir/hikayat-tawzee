@@ -79,7 +79,12 @@ export interface Chapter {
     hookTex: string;
     hookNote?: string;
     /** «املأ القانون»: بطاقات يختار منها الطالب لكل خانة (تشمل الصحيحة ومشتّتات). */
-    compose: { tiles: string[]; meanings: string[] };
+    compose: {
+      tiles: string[];
+      meanings: string[];
+      /** خانات يمكن تبادل محتواها دون تغيير القانون (مثل عاملي ضرب في البسط). */
+      interchangeable?: number[][];
+    };
     recall: (Choice & { id: string; check?: NumericCheck })[];
     bridge: string;
   };

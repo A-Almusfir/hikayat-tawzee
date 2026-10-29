@@ -1,4 +1,5 @@
 import { useState, type CSSProperties } from 'react';
+import { gradeCompose } from '../../lib/compose';
 import { useProgress } from '../../lib/storage';
 import type { Chapter } from '../../content/chapterTypes';
 import { distById } from '../../content/distributions';
@@ -58,6 +59,8 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
   const [fill, setFill] = useState<(string | null)[]>(() => Array(n).fill(null));
   const [active, setActive] = useState(0);
   const [checked, setChecked] = useState(false);
+  const [wrongTries, setWrongTries] = useState(0);
+  const [showAnswer, setShowAnswer] = useState(false);
   const tex = law.template.replace(/@(\d)/g, (_, d: string) => {
     const v = fill[Number(d) - 1];
     return v ? String.raw`\underbrace{\textcolor{${color}}{${v}}}_{(${d})}` : String.raw`\underbrace{${BOX}}_{(${d})}`;
@@ -70,8 +73,15 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
     const empty = next.findIndex((v) => v === null);
     setActive(empty === -1 ? active : empty);
   };
-  const ok = (i: number) => fill[i] === law.slots[i];
-  const allOk = fill.every((_, i) => ok(i));
+  const grades = gradeCompose(fill, law.slots, ch.anchor.compose.interchangeable);
+  const ok = (i: number) => grades[i];
+  const allOk = grades.every(Boolean);
+  const reset = () => (setFill(Array(n).fill(null)), setActive(0), setChecked(false), setWrongTries(0), setShowAnswer(false));
+  const check = () => {
+    setChecked(true);
+    if (!gradeCompose(fill, law.slots, ch.anchor.compose.interchangeable).every(Boolean)) setWrongTries((w) => w + 1);
+    onChecked();
+  };
   if (checked && allOk)
     return (
       <div className="compose done feedback ok" role="status">
@@ -86,7 +96,7 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
             </li>
           ))}
         </ul>
-        <button type="button" className="link-btn" onClick={() => (setFill(Array(n).fill(null)), setActive(0), setChecked(false))}>
+        <button type="button" className="link-btn" onClick={reset}>
           أعد الكتابة
         </button>
       </div>
@@ -112,23 +122,32 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
         ))}
       </div>
       <div className="btn-row">
-        <button type="button" className="btn btn-c" disabled={fill.some((v) => v === null)} onClick={() => (setChecked(true), onChecked())}>
+        <button type="button" className="btn btn-c" disabled={fill.some((v) => v === null)} onClick={check}>
           تحقّق
         </button>
-        <button type="button" className="btn btn-quiet" onClick={() => (setFill(Array(n).fill(null)), setActive(0), setChecked(false))}>
+        <button type="button" className="btn btn-quiet" onClick={reset}>
           امسح
         </button>
       </div>
       {checked && (
         <div className="feedback no" role="status">
-          <p><strong>راجع الخانات المعلّمة ✗، ثم اختر بطاقة أخرى لها:</strong></p>
-          <ul>
-            {law.slots.map((s, i) => (
-              <li key={i}>
-                ({i + 1}) <Tex tex={s} />: <Rich text={ch.anchor.compose.meanings[i]} />
-              </li>
-            ))}
-          </ul>
+          <p>
+            <strong>راجع الخانات المعلّمة ✗، ثم اختر لها بطاقة أخرى.</strong>
+          </p>
+          {/* الإجابة لا تُكشف من أول محاولة: بعد محاولتين خاطئتين، أو بطلب الطالب */}
+          {showAnswer || wrongTries >= 2 ? (
+            <ul>
+              {law.slots.map((sl, i) => (
+                <li key={i}>
+                  ({i + 1}) <Tex tex={sl} />: <Rich text={ch.anchor.compose.meanings[i]} />
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <button type="button" className="link-btn" onClick={() => setShowAnswer(true)}>
+              أرني الإجابة
+            </button>
+          )}
         </div>
       )}
     </div>

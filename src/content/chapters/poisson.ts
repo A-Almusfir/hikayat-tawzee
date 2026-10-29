@@ -72,7 +72,7 @@ export const poissonChapter: Chapter = {
     steps: [
       {
         story: 'قسّم الفيلق-السنة إلى $n$ فرصة صغيرة، احتمال الوفاة في كل منها $\\lambda/n$.',
-        tex: [r`X \sim \mathrm{Bin}\!\left(n,\ \tfrac{\lambda}{n}\right)`],
+        tex: [r`\text{في هذا النموذج: } X \sim \mathrm{Bin}\!\left(n,\ \tfrac{\lambda}{n}\right)`],
       },
       {
         story: 'سنة بلا أي وفاة تعني أن الفرص الـ $n$ كلها مرّت بسلام.',
@@ -148,7 +148,9 @@ export const poissonChapter: Chapter = {
     hookNote: 'وفي بيانات الخيل نفسها: المتوسط $0.61$ والتباين $\\approx 0.61$.',
     compose: {
       tiles: [r`\lambda^{k}`, r`k!`, r`e^{-\lambda}`, r`n^{k}`, r`e^{\lambda}`, r`\lambda`],
-      meanings: ['احتمال فترة خالية تمامًا', 'أثر المتوسط مرفوعًا لعدد الأحداث', 'الترتيب لا يهم'],
+      meanings: ['الفرص الباقية تمر بسلام (وهو نفسه $P(X=0)$)', 'أثر المتوسط مرفوعًا لعدد الأحداث', 'الترتيب لا يهم'],
+      // e^{-λ} و λ^k كلاهما عامل في البسط: تبادلهما لا يغيّر القانون
+      interchangeable: [[1, 2]],
     },
     recall: [
       {

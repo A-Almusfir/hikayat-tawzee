@@ -369,3 +369,4 @@ main:has(.exam-night) { max-width: 72rem; }
   main:has(.exam-night) + .site-foot { margin-top: 2mm; }
 }
 @media print { body:has(.exam-night) .site-foot { display: none; } }
+@media print { .exam-night .fold > summary { break-after: avoid; } .exam-night .fold { break-inside: auto; } }

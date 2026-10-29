@@ -44,6 +44,11 @@ export function DrillPage() {
   // كل جولة مراجعة لها بذرة ومفاتيح حفظ مستقلة، فلا تظهر المسائل محلولة من جولة سابقة
   const [seed, setSeed] = useState(() => Math.floor(Math.random() * 1e9));
   const prefix = mode === 'review' ? `r${seed}:` : '';
+  // لا تتراكم جولات المراجعة القديمة في التخزين المحلي: نحذف مفاتيح الجولات السابقة
+  useEffect(() => {
+    for (const k of Object.keys(quiz)) if (/^r\d+:/.test(k) && !k.startsWith(`r${seed}:`)) progress.setQuiz(k, undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seed]);
 
   // الفصول المنتهية: أُجيب فيها عن سؤال استرجاع واحد على الأقل
   const finished = useMemo(

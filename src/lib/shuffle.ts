@@ -30,6 +30,7 @@ export function parseNumber(s: string): number | null {
   const t = s
     .trim()
     .replace(/[٠-٩]/g, (d) => String('٠١٢٣٤٥٦٧٨٩'.indexOf(d)))
+    .replace(/[۰-۹]/g, (d) => String('۰۱۲۳۴۵۶۷۸۹'.indexOf(d)))
     .replace(/[٫,]/g, '.')
     .replace(/\s/g, '');
   if (!/^-?\d*\.?\d+$/.test(t)) return null;

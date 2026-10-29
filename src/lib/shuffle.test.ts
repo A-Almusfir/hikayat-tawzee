@@ -30,6 +30,7 @@ describe('قراءة الأرقام', () => {
     expect(parseNumber('٠٫٤٠٦')).toBeCloseTo(0.406, 12);
     expect(parseNumber('0,406')).toBeCloseTo(0.406, 12);
     expect(parseNumber(' .5 ')).toBe(0.5);
+    expect(parseNumber('۰٫۵')).toBe(0.5);
     expect(parseNumber('abc')).toBeNull();
   });
 });

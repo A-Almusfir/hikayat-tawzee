@@ -25,11 +25,11 @@ describe('المصادر', () => {
 });
 
 describe('حدود الطول التي اتفق عليها المجلس', () => {
-  it('الحكاية: ثلاث أو أربع جمل، وأقل من 100 كلمة مع روابطها', () => {
+  it('الحكاية: أربع جمل على الأكثر، وأقل من 80 كلمة مع روابطها', () => {
     for (const ch of all) {
       expect(ch.story.claims.length).toBeLessThanOrEqual(4);
       const total = ch.story.claims.reduce((s, c) => s + words(c.text) + words(c.links ?? ''), 0);
-      expect(total, `${ch.id}: ${total} كلمة`).toBeLessThan(100);
+      expect(total, `${ch.id}: ${total} كلمة`).toBeLessThan(80);
     }
   });
   it('توقّعان على الأكثر في «ابنِ القانون»، وكل خانات القانون تُكشف', () => {

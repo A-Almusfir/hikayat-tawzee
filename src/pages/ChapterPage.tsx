@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type { Chapter } from '../content/chapterTypes';
 import { chapterNumber, nextInJourney } from '../content/chapters';
 import { distById } from '../content/distributions';
-import { identity, tint } from '../content/identity';
+import { identity, journey, tint } from '../content/identity';
 import { sourceById } from '../content/sources';
 import { Glyph } from '../components/Glyph';
 import { labs } from '../components/labs';
@@ -53,7 +53,7 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
       <header className="ch-head">
         <p className="ch-num" aria-hidden="true">{number}</p>
         <div>
-          <p className="ch-kicker">الفصل {number} من 6 · {d.type === 'discrete' ? 'متقطع' : 'مستمر'}</p>
+          <p className="ch-kicker">الفصل {number} من {journey.length} · {d.type === 'discrete' ? 'متقطع' : 'مستمر'}</p>
           <h1 tabIndex={-1}>
             <Glyph id={ch.id} size={40} /> {d.nameAr} <span className="en" lang="en" dir="ltr">{d.nameEn}</span>
           </h1>

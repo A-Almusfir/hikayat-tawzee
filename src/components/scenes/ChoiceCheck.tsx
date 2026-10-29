@@ -12,10 +12,16 @@ export function ChoiceCheck({ id, q, kicker }: { id: string; q: Choice; kicker: 
   const answered = saved !== undefined;
   const [pick, setPick] = useState<number | null>(null);
   const fb = useRef<HTMLDivElement>(null);
+  const fsRef = useRef<HTMLFieldSetElement>(null);
+  const retried = useRef(false);
   const justChecked = useRef(false);
   const ci = q.options.findIndex((o) => o.correct);
 
   useEffect(() => {
+    if (!answered && retried.current) {
+      retried.current = false;
+      fsRef.current?.querySelector<HTMLInputElement>('input[type=radio]')?.focus();
+    }
     if (answered && justChecked.current) {
       fb.current?.focus();
       justChecked.current = false;
@@ -41,7 +47,7 @@ export function ChoiceCheck({ id, q, kicker }: { id: string; q: Choice; kicker: 
     );
 
   return (
-    <fieldset className="predict">
+    <fieldset className="predict" ref={fsRef}>
       <legend>
         <span className="pk">{kicker}</span>
         <Rich as="span" className="pq" text={q.prompt} />
@@ -77,7 +83,7 @@ export function ChoiceCheck({ id, q, kicker }: { id: string; q: Choice; kicker: 
             <strong>{saved === ci ? '✓ صحيح. ' : 'الصحيح: '}</strong>
             <Rich text={q.options[ci].why} />
           </p>
-          <button type="button" className="link-btn" onClick={() => (progress.setQuiz(id, undefined), setPick(null))}>
+          <button type="button" className="link-btn" onClick={() => ((retried.current = true), progress.setQuiz(id, undefined), setPick(null))}>
             أعد المحاولة
           </button>
         </div>

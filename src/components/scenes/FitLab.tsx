@@ -37,7 +37,7 @@ export function FitLab({ t }: { t: Fit }) {
       title={t.headline}
       art={
         <figure className="hk-chart">
-          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`عند ${t.param.symbol.replace('\\', '')} = ${fmt(theta, 2)}: المتوقع ${cats.map((c) => `${c.label}: ${fmt(c.e, 1)}`).join('، ')}. الواقع: ${cats.map((c) => c.o).join('، ')}`} direction="ltr">
+          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`عند ${t.param.label} = ${fmt(theta, 2)}: المتوقع ${cats.map((c) => `${c.label}: ${fmt(c.e, 1)}`).join('، ')}. الواقع: ${cats.map((c) => c.o).join('، ')}`} direction="ltr">
             <defs>
               <pattern id="obsHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
                 <line x1="0" y1="0" x2="0" y2="6" stroke="#1b2a4a" strokeWidth="1.6" />

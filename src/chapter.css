@@ -21,7 +21,7 @@ main:has(.chapter), main:has(.home2) { max-width: 72rem; }
 @media (max-width: 520px) { .ch-progress a:not([aria-current='step']) .pt { display: none; } }
 
 /* ——— المشهد ——— */
-.scene { padding: 2.2rem 0 2rem; scroll-margin-top: 56px; }
+.scene { padding: 2.2rem 0 2rem; }
 .scene.even { background: var(--c-tint); margin: 0 -16px; padding-inline: 16px; }
 @media (min-width: 900px) { .scene.even { border-radius: 22px; margin: .5rem 0; padding-inline: 2rem; } .scene.odd { padding-inline: 2rem; } }
 .scene-k { margin: 0; color: var(--c); font-weight: 700; font-size: .9rem; letter-spacing: .01em; }
@@ -219,4 +219,13 @@ html:has(.chapter) { scroll-padding-top: 64px; }
   .build-steps .tex-block { margin: .2rem 0; padding: .2rem 0; }
   .build-art { padding: .7rem .8rem; }
   .build-art .hint { margin: .3rem 0 0; }
+}
+
+.hk-num { font-family: var(--font); font-size: 10px; font-weight: 700; fill: var(--c); }
+/* ترويسة مضغوطة على الجوال: سطر واحد للتنقل قابل للتمرير */
+@media (max-width: 640px) {
+  .site-head { padding: 8px 16px; gap: 2px 12px; }
+  .site-head nav { width: 100%; }
+  .site-head nav ul { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .site-head nav a { white-space: nowrap; padding: 4px 2px; }
 }

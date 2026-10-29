@@ -1,4 +1,4 @@
-import { useState, type CSSProperties } from 'react';
+import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { gradeCompose } from '../../lib/compose';
 import { useProgress } from '../../lib/storage';
 import type { Chapter } from '../../content/chapterTypes';
@@ -61,6 +61,8 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
   const [checked, setChecked] = useState(false);
   const [wrongTries, setWrongTries] = useState(0);
   const [showAnswer, setShowAnswer] = useState(false);
+  const doneRef = useRef<HTMLDivElement>(null);
+  const firstTile = useRef<HTMLButtonElement>(null);
   const tex = law.template.replace(/@(\d)/g, (_, d: string) => {
     const v = fill[Number(d) - 1];
     return v ? String.raw`\underbrace{\textcolor{${color}}{${v}}}_{(${d})}` : String.raw`\underbrace{${BOX}}_{(${d})}`;
@@ -76,15 +78,25 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
   const grades = gradeCompose(fill, law.slots, ch.anchor.compose.interchangeable);
   const ok = (i: number) => grades[i];
   const allOk = grades.every(Boolean);
-  const reset = () => (setFill(Array(n).fill(null)), setActive(0), setChecked(false), setWrongTries(0), setShowAnswer(false));
+  const reset = () => {
+    setFill(Array(n).fill(null));
+    setActive(0);
+    setChecked(false);
+    setWrongTries(0);
+    setShowAnswer(false);
+    window.setTimeout(() => firstTile.current?.focus(), 0);
+  };
   const check = () => {
     setChecked(true);
     if (!gradeCompose(fill, law.slots, ch.anchor.compose.interchangeable).every(Boolean)) setWrongTries((w) => w + 1);
     onChecked();
   };
+  useEffect(() => {
+    if (checked && allOk) doneRef.current?.focus();
+  }, [checked, allOk]);
   if (checked && allOk)
     return (
-      <div className="compose done feedback ok" role="status">
+      <div className="compose done feedback ok" role="status" tabIndex={-1} ref={doneRef}>
         <p>
           <strong>✓ كتبت القانون كاملًا من ذاكرتك:</strong>
         </p>
@@ -115,8 +127,8 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
         ))}
       </div>
       <div className="tiles" role="group" aria-label={`بطاقات للخانة ${active + 1}`}>
-        {ch.anchor.compose.tiles.map((t) => (
-          <button key={t} type="button" className="tile" onClick={() => place(t)}>
+        {ch.anchor.compose.tiles.map((t, i) => (
+          <button key={t} type="button" className="tile" onClick={() => place(t)} ref={i === 0 ? firstTile : undefined}>
             <Tex tex={t} />
           </button>
         ))}

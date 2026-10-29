@@ -67,5 +67,4 @@ scripts/ui-check.cjs          فحص الواجهة
 
 ## الإعداد
 
-إعداد عبدالله المسفر — طالب إحصاء.
-التطوير بمساعدة Claude Code.
+© 2026 Abdullah Almusfir — Statistics Student.

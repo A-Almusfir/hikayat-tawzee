@@ -86,8 +86,12 @@ export default function App() {
           <button type="button" className="btn btn-quiet" onClick={clear}>امسح التقدم</button>
           <span role="status" aria-live="polite">{cleared ? 'تم مسح التقدم.' : ''}</span>
         </div>
-        <p>إعداد عبدالله المسفر — طالب إحصاء</p>
-        <p>التطوير بمساعدة Claude Code</p>
+        <div className="signature" lang="en" dir="ltr">
+          <p className="sig-by">Designed &amp; built by</p>
+          <p className="sig-name">Abdullah Almusfir</p>
+          <p className="sig-role">Statistics Student</p>
+          <p className="sig-copy">© {new Date().getFullYear()} Abdullah Almusfir. All rights reserved.</p>
+        </div>
       </footer>
     </>
   );

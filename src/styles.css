@@ -311,3 +311,12 @@ h1:focus, h2:focus { outline: none; }
   .site-foot { border: none; margin-top: 6mm; padding: 0; font-size: 9pt; }
   a { color: #000; text-decoration: none; }
 }
+
+/* توقيع صاحب الموقع */
+.signature { margin-top: 1.4rem; padding-top: 1.2rem; border-top: 1px solid var(--rule); font-family: var(--font); }
+.signature p { margin: 0; }
+.sig-by { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); }
+.sig-name { font-size: 1.45rem; font-weight: 700; letter-spacing: .02em; color: var(--ink); margin: .15rem 0 .1rem !important; }
+.sig-role { font-size: .85rem; color: var(--accent); font-weight: 500; letter-spacing: .04em; }
+.sig-copy { font-size: .75rem; color: var(--ink-2); margin-top: .7rem !important; }
+@media print { .signature { margin-top: 4mm; padding-top: 2mm; } .sig-name { font-size: 12pt; } }

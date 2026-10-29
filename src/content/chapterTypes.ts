@@ -42,7 +42,7 @@ export type TryIt = TryBase &
       }
     | { kind: 'lln'; p: number; successLabel: string; reveal: string }
     | { kind: 'points'; aNeeds: number; bMin: number; bMax: number; bStart: number }
-    | { kind: 'waits'; lambda: { min: number; max: number; step: number; start: number }; unit: string; rateUnit: string }
+    | { kind: 'waits'; theta: { min: number; max: number; step: number; start: number }; unit: string; rateUnit: string }
     | { kind: 'memory'; p: number; maxStreak: number; failLabel: string; successLabel: string }
     | { kind: 'galton'; rows: { min: number; max: number; start: number }; balls: number }
     | { kind: 'lab' }

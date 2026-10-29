@@ -129,7 +129,7 @@ describe('لا NaN ولا Infinity في نطاقات المدخلات المسم
       const l = r * t;
       for (let k = 0; k <= 60; k++) finite(poisson.pmf(k, l));
     }
-    for (const l of vals(RANGES.expLambda)) {
+    for (const l of vals(RANGES.expTheta)) {
       finite(exponential.mean(l)); finite(exponential.variance(l));
       for (const x of [0, 0.1, 1, 10, 50]) { finite(exponential.pdf(x, l)); finite(exponential.cdf(x, l)); }
       finite(exponential.quantile(0.995, l));

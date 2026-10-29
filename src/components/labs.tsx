@@ -285,14 +285,14 @@ export function PoissonLab() {
 
 // ———————— الأسي ————————
 export function ExponentialLab() {
-  const [lambda, setLambda] = useState(3);
+  const [theta, setTheta] = useState(3);
   const [t, setT] = useState(0.5);
   const [mode, setMode] = useState<'le' | 'gt'>('gt');
   const [waits, setWaits] = useState<number[]>([]);
   const [one, setOne] = useState<number | null>(null);
-  useEffect(() => (setWaits([]), setOne(null)), [lambda]);
-  const xMax = Math.max(exponential.quantile(0.99, lambda), t * 1.15);
-  const pr = mode === 'le' ? exponential.cdf(t, lambda) : 1 - exponential.cdf(t, lambda);
+  useEffect(() => (setWaits([]), setOne(null)), [theta]);
+  const xMax = Math.max(exponential.quantile(0.99, theta), t * 1.15);
+  const pr = mode === 'le' ? exponential.cdf(t, theta) : 1 - exponential.cdf(t, theta);
   const hist: Bin[] | null = useMemo(() => {
     if (!waits.length) return null;
     const B = 24, w = xMax / B;
@@ -308,7 +308,7 @@ export function ExponentialLab() {
   }, [waits]);
   const full = waits.length >= SIM_MAX;
   const add = (k: number) => {
-    const xs = Array.from({ length: k }, () => sample.exponential(lambda));
+    const xs = Array.from({ length: k }, () => sample.exponential(theta));
     setWaits((w) => w.concat(xs).slice(0, SIM_MAX));
     if (k === 1) setOne(xs[0]);
   };
@@ -316,7 +316,7 @@ export function ExponentialLab() {
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="المعدل" symbol="\theta" value={lambda} onChange={setLambda} {...RANGES.expLambda} unit="طلب/ساعة" digits={1} />
+        <Slider label="المعدل" symbol="\theta" value={theta} onChange={setTheta} {...RANGES.expTheta} unit="طلب/ساعة" digits={1} />
         <Slider label="الزمن" symbol="t" value={t} onChange={setT} min={0.05} max={3} step={0.05} unit="ساعة" />
       </div>
       <fieldset className="seg">
@@ -329,25 +329,25 @@ export function ExponentialLab() {
         </label>
       </fieldset>
       <CurveChart
-        f={(x) => exponential.pdf(x, lambda)}
+        f={(x) => exponential.pdf(x, theta)}
         xMin={0}
         xMax={xMax}
         shade={mode === 'le' ? [0, t] : [t, xMax]}
         hist={waits.length >= MIN_SIM ? hist : null}
-        markers={[{ x: 1 / lambda, label: 'E[X]' }]}
-        ariaLabel={`كثافة أسية بمعدل ${fmt(lambda)} لكل ساعة. ${mode === 'le' ? 'P(X ≤ t)' : 'P(X > t)'} = ${fmt(pr)} عند t = ${fmt(t)} ساعة`}
+        markers={[{ x: 1 / theta, label: 'E[X]' }]}
+        ariaLabel={`كثافة أسية بمعدل ${fmt(theta)} لكل ساعة. ${mode === 'le' ? 'P(X ≤ t)' : 'P(X > t)'} = ${fmt(pr)} عند t = ${fmt(t)} ساعة`}
         xLabel="زمن الانتظار x (ساعة)"
       />
       <Legend items={hist && waits.length >= MIN_SIM ? ['curve', 'shade', 'hist'] : ['curve', 'shade']} />
       <ProbLine
-        tex={mode === 'le' ? `P(X\\le ${fmt(t)}) = 1-e^{-${fmt(lambda)}\\times ${fmt(t)}}` : `P(X> ${fmt(t)}) = e^{-${fmt(lambda)}\\times ${fmt(t)}}`}
+        tex={mode === 'le' ? `P(X\\le ${fmt(t)}) = 1-e^{-${fmt(theta)}\\times ${fmt(t)}}` : `P(X> ${fmt(t)}) = e^{-${fmt(theta)}\\times ${fmt(t)}}`}
         value={pr}
       />
       <p className="hint">
         <Rich text={`$t = ${fmt(t)}$ ساعة = ${fmt(t * 60, 1)} دقيقة. المساحة المظللة هي الاحتمال.`} />
       </p>
       <p className="trunc-note">
-        <Rich text={`الرسم يتوقف عند $x \\approx ${fmt(xMax, 2)}$ ساعة؛ المساحة بعدها $\\approx ${fmt(1 - exponential.cdf(xMax, lambda), 4)}$ غير معروضة لكنها محسوبة في الاحتمالات. ارتفاع المنحنى كثافة لا احتمال: عند $\\theta > 1$ تتجاوز $f(0) = \\theta$ القيمة 1 دون أي تناقض.`} />
+        <Rich text={`الرسم يتوقف عند $x \\approx ${fmt(xMax, 2)}$ ساعة؛ المساحة بعدها $\\approx ${fmt(1 - exponential.cdf(xMax, theta), 4)}$ غير معروضة لكنها محسوبة في الاحتمالات. ارتفاع المنحنى كثافة لا احتمال: عند $\\theta > 1$ تتجاوز $f(0) = \\theta$ القيمة 1 دون أي تناقض.`} />
       </p>
       <SimButtons onOne={() => add(1)} oneLabel="انتظر الطلب التالي" onBatch={() => add(SIM_BATCH)} batchLabel={`ولّد ${SIM_BATCH} زمن انتظار`} onClear={() => (setWaits([]), setOne(null))} full={full} hasData={waits.length > 0} />
       {one !== null && (
@@ -360,7 +360,7 @@ export function ExponentialLab() {
       )}
       {beyond > 0 && <p className="trunc-note">أزمنة في المحاكاة تجاوزت نطاق الرسم ولا تظهر في المدرج: {beyond}.</p>}
       <SimNote count={waits.length} max={SIM_MAX} />
-      <Stats mean={exponential.mean(lambda)} variance={exponential.variance(lambda)} meanTex="\tfrac{1}{\theta}" varTex="\tfrac{1}{\theta^2}" sim={enough(stats)} unit="ساعة" />
+      <Stats mean={exponential.mean(theta)} variance={exponential.variance(theta)} meanTex="\tfrac{1}{\theta}" varTex="\tfrac{1}{\theta^2}" sim={enough(stats)} unit="ساعة" />
     </div>
   );
 }

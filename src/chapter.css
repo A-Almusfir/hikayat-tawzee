@@ -377,6 +377,8 @@ main:has(.exam-night) { max-width: 72rem; }
 .sheet-table .sub { display: block; color: var(--ink-2); font-size: .85em; }
 .sheet-note .tex { white-space: normal; }
 .sheet-table tbody th { white-space: normal; min-width: 8.5rem; }
+.sheet-table thead .tex { color: var(--ink); font-size: 1.05em; }
+.sheet-table tbody tr:focus { outline: 3px solid var(--focus); outline-offset: -3px; }
 .sheet-name { display: flex; flex-direction: column; gap: 2px; }
 .sheet-name a, .sheet-name .nolink { color: var(--ink); font-weight: 700; text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
 .sheet-name a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }

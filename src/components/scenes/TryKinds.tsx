@@ -118,10 +118,10 @@ export function PointsTry({ t }: { t: Of<'points'> }) {
 
 // ———— الأسي: أزمنة الانتظار بين المكالمات ————
 export function WaitsTry({ t }: { t: Of<'waits'> }) {
-  const [lambda, setLambda] = useState(t.lambda.start);
+  const [theta, setTheta] = useState(t.theta.start);
   const [waits, setWaits] = useState<number[]>([]);
-  useEffect(() => setWaits([]), [lambda]);
-  const xMax = exponential.quantile(0.99, lambda);
+  useEffect(() => setWaits([]), [theta]);
+  const xMax = exponential.quantile(0.99, theta);
   const hist: Bin[] | null = useMemo(() => {
     if (waits.length < 20) return null;
     const B = 20, w = xMax / B, c = new Array(B).fill(0);
@@ -135,12 +135,12 @@ export function WaitsTry({ t }: { t: Of<'waits'> }) {
       title={t.headline}
       art={
         <CurveChart
-          f={(x) => exponential.pdf(x, lambda)}
+          f={(x) => exponential.pdf(x, theta)}
           xMin={0}
           xMax={xMax}
           hist={hist}
-          markers={[{ x: 1 / lambda, label: '1/θ' }]}
-          ariaLabel={`كثافة الانتظار بمعدل ${lambda} ${t.rateUnit}`}
+          markers={[{ x: 1 / theta, label: '1/θ' }]}
+          ariaLabel={`كثافة الانتظار بمعدل ${theta} ${t.rateUnit}`}
           xLabel={`زمن الانتظار (${t.unit})`}
         />
       }
@@ -151,17 +151,17 @@ export function WaitsTry({ t }: { t: Of<'waits'> }) {
           المعدل <Tex tex="\theta" /> ({t.rateUnit})
         </label>
         <div className="slider-row">
-          <input id="w-l" type="range" min={t.lambda.min} max={t.lambda.max} step={t.lambda.step} value={lambda} onChange={(e) => setLambda(Number(e.target.value))} dir="ltr" />
-          <output htmlFor="w-l" className="num big-out" dir="ltr">{fmt(lambda, 1)}</output>
+          <input id="w-l" type="range" min={t.theta.min} max={t.theta.max} step={t.theta.step} value={theta} onChange={(e) => setTheta(Number(e.target.value))} dir="ltr" />
+          <output htmlFor="w-l" className="num big-out" dir="ltr">{fmt(theta, 1)}</output>
         </div>
       </div>
       <div className="btn-row">
-        <button type="button" className="btn btn-c" onClick={() => setWaits(Array.from({ length: 500 }, () => sample.exponential(lambda)))}>
+        <button type="button" className="btn btn-c" onClick={() => setWaits(Array.from({ length: 500 }, () => sample.exponential(theta)))}>
           ولّد 500 زمن انتظار
         </button>
       </div>
       <p className="fit" aria-live="polite">
-        متوسط الانتظار نظريًا <Tex tex={`\\tfrac{1}{\\theta} = ${fmt(1 / lambda, 3)}`} /> {t.unit}
+        متوسط الانتظار نظريًا <Tex tex={`\\tfrac{1}{\\theta} = ${fmt(1 / theta, 3)}`} /> {t.unit}
         {mean !== null && (
           <>
             ، وفي المحاكاة <strong className="num" dir="ltr">≈ {fmt(mean, 3)}</strong>

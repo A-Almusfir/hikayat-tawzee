@@ -43,13 +43,17 @@ export function ExamNightPage() {
         <ol>
           {sheetFixes.map((f) => (
             <li key={f.id} id={`fix-${f.id}`} tabIndex={-1}>
-              <span className={`fix-kind ${f.kind}`}>{FIX_KIND[f.kind]}</span> <Rich text={f.text} />
+              <span className={`fix-kind ${f.kind}`}>{FIX_KIND[f.kind]}</span> <Rich text={f.text} />{' '}
+              <button type="button" className="link-btn no-print" onClick={() => scrollToId(`row-${f.rows[0]}`)}>
+                ↑ إلى الجدول
+              </button>
             </li>
           ))}
         </ol>
       </section>
 
-      <Fold title="قاموس الرموز">
+      <section aria-labelledby="sym-h">
+        <h2 id="sym-h">قاموس الرموز</h2>
         <dl className="symbols">
           {symbols.map((s) => (
             <div key={s.sym}>
@@ -58,7 +62,7 @@ export function ExamNightPage() {
             </div>
           ))}
         </dl>
-      </Fold>
+      </section>
 
       <Fold title="الستة: ماذا يسأل كل توزيع، والفخ الشائع">
         <ul className="traps">
@@ -107,7 +111,7 @@ export function ExamNightPage() {
 }
 
 const FIX_KIND = { fix: 'تصحيح', missing: 'ناقص', notation: 'ترميز' } as const;
-const fixNumbers = (id: SheetRow['id']) => sheetFixes.flatMap((f, i) => (f.rows.includes(id) ? [{ n: i + 1, id: f.id }] : []));
+const fixNumbers = (id: SheetRow['id']) => sheetFixes.flatMap((f, i) => (f.rows.includes(id) ? [{ n: i + 1, id: f.id, kind: f.kind }] : []));
 const isDist = (id: string): id is DistId => id in identity;
 
 /** جدول بأعمدة ورقة المقرر نفسها. الرابط إلى الفصل يظهر فقط إن كان الفصل منشورًا. */
@@ -136,7 +140,7 @@ function SheetTable({ group, title }: { group: SheetRow['group']; title: string 
               </>
             );
             return (
-              <tr key={s.id} role="row" style={{ '--c': dist ? identity[dist].color : 'var(--ink-2)' } as CSSProperties}>
+              <tr key={s.id} id={`row-${s.id}`} tabIndex={-1} role="row" style={{ '--c': dist ? identity[dist].color : 'var(--ink-2)' } as CSSProperties}>
                 <th scope="row" role="rowheader">
                   <span className="sheet-name">
                     {dist && chapters[dist] ? <a href={href.dist(dist)}>{name}</a> : <span className="nolink">{name}</span>}
@@ -145,7 +149,7 @@ function SheetTable({ group, title }: { group: SheetRow['group']; title: string 
                   <span className="sheet-marks">
                     {s.extra && <span className="tag">ليس في الورقة</span>}
                     {fixNumbers(s.id).map((f) => (
-                      <button key={f.id} type="button" className="fix-mark" aria-label={`تنبيه ${f.n}`} onClick={() => scrollToId(`fix-${f.id}`)}>
+                      <button key={f.id} type="button" className="fix-mark" aria-label={`تنبيه ${f.n} (${FIX_KIND[f.kind]}): انتقل إليه`} onClick={() => scrollToId(`fix-${f.id}`)}>
                         {f.n}
                       </button>
                     ))}

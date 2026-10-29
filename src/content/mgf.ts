@@ -152,7 +152,7 @@ export const derive: DeriveItem[] = [
           { text: r`$\lambda$`, correct: true, why: '$R\'\'(t) = \\lambda e^{t}$، وعند الصفر $\\lambda$. لذلك المتوسط = التباين في بواسون.', value: ({ l }) => l },
           { text: r`$\lambda + \lambda^{2}$`, why: 'هذا $E(X^{2}) = M\'\'(0)$. مع اللوغاريتم لا نحتاج إلى الطرح.', value: ({ l }) => l + l * l },
           { text: r`$\lambda^{2}$`, why: 'هذا مربع المتوسط.', value: ({ l }) => l * l },
-          { text: '$0$', why: 'المشتقة الثانية لـ $\\lambda e^{t}$ ليست صفرًا.', value: () => 0 },
+          { text: '$0$', why: 'مشتقة $R\'(t) = \\lambda e^{t}$ هي $\\lambda e^{t}$ نفسها، لا صفر.', value: () => 0 },
         ],
       },
     ],
@@ -187,7 +187,7 @@ export const derive: DeriveItem[] = [
         prompt: 'المشتقة الثانية عند الصفر: ما $M\'\'(0) = E(X^{2})$؟',
         options: [
           { text: r`$\dfrac{1 + q}{p^{2}}$`, correct: true, why: '$M\'\'(t) = \\frac{pe^{t}(1 + qe^{t})}{(1 - qe^{t})^{3}}$، وعند الصفر $\\frac{p(1+q)}{p^{3}}$.', value: ({ p }) => (1 + q(p)) / (p * p) },
-          { text: r`$\dfrac{2}{p^{2}}$`, why: 'مثل المتوسط لكن نسيت أن $1 + q \\ne 2$.', value: ({ p }) => 2 / (p * p) },
+          { text: r`$\dfrac{2}{p^{2}}$`, why: 'قياس على الأسي ($E(X^{2}) = \\frac{2}{\\theta^{2}}$)؛ في الهندسي البسط $1 + q$ لا $2$.', value: ({ p }) => 2 / (p * p) },
           { text: r`$\dfrac{1}{p^{2}}$`, why: 'هذا مربع المتوسط، لا $E(X^{2})$.', value: ({ p }) => 1 / (p * p) },
           { text: r`$\dfrac{q}{p^{2}}$`, why: 'هذا التباين؛ $E(X^{2})$ أكبر منه بمربع المتوسط.', value: ({ p }) => q(p) / (p * p) },
         ],
@@ -215,7 +215,7 @@ export const derive: DeriveItem[] = [
         options: [
           { text: r`$\dfrac{\theta}{(\theta - t)^{2}}$`, correct: true, why: '$-\\theta(\\theta - t)^{-2} \\times (-1)$: إشارتان سالبتان.', fn: (t, { th }) => th / (th - t) ** 2 },
           { text: r`$-\dfrac{\theta}{(\theta - t)^{2}}$`, why: 'نسيت مشتقة ما داخل القوس، $-1$.', fn: (t, { th }) => -th / (th - t) ** 2 },
-          { text: r`$\dfrac{1}{\theta - t}$`, why: 'اشتققت البسط $\\theta$ كأنه متغير.', fn: (t, { th }) => 1 / (th - t) },
+          { text: r`$\dfrac{1}{\theta - t}$`, why: 'هذه مشتقة $\\ln M_X(t)$، أي $R\'(t)$، لا $M\'(t)$.', fn: (t, { th }) => 1 / (th - t) },
           { text: r`$\dfrac{\theta}{\theta - t}$`, why: 'هذه $M(t)$ نفسها.', fn: (t, { th }) => th / (th - t) },
         ],
       },
@@ -447,7 +447,7 @@ export const identify: IdentifyItem[] = [
       options: [
         { text: '$v = 10$', correct: true, why: '$\\frac{v}{2} = 5$.', p: { v: 10 } },
         { text: '$v = 5$', why: 'الأس هو $\\frac{v}{2}$ لا $v$.', p: { v: 5 } },
-        { text: '$v = \\frac{5}{2}$', why: 'ضربت بدل أن تقسم: $\\frac{v}{2} = 5$.', p: { v: 2.5 } },
+        { text: '$v = \\frac{5}{2}$', why: 'قسمت بدل أن تضرب: $\\frac{v}{2} = 5$ تعني $v = 10$.', p: { v: 2.5 } },
       ],
     },
     calc: {

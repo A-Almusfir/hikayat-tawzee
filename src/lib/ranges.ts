@@ -7,7 +7,7 @@ export const RANGES = {
   geometricP: { min: 0.1, max: 0.9, step: 0.05 },
   poissonRate: { min: 0.5, max: 5, step: 0.5 },
   poissonT: { min: 0.5, max: 3, step: 0.5 },
-  expLambda: { min: 0.5, max: 6, step: 0.5 },
+  expTheta: { min: 0.5, max: 6, step: 0.5 },
   normalMu: { min: 480, max: 520, step: 1 },
   normalSigma: { min: 1, max: 12, step: 0.5 },
 } as const;

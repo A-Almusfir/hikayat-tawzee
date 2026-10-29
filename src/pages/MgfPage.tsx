@@ -25,7 +25,7 @@ export function MgfPage() {
     <article className="mgf">
       <header className="page-head">
         <h1 tabIndex={-1}>الدالة المولدة للعزوم</h1>
-        <Rich as="p" className="lead" text="من $M_X(t)$ إلى المتوسط والتباين، ومن شكل $M_X(t)$ إلى اسم التوزيع: مهارتان تتكرران في الاختبار. القواعد أولًا، ثم اشتقاق خطوة خطوة، ثم مسائل تعرّف." />
+        <Rich as="p" className="lead" text="من $M_X(t)$ إلى المتوسط والتباين، ومن شكل $M_X(t)$ إلى اسم التوزيع: مهارتان تتكرران في الاختبار. القواعد أولًا، ثم اشتقاق خطوة خطوة، ثم مسائل للتعرّف على التوزيع." />
       </header>
 
       <section aria-labelledby="mgf-rules-h">

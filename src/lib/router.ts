@@ -6,7 +6,6 @@ export type Route =
   | { name: 'dist'; id: string; scene?: number }
   | { name: 'choose' }
   | { name: 'cards' }
-  | { name: 'map' }
   | { name: 'refs' }
   | { name: 'exam' }
   | { name: 'drill' }
@@ -20,7 +19,6 @@ export function parse(hash: string): Route {
   if (m) return { name: 'dist', id: m[1], scene: m[2] ? Number(m[2]) : undefined };
   if (path === '/choose') return { name: 'choose' };
   if (path === '/cards') return { name: 'cards' };
-  if (path === '/map') return { name: 'map' };
   if (path === '/refs') return { name: 'refs' };
   if (path === '/exam') return { name: 'exam' };
   if (path === '/drill') return { name: 'drill' };
@@ -33,7 +31,6 @@ export const href = {
   dist: (id: string, scene?: number) => `#/d/${id}${scene ? `/${scene}` : ''}`,
   choose: '#/choose',
   cards: '#/cards',
-  map: '#/map',
   refs: '#/refs',
   exam: '#/exam',
   drill: '#/drill',

@@ -27,7 +27,7 @@ export default function App() {
 
   const pageKey = route.name === 'dist' ? `dist:${route.id}` : route.name;
   useEffect(() => {
-    const titles: Record<string, string> = { choose: 'أي توزيع أختار؟', cards: 'بطاقات المراجعة', map: 'خريطة العلاقات', refs: 'المراجع والمنهج', exam: 'ليلة الاختبار', drill: 'تدريب مختلط', mgf: 'الدالة المولدة للعزوم' };
+    const titles: Record<string, string> = { choose: 'أي توزيع أختار؟', cards: 'بطاقات المراجعة', refs: 'المراجع والمنهج', exam: 'ليلة الاختبار', drill: 'تدريب مختلط', mgf: 'الدالة المولدة للعزوم' };
     const h1 = document.querySelector('main h1')?.textContent;
     document.title = route.name === 'home' ? 'حكاية توزيع — افهم الحكاية… يثبت القانون' : `${titles[route.name] ?? h1 ?? ''} · حكاية توزيع`;
     // رابط مشهد مباشر: الفصل يتولى التمرير إلى المشهد، فلا نعيد الصفحة إلى أعلاها
@@ -46,7 +46,6 @@ export default function App() {
       }
       case 'choose': return <ChooserPage />;
       case 'cards': return <CardsPage />;
-      case 'map': return <HomePage />;
       case 'refs': return <RefsPage />;
       case 'exam': return <ExamNightPage />;
       case 'drill': return <DrillPage />;

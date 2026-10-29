@@ -14,7 +14,9 @@ function render(tex: string, display: boolean) {
 
 /** معادلة KaTeX. تُعرض دائمًا باتجاه LTR داخل الواجهة العربية. */
 export function Tex({ tex, display = false, className = '' }: { tex: string; display?: boolean; className?: string }) {
-  const html = useMemo(() => render(tex, display), [tex, display]);
+  // المعادلات القصيرة داخل السطر لا تنكسر عند «=» (تجميعها في {} يمنع KaTeX من كسرها)
+  const src = !display && tex.length <= 40 ? `{${tex}}` : tex;
+  const html = useMemo(() => render(src, display), [src, display]);
   if (display) return <div className={`tex-block ${className}`} dir="ltr" dangerouslySetInnerHTML={{ __html: html }} />;
   return <span className={`tex ${className}`} dir="ltr" dangerouslySetInnerHTML={{ __html: html }} />;
 }

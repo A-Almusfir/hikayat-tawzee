@@ -4,12 +4,16 @@ import { progress } from './lib/storage';
 import { chapters } from './content/chapters';
 import type { DistId } from './content/types';
 import { ChapterPage } from './pages/ChapterPage';
+import { DrillPage } from './pages/DrillPage';
+import { ExamNightPage } from './pages/ExamNightPage';
 import { HomePage } from './pages/HomePage';
 import { CardsPage, ChooserPage, DistPage, NotFound, RefsPage } from './pages/pages';
 
 
 const NAV = [
   { to: href.home, label: 'الرئيسية', match: 'home' },
+  { to: href.exam, label: 'ليلة الاختبار', match: 'exam' },
+  { to: href.drill, label: 'تدريب مختلط', match: 'drill' },
   { to: href.choose, label: 'أي توزيع أختار؟', match: 'choose' },
   { to: href.cards, label: 'بطاقات المراجعة', match: 'cards' },
   { to: href.refs, label: 'المراجع والمنهج', match: 'refs' },
@@ -21,7 +25,7 @@ export default function App() {
 
   const pageKey = route.name === 'dist' ? `dist:${route.id}` : route.name;
   useEffect(() => {
-    const titles: Record<string, string> = { choose: 'أي توزيع أختار؟', cards: 'بطاقات المراجعة', map: 'خريطة العلاقات', refs: 'المراجع والمنهج' };
+    const titles: Record<string, string> = { choose: 'أي توزيع أختار؟', cards: 'بطاقات المراجعة', map: 'خريطة العلاقات', refs: 'المراجع والمنهج', exam: 'ليلة الاختبار', drill: 'تدريب مختلط' };
     const h1 = document.querySelector('main h1')?.textContent;
     document.title = route.name === 'home' ? 'حكاية توزيع — افهم الحكاية… يثبت القانون' : `${titles[route.name] ?? h1 ?? ''} · حكاية توزيع`;
     // رابط مشهد مباشر: الفصل يتولى التمرير إلى المشهد، فلا نعيد الصفحة إلى أعلاها
@@ -42,6 +46,8 @@ export default function App() {
       case 'cards': return <CardsPage />;
       case 'map': return <HomePage />;
       case 'refs': return <RefsPage />;
+      case 'exam': return <ExamNightPage />;
+      case 'drill': return <DrillPage />;
       default: return <NotFound />;
     }
   })();

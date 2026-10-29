@@ -8,6 +8,8 @@ export type Route =
   | { name: 'cards' }
   | { name: 'map' }
   | { name: 'refs' }
+  | { name: 'exam' }
+  | { name: 'drill' }
   | { name: 'notfound' };
 
 export function parse(hash: string): Route {
@@ -19,6 +21,8 @@ export function parse(hash: string): Route {
   if (path === '/cards') return { name: 'cards' };
   if (path === '/map') return { name: 'map' };
   if (path === '/refs') return { name: 'refs' };
+  if (path === '/exam') return { name: 'exam' };
+  if (path === '/drill') return { name: 'drill' };
   return { name: 'notfound' };
 }
 
@@ -29,6 +33,8 @@ export const href = {
   cards: '#/cards',
   map: '#/map',
   refs: '#/refs',
+  exam: '#/exam',
+  drill: '#/drill',
 };
 
 export function useRoute(): Route {

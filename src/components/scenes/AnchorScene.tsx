@@ -49,9 +49,9 @@ export function AnchorScene({ ch, next, color }: { ch: Chapter; next?: DistId; c
         </a>
       )}
       {!next && (
-        <a className="bridge" href={href.choose} style={{ '--to': 'var(--ink)' } as CSSProperties}>
+        <a className="bridge" href={href.drill} style={{ '--to': 'var(--ink)' } as CSSProperties}>
           <span>
-            <span className="bridge-k">أنهيت الرحلة: تدرّب على التمييز</span>
+            <span className="bridge-k">أنهيت الرحلة: تدريب مختلط</span>
             <Rich as="span" className="bridge-t" text={a.bridge} />
           </span>
           <span aria-hidden="true" className="bridge-arr">←</span>

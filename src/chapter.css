@@ -260,3 +260,65 @@ html:has(.chapter) { scroll-padding-top: 64px; }
 .lg-p { height: 0 !important; border-top: 2px dashed var(--ink); }
 .lg-dia { width: 11px !important; height: 11px !important; border: 2px solid var(--ink); transform: rotate(45deg) scale(.8); background: var(--paper); }
 .lg-curve { height: 3px !important; background: var(--ink); }
+
+/* ——— ليلة الاختبار ——— */
+main:has(.exam-night) { max-width: 72rem; }
+.exam-night h2 { font-family: var(--font); font-weight: 700; margin-top: 1.6rem; }
+.cheat { width: 100%; border-collapse: collapse; font-size: .92rem; }
+.cheat th, .cheat td { border-bottom: 1px solid var(--rule); padding: .45rem .5rem; text-align: start; vertical-align: top; }
+.cheat thead th { font-size: .8rem; color: var(--ink-2); font-weight: 500; }
+.cheat tbody th { white-space: nowrap; border-inline-start: 5px solid var(--c); }
+.cheat tbody th a { color: var(--ink); font-weight: 700; text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
+.cheat .tag { margin-inline-start: 0; margin-top: .2rem; }
+@media (max-width: 899px) {
+  .cheat thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .cheat, .cheat tbody, .cheat tr, .cheat th, .cheat td { display: block; width: 100%; }
+  .cheat tr { border: 1.5px solid var(--rule); border-inline-start: 6px solid var(--c); border-radius: 12px; margin-bottom: .7rem; background: #fffdf8; padding: .3rem .2rem; }
+  .cheat tbody th { border: none; display: flex; justify-content: space-between; align-items: center; }
+  .cheat td { border: none; padding: .15rem .6rem; display: grid; grid-template-columns: 6.5rem 1fr; gap: 6px; }
+  .cheat td::before { content: attr(data-label); color: var(--ink-2); font-size: .82rem; }
+  .cheat td > * { min-width: 0; }
+}
+.decision { overflow-x: auto; }
+.dnode { border-inline-start: 2px solid var(--ink-2); padding-inline-start: .8rem; margin: .3rem 0; }
+.dq { font-weight: 700; margin: .2rem 0; }
+.dnode ul { list-style: none; margin: 0; padding: 0; }
+.dnode li { margin: .25rem 0 .4rem; }
+.dl { display: inline-block; font-size: .85rem; color: var(--ink-2); margin-inline-end: .4rem; }
+.leaf { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; border: 1.5px solid var(--c, var(--ink)); border-inline-start-width: 5px; border-radius: 10px; padding: .25rem .6rem; background: #fffdf8; color: var(--ink); text-decoration: none; font-weight: 700; }
+.leaf-h { font-weight: 400; font-size: .85rem; color: var(--ink-2); flex-basis: 100%; }
+.twins { display: grid; gap: 12px; }
+@media (min-width: 900px) { .twins { grid-template-columns: 1fr 1fr; } }
+.twin { border: 1.5px solid var(--rule); border-radius: 14px; padding: .7rem; background: #fffdf8; }
+.twin-pair { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.twin-side { border-top: 4px solid var(--c); padding-top: .3rem; min-width: 0; }
+.twin-side p { margin: .2rem 0; font-size: .9rem; }
+.twin-name { font-weight: 700; display: flex; align-items: center; gap: 4px; }
+.twin-side .tex { font-size: .92em; }
+.twin-tell { margin: .5rem 0 0; font-size: .92rem; border-top: 1px dashed var(--rule); padding-top: .4rem; }
+
+/* ——— التدريب المختلط ——— */
+.drill .scenario { font-size: 1.12rem; background: #fffdf8; border: 1.5px solid var(--ink); border-radius: 12px; padding: .9rem 1rem; }
+.drill-card .predict, .drill-card .predict-done { margin-top: .9rem; }
+.drill .pk { background: var(--ink); }
+
+@media print {
+  .exam-night .page-head .lead, .exam-night .btn-row { display: none !important; }
+  .cheat { font-size: 9pt; }
+  .cheat tbody tr { break-inside: avoid; }
+  .exam-night section { break-inside: avoid-page; }
+  .twins { grid-template-columns: 1fr 1fr; }
+  .twin { break-inside: avoid; }
+}
+.cheat td .tex { display: inline-block; white-space: nowrap; }
+.cheat td[data-label='القانون'] { overflow-x: auto; }
+@media (max-width: 899px) {
+  .cheat { font-size: .86rem; }
+  .cheat tr { padding: .2rem 0; margin-bottom: .5rem; }
+  .cheat td { grid-template-columns: 4.6rem 1fr; padding: .08rem .55rem; line-height: 1.55; }
+  .cheat td[data-label='ماذا يسأل؟'] { font-weight: 500; }
+}
+/* صفحات الأدوات خارج الفصول: لون محايد للعناصر التي تستعمل لون الفصل */
+.drill, .exam-night, .chooser { --c: var(--ink); --c-tint: #f1ede4; --c-tint2: #e6e1d6; }
+.twin-side .tex { display: block; overflow-x: auto; overflow-y: hidden; font-size: .9em; padding-bottom: 2px; }
+@media (max-width: 520px) { .twin-pair { grid-template-columns: 1fr; gap: 10px; } }

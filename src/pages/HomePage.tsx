@@ -53,6 +53,12 @@ export function HomePage() {
         <h2 id="t-h">أدوات المراجعة</h2>
         <ul>
           <li>
+            <a href={href.exam}>ليلة الاختبار</a> <span>الستة في جدول واحد، ومخطط لتحديد التوزيع، و«التوائم» التي يُخلط بينها.</span>
+          </li>
+          <li>
+            <a href={href.drill}>تدريب مختلط</a> <span>مسائل من الستة معًا: اختر التوزيع، ثم المعلمات، ثم احسب.</span>
+          </li>
+          <li>
             <a href={href.choose}>أي توزيع أختار؟</a> <span>{scenarios.length} موقفًا للتمييز بين التوزيعات.</span>
           </li>
           <li>

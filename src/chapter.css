@@ -319,7 +319,7 @@ main:has(.exam-night) { max-width: 72rem; }
   .cheat td[data-label='ماذا يسأل؟'] { font-weight: 500; }
 }
 /* صفحات الأدوات خارج الفصول: لون محايد للعناصر التي تستعمل لون الفصل */
-.drill, .exam-night, .chooser { --c: var(--ink); --c-tint: #f1ede4; --c-tint2: #e6e1d6; }
+.drill, .exam-night, .chooser, .mgf { --c: var(--ink); --c-tint: #f1ede4; --c-tint2: #e6e1d6; }
 .twin-side .tex { display: block; overflow-x: auto; overflow-y: hidden; font-size: .9em; padding-bottom: 2px; }
 @media (max-width: 520px) { .twin-pair { grid-template-columns: 1fr; gap: 10px; } }
 /* المعادلة بجانب تسميتها في بطاقات الجوال، والتسمية لا تُقرأ مرتين */
@@ -413,3 +413,13 @@ main:has(.exam-night) { max-width: 72rem; }
   .sheet-fixes { font-size: 9pt; }
   .sheet-fixes li { margin: 1pt 0; line-height: 1.4; }
 }
+
+/* ——— الدالة المولدة ——— */
+.mgf h2 { font-family: var(--font); font-weight: 700; margin-top: 1.6rem; }
+.mgf-rules { display: grid; gap: 10px; }
+@media (min-width: 900px) { .mgf-rules { grid-template-columns: 1fr 1fr; } }
+.mgf-rule { border: 1.5px solid var(--rule); border-radius: 12px; padding: .5rem .8rem; background: #fffdf8; min-width: 0; }
+.mgf-rule h3 { margin: .2rem 0; font-size: 1rem; }
+.mgf-rule p { margin: .3rem 0; font-size: .95rem; }
+.mgf .seg-tabs { flex-wrap: wrap; }
+.mgf-card .scenario .tex-block { margin: .2rem 0; }

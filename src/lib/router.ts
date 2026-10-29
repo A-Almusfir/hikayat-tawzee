@@ -10,6 +10,7 @@ export type Route =
   | { name: 'refs' }
   | { name: 'exam' }
   | { name: 'drill' }
+  | { name: 'mgf' }
   | { name: 'notfound' };
 
 export function parse(hash: string): Route {
@@ -23,6 +24,7 @@ export function parse(hash: string): Route {
   if (path === '/refs') return { name: 'refs' };
   if (path === '/exam') return { name: 'exam' };
   if (path === '/drill') return { name: 'drill' };
+  if (path === '/mgf') return { name: 'mgf' };
   return { name: 'notfound' };
 }
 
@@ -35,6 +37,7 @@ export const href = {
   refs: '#/refs',
   exam: '#/exam',
   drill: '#/drill',
+  mgf: '#/mgf',
 };
 
 export function useRoute(): Route {

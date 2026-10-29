@@ -7,6 +7,7 @@ import { sheet } from '../content/sheet';
 import { FamilyTree } from '../components/FamilyTree';
 import { Glyph } from '../components/Glyph';
 import { href } from '../lib/router';
+import { Tex } from '../components/Tex';
 
 export function HomePage() {
   return (
@@ -58,6 +59,9 @@ export function HomePage() {
           </li>
           <li>
             <a href={href.drill}>تدريب مختلط</a> <span>مسائل من الستة معًا: اختر التوزيع، ثم المعلمات، ثم احسب.</span>
+          </li>
+          <li>
+            <a href={href.mgf}>الدالة المولدة</a> <span>اشتق المتوسط والتباين من <Tex tex="M_X(t)" /> خطوة خطوة، وتعرّف على التوزيع من شكل دالته.</span>
           </li>
           <li>
             <a href={href.choose}>أي توزيع أختار؟</a> <span>{scenarios.length} موقفًا للتمييز بين التوزيعات.</span>

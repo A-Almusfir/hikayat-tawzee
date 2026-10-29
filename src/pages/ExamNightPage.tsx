@@ -1,5 +1,4 @@
 import type { CSSProperties } from 'react';
-import { chapters } from '../content/chapters';
 import { decisionNote, decisionTree, hint, type DecisionNode, type Leaf } from '../content/decision';
 import { choiceLabels } from '../content/chooser';
 import { distById } from '../content/distributions';
@@ -49,7 +48,7 @@ export function ExamNightPage() {
                     </a>
                     <span className="tag">{d.type === 'discrete' ? 'متقطع' : 'مستمر'}</span>
                   </th>
-                  <td data-label="ماذا يسأل؟">{chapters[id]?.question ?? d.question}</td>
+                  <td data-label="ماذا يسأل؟">{d.question}</td>
                   <td data-label="المعلمات"><Tex tex={c.params.map((p) => p.tex).join(',\\ ')} /></td>
                   <td data-label="مجال X"><Tex tex={c.support} /></td>
                   <td data-label="القانون"><Tex tex={c.fnTex} /></td>

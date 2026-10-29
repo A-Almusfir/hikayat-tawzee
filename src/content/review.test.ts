@@ -6,8 +6,10 @@ import { journey } from './identity';
 import { twins } from './twins';
 
 describe('مخطط القرار', () => {
-  it('يصل إلى التوزيعات الستة، كل منها مرة واحدة', () => {
-    expect([...leaves()].sort()).toEqual([...journey].sort());
+  it('يصل إلى التوزيعات الستة، كل منها مرة واحدة، وإلى «ليس من الستة» حين لا يتطابق الموقف', () => {
+    const ls = leaves();
+    expect(ls.filter((l) => l !== 'insufficient').sort()).toEqual([...journey].sort());
+    expect(ls.filter((l) => l === 'insufficient').length).toBeGreaterThanOrEqual(2);
   });
 });
 

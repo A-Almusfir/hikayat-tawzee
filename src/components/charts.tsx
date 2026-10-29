@@ -8,16 +8,13 @@ const M = { l: 52, r: 14, t: 14, b: 40 };
 const PW = W - M.l - M.r;
 const PH = H - M.t - M.b;
 
-function niceMax(v: number) {
-  if (v <= 0) return 1;
-  const e = Math.pow(10, Math.floor(Math.log10(v)));
-  const n = v / e;
-  const step = n <= 1 ? 1 : n <= 1.2 ? 1.2 : n <= 1.5 ? 1.5 : n <= 2 ? 2 : n <= 2.5 ? 2.5 : n <= 3 ? 3 : n <= 4 ? 4 : n <= 5 ? 5 : n <= 6 ? 6 : n <= 8 ? 8 : 10;
-  return step * e;
-}
-
-function yTicks(max: number) {
-  return [0, 0.25, 0.5, 0.75, 1].map((f) => f * max);
+/** خطوة تدريج «جميلة» (1، 2، 2.5، 5 × 10^k) وحد أعلى من مضاعفاتها. */
+function niceScale(v: number) {
+  const raw = Math.max(v, 1e-9) / 4;
+  const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+  const step = [1, 2, 2.5, 5, 10].map((m) => m * mag).find((s) => s >= raw)!;
+  const max = Math.ceil(v / step - 1e-9) * step;
+  return { max, ticks: Array.from({ length: Math.round(max / step) + 1 }, (_, i) => +(i * step).toPrecision(6)) };
 }
 
 function tickLabel(v: number) {
@@ -58,7 +55,7 @@ export function BarChart({
 }) {
   const uid = useId().replace(/:/g, '');
   const maxP = Math.max(...bars.map((b) => b.p), ...(sim ?? []).map((b) => b.p));
-  const yMax = niceMax(maxP * 1.05);
+  const { max: yMax, ticks: yt } = niceScale(maxP * 1.05);
   const n = bars.length;
   const slot = PW / n;
   const bw = Math.max(2, Math.min(44, slot * 0.72));
@@ -74,7 +71,7 @@ export function BarChart({
         <defs>
           <Hatch id={`h${uid}`} color="var(--accent)" />
         </defs>
-        {yTicks(yMax).map((t) => (
+        {yt.map((t) => (
           <g key={t}>
             <line x1={M.l} x2={W - M.r} y1={y(t)} y2={y(t)} className="grid" />
             <text x={M.l - 6} y={y(t) + 6} textAnchor="end" className="tick">
@@ -167,7 +164,7 @@ export function CurveChart({
     return { x, y: f(x) };
   });
   const maxY = Math.max(...pts.map((p) => p.y), ...(hist ?? []).map((b) => b.density));
-  const yMax = niceMax(maxY * 1.05);
+  const { max: yMax, ticks: yt } = niceScale(maxY * 1.05);
   const X = (x: number) => M.l + ((x - xMin) / (xMax - xMin)) * PW;
   const Y = (v: number) => M.t + PH - (Math.min(v, yMax) / yMax) * PH;
   const path = pts.map((p, i) => `${i ? 'L' : 'M'} ${X(p.x).toFixed(2)} ${Y(p.y).toFixed(2)}`).join(' ');
@@ -197,7 +194,7 @@ export function CurveChart({
         <defs>
           <Hatch id={`c${uid}`} color="var(--accent)" />
         </defs>
-        {yTicks(yMax).map((t) => (
+        {yt.map((t) => (
           <g key={t}>
             <line x1={M.l} x2={W - M.r} y1={Y(t)} y2={Y(t)} className="grid" />
             <text x={M.l - 6} y={Y(t) + 6} textAnchor="end" className="tick">

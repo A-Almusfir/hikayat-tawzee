@@ -1,5 +1,5 @@
 import type { Art } from '../../content/chapterTypes';
-import { choose, fmt } from '../../lib/dist';
+import { choose } from '../../lib/dist';
 
 type Of<K extends Art['kind']> = Extract<Art, { kind: K }>;
 
@@ -89,7 +89,7 @@ function Pascal({ a }: { a: Of<'pascal'> }) {
 
 /** خط زمني لأحداث، والمسافات بينها أزمنة الانتظار. */
 function Timeline({ a }: { a: Of<'timeline'> }) {
-  const W = 400, H = 92, L = 14, R = 14;
+  const W = 320, H = 104, L = 14, R = 14;
   const X = (t: number) => L + (t / a.span) * (W - L - R);
   const ticks = Array.from({ length: Math.floor(a.span) + 1 }, (_, i) => i);
   return (
@@ -106,7 +106,7 @@ function Timeline({ a }: { a: Of<'timeline'> }) {
         </g>
       ))}
       {a.times.map((t, i) => <path key={i} d={`M ${X(t)} 36 l 7 10 l -7 10 l -7 -10 z`} className="ev" />)}
-      <text x={W - R} y={88} textAnchor="end" className="tl-t">{a.unit}</text>
+      <text x={W - R} y={100} textAnchor="end" className="tl-t">{a.unit}</text>
     </svg>
   );
 }
@@ -145,7 +145,6 @@ function Galton({ a }: { a: Of<'galton'> }) {
         return <rect key={k} x={x - dx / 2 + 3} y={pegsH + barMax - h + 6} width={dx - 6} height={h} className="gbar" />;
       })}
       <line x1={0} x2={W} y1={pegsH + barMax + 6} y2={pegsH + barMax + 6} className="axis-l" />
-      <title>{`${R} صفًا: أعلى عمود ${fmt(max / 2 ** R, 3)}`}</title>
     </svg>
   );
 }

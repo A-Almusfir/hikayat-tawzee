@@ -9,7 +9,7 @@ export const identity: Record<DistId, { color: string; shape: Shape }> = {
   binomial: { color: '#2A5A8C', shape: 'triangle' },
   geometric: { color: '#426A2E', shape: 'steps' },
   poisson: { color: '#1E5F6E', shape: 'dots' },
-  exponential: { color: '#4D5966', shape: 'decay' },
+  exponential: { color: '#7D2E2E', shape: 'decay' },
   normal: { color: '#6B5A1E', shape: 'bell' },
 };
 

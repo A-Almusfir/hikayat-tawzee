@@ -7,6 +7,8 @@ import { Scene } from './Scene';
 
 type Of<K extends TryIt['kind']> = Extract<TryIt, { kind: K }>;
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
+/** «دورة واحدة / دورتين / 3 دورات / 11 دورة» */
+const spins = (n: number) => (n === 0 ? 'أي دورة' : n === 1 ? 'دورة واحدة' : n === 2 ? 'دورتين' : n <= 10 ? `${n} دورات` : `${n} دورة`);
 
 function SimNoteLine() {
   return <p className="sim-note">◆ نتائج المحاكاة عشوائية وتتغير من تشغيل لآخر؛ القيم النظرية لا تتغير.</p>;
@@ -188,9 +190,9 @@ export function MemoryTry({ t }: { t: Of<'memory'> }) {
       title={t.headline}
       art={
         <figure className="hk-chart">
-          <BarChart bars={cond} sim={fresh} ariaLabel={`بعد ${s} دورات بلا ${t.successLabel}: احتمال الدورة التالية ${fmt(cond[0].p, 4)}، وهو نفسه في بداية اللعب`} xLabel="عدد الدورات الإضافية حتى أول نجاح" />
+          <BarChart bars={cond} sim={fresh} ariaLabel={`بعد ${spins(s)} بلا ${t.successLabel}: احتمال الدورة التالية ${fmt(cond[0].p, 4)}، وهو نفسه في بداية اللعب`} xLabel="عدد الدورات الإضافية حتى أول نجاح" />
           <figcaption>
-            <span className="lg"><i className="lg-exp" /> ما بقي بعد {s} دورات بلا {t.successLabel}</span>
+            <span className="lg"><i className="lg-exp" /> ما بقي بعد {spins(s)} بلا {t.successLabel}</span>
             <span className="lg"><i className="lg-dia" /> التوزيع في بداية اللعب</span>
           </figcaption>
         </figure>
@@ -208,7 +210,7 @@ export function MemoryTry({ t }: { t: Of<'memory'> }) {
         احتمال {t.successLabel} في الدورة التالية: <Tex tex={`${fmt(cond[0].p, 4)}`} />، مهما كان عدد الدورات السابقة. الأعمدة لا تتحرك: العجلة لا تتذكر.
       </p>
       <p className="hint">
-        أما احتمال أن ترى {s} دورات متتالية بلا {t.successLabel} أصلًا فهو <Tex tex={`{(1-p)^{${s}} \\approx ${seen < 1e-4 ? seen.toExponential(1).replace('e', '\\times 10^{') + '}' : fmt(seen, 4)}}`} />. ندرة الماضي لا تغيّر المستقبل.
+        أما احتمال أن ترى {spins(s)} متتالية بلا {t.successLabel} أصلًا فهو <Tex tex={`{(1-p)^{${s}} \\approx ${seen < 1e-4 ? seen.toExponential(1).replace('e', '\\times 10^{') + '}' : fmt(seen, 4)}}`} />. ندرة الماضي لا تغيّر المستقبل.
       </p>
     </Scene>
   );

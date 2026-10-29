@@ -109,16 +109,16 @@ export const normalChapter: Chapter = {
         steps: [
           { title: 'المعلمات', body: '$X \\sim \\mathrm{Bin}(100, \\tfrac12)$، و$np = n(1-p) = 50 \\ge 10$، فالتقريب مناسب:', tex: [r`\mu = np = 50,\qquad \sigma = \sqrt{np(1-p)} = 5`] },
           { title: 'صحّح الاتصال', body: 'العدد متقطع، فنوسّع الفترة نصف وحدة من كل جهة:', tex: [r`P(45 \le X \le 55) \approx P(44.5 < Y < 55.5)`] },
-          { title: 'حوّل إلى $z$ واحسب', body: 'والقيمة الدقيقة من ذي الحدين $\\approx 0.7287$ أيضًا.', tex: [r`= \Phi(1.1) - \Phi(-1.1)`, r`= 2\,\Phi(1.1) - 1 \approx 0.7287`] },
+          { title: 'حوّل إلى $z$ واحسب', body: '', tex: [r`= \Phi(1.1) - \Phi(-1.1)`, r`= 2\,\Phi(1.1) - 1 \approx 0.7287`] },
         ],
-        answer: '$P(45 \\le X \\le 55) \\approx 0.7287$',
+        answer: '$P(45 \\le X \\le 55) \\approx 0.7287$، والقيمة الدقيقة من ذي الحدين $\\approx 0.7287$ أيضًا.',
         check: { compute: () => normal.interval(44.5, 55.5, 50, 5), shown: 0.7287, digits: 4 },
       },
       {
         label: 'بصيغة المقرر',
         given: 'أطوال الطلاب في جامعة (مثال افتراضي) $N(170, 8^2)$ سم. ما نسبة من يقع طوله بين 162 و186 سم؟',
         steps: [
-          { title: 'حوّل إلى $z$', body: 'اقسم على $\\sigma = 8$ لا على $\\sigma^2 = 64$:', tex: [r`z_1 = \frac{162 - 170}{8} = -1,\qquad z_2 = \frac{186 - 170}{8} = 2`] },
+          { title: 'حوّل إلى $z$', body: 'اقسم على $\\sigma = 8$ لا على $\\sigma^2 = 64$:', tex: [r`z_1 = \frac{162 - 170}{8} = -1`, r`z_2 = \frac{186 - 170}{8} = 2`] },
           { title: 'من الجدول', body: '', tex: [r`\Phi(2) - \Phi(-1) \approx 0.97725 - 0.15866`, r`\approx 0.8186`] },
         ],
         answer: 'نحو $0.8186$، أي قرابة 82% من الطلاب.',

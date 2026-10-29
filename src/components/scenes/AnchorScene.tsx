@@ -72,6 +72,10 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
   const [showAnswer, setShowAnswer] = useState(false);
   const doneRef = useRef<HTMLDivElement>(null);
   const firstTile = useRef<HTMLButtonElement>(null);
+  const answerRef = useRef<HTMLUListElement>(null);
+  useEffect(() => {
+    if (showAnswer) answerRef.current?.focus();
+  }, [showAnswer]);
   const tex = law.template.replace(/@(\d)/g, (_, d: string) => {
     const v = fill[Number(d) - 1];
     return v ? String.raw`\underbrace{\textcolor{${color}}{${v}}}_{(${d})}` : String.raw`\underbrace{${BOX}}_{(${d})}`;
@@ -157,7 +161,7 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
           </p>
           {/* الإجابة لا تُكشف من أول محاولة: بعد محاولتين خاطئتين، أو بطلب الطالب */}
           {showAnswer || wrongTries >= 2 ? (
-            <ul>
+            <ul ref={answerRef} tabIndex={-1} aria-label="الإجابة">
               {law.slots.map((sl, i) => (
                 <li key={i}>
                   ({i + 1}) <Tex tex={sl} />: <Rich text={ch.anchor.compose.meanings[i]} />

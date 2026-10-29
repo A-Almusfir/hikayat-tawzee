@@ -54,7 +54,7 @@ function ExamBlock({ p }: { p: ExamProblem }) {
       <ol className="steps" ref={listRef}>
         {p.steps.slice(0, shown).map((s, i) => (
           <li key={i} tabIndex={-1}>
-            <strong>{s.title}</strong>
+            <strong><Rich text={s.title} /></strong>
             {s.body && <Rich as="p" text={s.body} />}
             {s.tex?.map((t, j) => <Tex key={j} tex={t} display />)}
           </li>

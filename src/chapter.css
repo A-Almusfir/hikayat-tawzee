@@ -202,7 +202,9 @@ html:has(.chapter) { scroll-padding-top: 64px; }
 .slot.on { border-style: solid; border-color: var(--c); box-shadow: 0 0 0 2px var(--c-tint2); }
 .slot.ok { border-color: var(--ok); border-style: solid; }
 .slot.no { border-color: var(--no); }
-.tile { font: inherit; border: 1.5px solid var(--c); background: var(--c-tint); color: var(--ink); border-radius: 10px; min-width: 56px; min-height: 44px; padding: .2rem .7rem; cursor: pointer; }
+.tile { font: inherit; border: 1.5px solid var(--c); background: var(--c-tint); color: var(--ink); border-radius: 10px; min-width: 56px; min-height: 52px; padding: .3rem .7rem; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; line-height: 1.2; overflow: hidden; position: relative; }
+.tile .katex, .slot .katex { pointer-events: none; }
+.tiles { align-items: stretch; }
 .tile:hover { background: var(--c-tint2); }
 .compose .feedback ul { margin: .2rem 0 0; padding-inline-start: 1.1rem; }
 .recall { margin-bottom: .5rem; }
@@ -243,7 +245,7 @@ html:has(.chapter) { scroll-padding-top: 64px; }
 .gap { stroke: var(--c); stroke-width: 3; stroke-linecap: round; opacity: .55; }
 .axis-l { stroke: var(--ink); stroke-width: 1.5; }
 .ev { fill: var(--c); stroke: var(--ink); stroke-width: 1; }
-.tl-t { font-family: var(--font); font-size: 13px; fill: var(--ink-2); }
+.tl-t { font-family: var(--font); font-size: 14px; fill: var(--ink-2); }
 .stk { fill: var(--ink); }
 .stk.q { fill: #fffdf8; stroke: var(--c); stroke-width: 2; stroke-dasharray: 4 3; }
 .stk-t { font-family: var(--font); font-size: 12px; font-weight: 700; fill: #fff; }

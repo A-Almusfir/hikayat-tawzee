@@ -62,7 +62,7 @@ export const binomialChapter: Chapter = {
     steps: [
       {
         story: 'خذ طريقًا واحدًا محددًا لإكمال اللعبة، مثل: فوز، فوز، خسارة، خسارة (W W L L). الجولات مستقلة، واحتمال الفوز ثابت $p$ في كل منها.',
-        tex: [r`P(WWLL) = p \cdot p \cdot (1-p) \cdot (1-p) = p^{2}(1-p)^{2}`],
+        tex: [r`P(WWLL) = p \cdot p \cdot (1-p) \cdot (1-p)`, r`= p^{2}(1-p)^{2}`],
         reveals: [2, 3],
         predict: {
           prompt: 'ما احتمال طريق محدد فيه $k$ فوزًا و$n-k$ خسارة؟',

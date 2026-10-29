@@ -370,3 +370,4 @@ main:has(.exam-night) { max-width: 72rem; }
 }
 @media print { body:has(.exam-night) .site-foot { display: none; } }
 @media print { .exam-night .fold > summary { break-after: avoid; } .exam-night .fold { break-inside: auto; } }
+@media print { .exam-night details::details-content { content-visibility: visible; display: block; } }

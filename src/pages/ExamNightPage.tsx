@@ -16,7 +16,17 @@ export function ExamNightPage() {
         <h1 tabIndex={-1}>ليلة الاختبار</h1>
         <p className="lead">الستة في صفحة واحدة: ماذا يسأل كل توزيع، وقانونه، ومتوسطه وتباينه، والفخ الذي يقع فيه الطلاب. ثم مخطط يحدد التوزيع من نص المسألة.</p>
         <div className="btn-row no-print">
-          <button type="button" className="btn" onClick={() => window.print()}>اطبع / احفظ PDF</button>
+          <button
+            type="button"
+            className="btn"
+            onClick={() => {
+              // تُفتح الأقسام المطوية قبل الطباعة (للمتصفحات التي لا تطلق beforeprint)
+              document.querySelectorAll<HTMLDetailsElement>('.exam-night details').forEach((d) => (d.open = true));
+              window.setTimeout(() => window.print(), 50);
+            }}
+          >
+            اطبع / احفظ PDF
+          </button>
           <a className="btn btn-quiet" href={href.drill}>تدرّب على مسائل مختلطة</a>
         </div>
       </header>

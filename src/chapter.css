@@ -1,0 +1,181 @@
+/* ———————— التصميم الجديد: الفصل كحكاية مصورة، والرئيسية كشجرة ———————— */
+
+main:has(.chapter), main:has(.home2) { max-width: 72rem; }
+
+/* ——— الرأس ——— */
+.chapter { --c: #6f3a94; }
+.ch-head { display: flex; align-items: flex-end; gap: 4px 18px; padding: 2rem 0 1rem; }
+.ch-num { font-family: var(--font-head); font-weight: 700; font-size: clamp(5rem, 22vw, 9rem); line-height: .8; color: var(--c); margin: 0; }
+.ch-kicker { margin: 0; font-weight: 700; color: var(--c); font-size: .95rem; }
+.chapter h1 { font-family: var(--font); font-weight: 700; font-size: clamp(2.4rem, 10vw, 4.2rem); line-height: 1.15; margin: .1rem 0 .3rem; display: flex; align-items: center; flex-wrap: wrap; gap: 4px 12px; }
+.chapter h1 .en { font-size: .4em; }
+.ch-q { font-family: var(--font-head); font-size: clamp(1.2rem, 4.6vw, 1.6rem); margin: 0; color: var(--ink); }
+
+/* ——— شريط التقدم ——— */
+.ch-progress { position: sticky; top: 0; z-index: 5; background: rgba(251, 247, 240, .94); backdrop-filter: blur(6px); border-bottom: 1px solid var(--rule); margin: 0 -16px; padding: 6px 16px; }
+.ch-progress ol { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.ch-progress a { display: flex; align-items: center; gap: 6px; text-decoration: none; color: var(--ink-2); padding: 4px 10px 4px 6px; border-radius: 999px; white-space: nowrap; font-size: .9rem; min-height: 40px; }
+.ch-progress .pn { display: inline-grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--c); color: var(--c); font-weight: 700; font-size: .85rem; }
+.ch-progress a[aria-current='step'] { color: var(--ink); font-weight: 700; background: var(--c-tint2); }
+.ch-progress a[aria-current='step'] .pn { background: var(--c); color: #fff; }
+@media (max-width: 520px) { .ch-progress a:not([aria-current='step']) .pt { display: none; } }
+
+/* ——— المشهد ——— */
+.scene { padding: 2.2rem 0 2rem; scroll-margin-top: 56px; }
+.scene.even { background: var(--c-tint); margin: 0 -16px; padding-inline: 16px; }
+@media (min-width: 900px) { .scene.even { border-radius: 22px; margin: .5rem 0; padding-inline: 2rem; } .scene.odd { padding-inline: 2rem; } }
+.scene-k { margin: 0; color: var(--c); font-weight: 700; font-size: .9rem; letter-spacing: .01em; }
+.scene-head h2 { font-family: var(--font); font-weight: 700; font-size: clamp(1.65rem, 6.2vw, 2.4rem); line-height: 1.3; margin: .2rem 0 1rem; max-width: 30ch; }
+.scene-in { display: grid; gap: 1.2rem; }
+.scene-in > * { min-width: 0; }
+.scene-art { order: -1; }
+.scene-in.art-after .scene-art { order: 0; }
+@media (min-width: 900px) {
+  .scene-in { grid-template-columns: minmax(0, 34rem) minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+  .scene-art, .scene-in.art-after .scene-art { order: 0; position: sticky; top: 72px; }
+}
+
+/* ——— المشهد 1: الحكاية ——— */
+.claims { list-style: none; margin: 0; padding: 0; counter-reset: cl; }
+.claims li { padding: .3rem 0 .9rem; }
+.claim { font-family: var(--font-head); font-size: 1.25rem; line-height: 2; margin: 0; display: inline; }
+.cites { white-space: nowrap; }
+.cite { font: inherit; font-size: .8rem; font-weight: 700; color: var(--c); background: none; border: none; padding: 4px 2px; cursor: pointer; vertical-align: super; min-height: 28px; }
+.cite:hover { text-decoration: underline; }
+.claim-link { margin: .35rem 0 0; font-size: .92rem; color: var(--ink-2); border-inline-start: 3px solid var(--c); padding-inline-start: .6rem; }
+.more { margin-top: .6rem; border-top: 1px solid var(--rule); }
+.more summary { cursor: pointer; font-weight: 700; padding: .7rem 0; min-height: 44px; color: var(--c); }
+.more-item p { display: inline; }
+.more-item { margin-bottom: .7rem; }
+.hk-art { margin: 0; }
+.hk-art svg { width: 100%; height: auto; display: block; }
+.hk-cell { fill: #fffdf8; stroke: #d9cfbf; stroke-width: 1; }
+.hk-cell.hit { fill: var(--c-tint2); stroke: var(--c); }
+.hk-dot { fill: var(--c); }
+.hk-art figcaption { font-size: .88rem; color: var(--ink-2); margin-top: .4rem; }
+
+/* ——— المشهد 2: جرّب ——— */
+.one-control { background: #fffdf8; border: 2px solid var(--c); border-radius: 14px; padding: .7rem 1rem; margin: .8rem 0; }
+.one-control label { font-weight: 700; display: block; }
+.one-control input[type='range'] { accent-color: var(--c); flex: 1; min-height: 40px; }
+.big-out { font-size: 1.6rem; font-weight: 700; color: var(--c); min-width: 4.5rem; text-align: end; }
+.fit { font-size: 1rem; }
+.fit strong { font-size: 1.25rem; color: var(--c); }
+.btn-c { border-color: var(--c); color: var(--c); font-weight: 700; }
+.btn-c:hover:not(:disabled) { background: var(--c); color: #fff; }
+.reveal-box { background: #fffdf8; border-inline-start: 4px solid var(--c); padding: .6rem 1rem; border-radius: 0 12px 12px 0; }
+.hk-chart { margin: 0; }
+.hk-chart svg { width: 100%; height: auto; display: block; }
+.hk-chart .grid { stroke: #e3d9c8; }
+.hk-chart .axis { stroke: var(--ink); stroke-width: 1.5; }
+.hk-chart .tick { font-family: var(--font); font-size: 15px; fill: var(--ink-2); }
+.hk-chart figcaption { display: flex; flex-wrap: wrap; gap: 4px 14px; font-size: .85rem; color: var(--ink-2); }
+.lg { display: inline-flex; align-items: center; gap: 6px; }
+.lg i { display: inline-block; width: 14px; height: 12px; }
+.lg-obs { border: 1.5px solid var(--ink); background: repeating-linear-gradient(45deg, var(--ink) 0 1.5px, transparent 1.5px 5px); }
+.lg-exp { background: var(--c); }
+.lg-x { flex-basis: 100%; text-align: center; }
+.hk-table { width: 100%; border-collapse: collapse; margin-top: .6rem; font-size: .9rem; }
+.hk-table th, .hk-table td { border-bottom: 1px solid var(--rule); padding: .25rem .3rem; text-align: center; font-variant-numeric: tabular-nums; }
+.hk-table th[scope='row'] { text-align: start; color: var(--ink-2); font-weight: 500; }
+
+/* ——— المشهد 3: ابنِ القانون ——— */
+.build-steps { list-style: none; padding: 0; margin: 0; counter-reset: bs; }
+.build-steps > li { counter-increment: bs; position: relative; padding: 0 0 1rem 0; padding-inline-start: 2.6rem; }
+.build-steps > li::before { content: counter(bs); position: absolute; inset-inline-start: 0; top: .2rem; width: 1.9rem; height: 1.9rem; border-radius: 50%; background: var(--c); color: #fff; display: grid; place-items: center; font-weight: 700; }
+.build-steps > li > p { font-size: 1.08rem; }
+.build-art { background: #fffdf8; border: 2px solid var(--c); border-radius: 16px; padding: 1rem; text-align: center; }
+.build-k { margin: 0; font-weight: 700; color: var(--c); }
+.build-art .tex-block .katex { font-size: 1.45em; }
+.predict { border: none; padding: 0; margin: .6rem 0 0; min-width: 0; }
+.predict legend { padding: 0; margin-bottom: .45rem; }
+.pk { display: inline-block; background: var(--c); color: #fff; font-size: .8rem; font-weight: 700; border-radius: 999px; padding: 0 .65rem; margin-bottom: .25rem; }
+.pq { display: block; font-weight: 700; font-size: 1.05rem; }
+
+/* ——— المشهد 4: مسألة الاختبار ——— */
+.exam { background: #fffdf8; border: 1.5px solid var(--rule); border-radius: 16px; padding: .9rem 1rem; margin-bottom: 1.1rem; }
+.exam-label { display: inline-block; margin: 0 0 .3rem; font-size: .82rem; font-weight: 700; color: var(--c); border: 1.5px solid var(--c); border-radius: 999px; padding: 0 .6rem; }
+.exam-given { font-size: 1.1rem; font-weight: 500; }
+.exam .steps li strong { color: var(--c); }
+.exam-answer { background: var(--c-tint2); border-radius: 10px; padding: .5rem .8rem; font-size: 1.05rem; }
+.tricks { background: var(--ink); color: var(--paper); border-radius: 16px; padding: 1rem 1.2rem; }
+.tricks h3 { margin: 0 0 .4rem; font-family: var(--font); color: #fff; }
+.tricks ul { margin: 0; padding-inline-start: 1.1rem; }
+.tricks li { margin: .45rem 0; }
+.tricks .katex { color: #fff; }
+
+/* ——— المشهد 5: ثبّت ——— */
+.hook { background: var(--c); color: #fff; border-radius: 18px; padding: 1.2rem 1.3rem; }
+.hook p { margin: 0 0 .3rem; font-size: 1.15rem; font-weight: 500; }
+.hook .tex-block .katex { font-size: 1.8em; color: #fff; }
+.hook-data { font-size: .95rem !important; opacity: .95; }
+.hook-data .katex { color: #fff; }
+.lead-s { font-weight: 700; }
+.bridge { display: flex; align-items: center; gap: 14px; margin-top: 1.4rem; padding: 1rem 1.1rem; border-radius: 16px; border: 2px solid var(--to); background: #fffdf8; text-decoration: none; color: var(--ink); }
+.bridge:hover { background: var(--paper-2); color: var(--ink); }
+.bridge-k { display: block; font-weight: 700; color: var(--to); }
+.bridge-t { display: block; }
+.bridge-arr { font-size: 1.6rem; color: var(--to); margin-inline-start: auto; }
+
+/* ——— المرجع والمصادر ——— */
+.reference { margin-top: 2.5rem; padding-top: 1.5rem; border-top: 2px solid var(--ink); }
+.reference h2, .ch-sources h2 { font-family: var(--font); font-weight: 700; }
+.reference > details { border-bottom: 1px solid var(--rule); }
+.reference > details > summary { cursor: pointer; font-weight: 700; padding: .8rem 0; min-height: 44px; }
+.reference > details[open] { padding-bottom: 1rem; }
+.ch-sources { margin-top: 2rem; }
+.ch-sources ol { padding-inline-start: 1.4rem; }
+.ch-sources li { margin-bottom: .5rem; scroll-margin-top: 70px; word-break: break-word; }
+
+/* ——— الرئيسية: الشجرة ——— */
+.home2 .h2-hero { padding: 2.4rem 0 1rem; max-width: 40rem; }
+.home2 h1 { font-family: var(--font); font-weight: 700; font-size: clamp(3rem, 14vw, 5.2rem); line-height: 1.1; margin: 0; }
+.h2-slogan { font-family: var(--font-head); font-size: clamp(1.4rem, 5.5vw, 2rem); color: var(--accent); margin: .2rem 0 .6rem; }
+.h2-sub { font-size: 1.1rem; color: var(--ink-2); }
+.home2 h2 { font-family: var(--font); font-weight: 700; font-size: clamp(1.5rem, 5.5vw, 2rem); }
+.home2 section + section { margin-top: 1.6rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); }
+.tree { display: grid; gap: 12px; }
+@media (min-width: 900px) { .tree { grid-template-columns: 1.15fr 1fr; align-items: start; } .tree-key { grid-column: 1; } .tree-panel { grid-row: 1 / span 2; grid-column: 2; } }
+.tree-svg { width: 100%; max-width: 520px; height: auto; display: block; margin: 0 auto; color: var(--ink); }
+.t-edge { cursor: pointer; }
+.t-edge .hit { stroke: transparent; stroke-width: 28; }
+.t-edge .ln { stroke: var(--ink-2); stroke-width: 2.5; }
+.t-edge.limit .ln { stroke-dasharray: 7 5; }
+.t-edge.active .ln { stroke: var(--ink); stroke-width: 4.5; }
+.t-edge:focus-visible { outline: none; }
+.t-edge:focus-visible .ln { stroke: var(--accent); stroke-width: 5; }
+.t-label { font-family: var(--font); font-size: 14.5px; font-weight: 500; fill: var(--ink-2); paint-order: stroke; stroke: var(--paper); stroke-width: 6px; stroke-linejoin: round; }
+.t-edge.active .t-label { fill: var(--ink); font-weight: 700; }
+.t-name { font-family: var(--font); font-size: 17px; font-weight: 700; paint-order: stroke; stroke: var(--paper); stroke-width: 5px; }
+.t-node:hover circle, .t-node:focus circle { fill: var(--paper-2); }
+.tree-key { display: flex; justify-content: center; gap: 18px; font-size: .88rem; color: var(--ink-2); }
+.tree-key i { display: inline-block; width: 26px; vertical-align: middle; margin-inline-end: 4px; border-top: 2.5px solid var(--ink-2); }
+.tree-key .k-dash { border-top-style: dashed; }
+.tree-panel { background: #fffdf8; border: 2px solid var(--ink); border-radius: 16px; padding: 1rem 1.1rem; min-width: 0; }
+.tree-panel.limit { border-style: dashed; }
+.tree-kind { margin: 0; font-size: .85rem; font-weight: 700; color: var(--accent); }
+.tree-panel h3 { font-family: var(--font); font-weight: 700; margin: .2rem 0 .4rem; font-size: 1.2rem; }
+.tree-cond { font-size: .95rem; }
+.tree-src { font-size: .85rem; color: var(--ink-2); word-break: break-word; }
+.tree-note { font-size: .85rem; color: var(--ink-2); margin-bottom: 0; }
+.h2-journey ol { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
+@media (min-width: 900px) { .h2-journey ol { grid-template-columns: 1fr 1fr; } }
+.h2-journey a { display: flex; align-items: center; gap: 12px; padding: .75rem .9rem; border: 1.5px solid var(--rule); border-inline-start: 6px solid var(--c); border-radius: 12px; background: #fffdf8; text-decoration: none; color: var(--ink); min-height: 64px; }
+.h2-journey a:hover { border-color: var(--c); color: var(--ink); }
+.j-n { font-weight: 700; color: var(--c); font-size: 1.3rem; min-width: 1.2rem; }
+.j-body { display: flex; flex-direction: column; flex: 1; min-width: 0; }
+.j-name { font-weight: 700; font-size: 1.12rem; }
+.j-q { color: var(--ink-2); font-size: .92rem; }
+.j-status { font-size: .75rem; font-weight: 700; border-radius: 999px; padding: .05rem .55rem; white-space: nowrap; }
+.j-status.new { background: var(--c); color: #fff; }
+.j-status.old { border: 1px solid var(--ink-2); color: var(--ink-2); }
+.h2-tools ul { list-style: none; padding: 0; }
+.h2-tools li { padding: .35rem 0; }
+.h2-tools a { font-weight: 700; }
+.h2-tools span { color: var(--ink-2); }
+.glyph { vertical-align: middle; flex: none; }
+
+@media print { .ch-progress, .reference, .bridge { display: none !important; } }
+.build-range { margin: -.3rem 0 .4rem; color: var(--ink-2); }
+.scene-art .one-control { margin-top: 0; }
+@media (min-width: 640px) { .predict .options { grid-template-columns: repeat(auto-fit, minmax(13rem, 1fr)); } }

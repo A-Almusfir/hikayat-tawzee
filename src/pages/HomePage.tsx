@@ -1,0 +1,66 @@
+import type { CSSProperties } from 'react';
+import { distById } from '../content/distributions';
+import { identity, journey, newChapters } from '../content/identity';
+import { scenarios } from '../content/chooser';
+import { FamilyTree } from '../components/FamilyTree';
+import { Glyph } from '../components/Glyph';
+import { href } from '../lib/router';
+
+export function HomePage() {
+  return (
+    <div className="home2">
+      <section className="h2-hero">
+        <h1 tabIndex={-1}>حكاية توزيع</h1>
+        <p className="h2-slogan">افهم الحكاية… يثبت القانون.</p>
+        <p className="h2-sub">ستة توزيعات احتمالية، وعائلة واحدة. لكل توزيع حكاية حقيقية: من أين جاء، ولماذا احتاجه الناس، وكيف يُبنى قانونه منها.</p>
+        <a className="btn btn-primary" href={href.dist('poisson')}>
+          ابدأ بحكاية بواسون: ركلات الخيل ←
+        </a>
+      </section>
+
+      <section className="h2-tree" aria-labelledby="tree-h">
+        <h2 id="tree-h">شجرة العائلة</h2>
+        <p className="hint">اضغط على أي سهم لترى العلاقة وشرطها، أو على أي توزيع لتفتح فصله.</p>
+        <FamilyTree />
+      </section>
+
+      <section className="h2-journey" aria-labelledby="j-h">
+        <h2 id="j-h">الرحلة: ستة فصول</h2>
+        <ol>
+          {journey.map((id, i) => {
+            const d = distById[id];
+            const isNew = newChapters.includes(id);
+            return (
+              <li key={id} style={{ '--c': identity[id].color } as CSSProperties}>
+                <a href={href.dist(id)}>
+                  <span className="j-n">{i + 1}</span>
+                  <Glyph id={id} size={30} />
+                  <span className="j-body">
+                    <span className="j-name">
+                      {d.nameAr} <span className="en" lang="en" dir="ltr">{d.nameEn}</span>
+                    </span>
+                    <span className="j-q">{d.question}</span>
+                  </span>
+                  <span className={`j-status ${isNew ? 'new' : 'old'}`}>{isNew ? 'الحكاية الجديدة' : 'النسخة السابقة'}</span>
+                </a>
+              </li>
+            );
+          })}
+        </ol>
+        <p className="hint">هذا نموذج أولي: فصل بواسون مكتوب بالطريقة الجديدة، والفصول الأخرى تعرض النسخة السابقة مؤقتًا.</p>
+      </section>
+
+      <section className="h2-tools" aria-labelledby="t-h">
+        <h2 id="t-h">أدوات المراجعة</h2>
+        <ul>
+          <li>
+            <a href={href.choose}>أي توزيع أختار؟</a> <span>{scenarios.length} موقفًا للتمييز بين التوزيعات.</span>
+          </li>
+          <li>
+            <a href={href.cards}>بطاقات المراجعة</a> <span>اختبر ذاكرتك في القانون والمتوسط والتباين والشروط.</span>
+          </li>
+        </ul>
+      </section>
+    </div>
+  );
+}

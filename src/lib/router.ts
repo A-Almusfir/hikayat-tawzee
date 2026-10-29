@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 // توجيه بالـ hash: كل الروابط من نوع #/... فلا يحتاج GitHub Pages إلى إعادة توجيه، ولا تظهر 404 عند فتح رابط مباشر.
 export type Route =
   | { name: 'home' }
-  | { name: 'dist'; id: string }
+  | { name: 'dist'; id: string; scene?: number }
   | { name: 'choose' }
   | { name: 'cards' }
   | { name: 'map' }
@@ -13,8 +13,8 @@ export type Route =
 export function parse(hash: string): Route {
   const path = hash.replace(/^#/, '').replace(/\/+$/, '') || '/';
   if (path === '/' || path === '') return { name: 'home' };
-  const m = path.match(/^\/d\/([a-z]+)$/);
-  if (m) return { name: 'dist', id: m[1] };
+  const m = path.match(/^\/d\/([a-z]+)(?:\/([1-9]))?$/);
+  if (m) return { name: 'dist', id: m[1], scene: m[2] ? Number(m[2]) : undefined };
   if (path === '/choose') return { name: 'choose' };
   if (path === '/cards') return { name: 'cards' };
   if (path === '/map') return { name: 'map' };
@@ -24,7 +24,7 @@ export function parse(hash: string): Route {
 
 export const href = {
   home: '#/',
-  dist: (id: string) => `#/d/${id}`,
+  dist: (id: string, scene?: number) => `#/d/${id}${scene ? `/${scene}` : ''}`,
   choose: '#/choose',
   cards: '#/cards',
   map: '#/map',

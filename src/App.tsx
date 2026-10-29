@@ -1,13 +1,17 @@
 import { useEffect, useState } from 'react';
 import { href, useRoute } from './lib/router';
 import { progress } from './lib/storage';
-import { CardsPage, ChooserPage, DistPage, HomePage, MapPage, NotFound, RefsPage } from './pages/pages';
+import { poissonChapter } from './content/chapters/poisson';
+import { ChapterPage } from './pages/ChapterPage';
+import { HomePage } from './pages/HomePage';
+import { CardsPage, ChooserPage, DistPage, NotFound, RefsPage } from './pages/pages';
+
+const CHAPTERS = { poisson: poissonChapter } as const;
 
 const NAV = [
   { to: href.home, label: 'الرئيسية', match: 'home' },
   { to: href.choose, label: 'أي توزيع أختار؟', match: 'choose' },
   { to: href.cards, label: 'بطاقات المراجعة', match: 'cards' },
-  { to: href.map, label: 'خريطة العلاقات', match: 'map' },
   { to: href.refs, label: 'المراجع والمنهج', match: 'refs' },
 ];
 
@@ -15,21 +19,28 @@ export default function App() {
   const route = useRoute();
   const [cleared, setCleared] = useState(false);
 
+  const pageKey = route.name === 'dist' ? `dist:${route.id}` : route.name;
   useEffect(() => {
+    // التنقل بين مشاهد الفصل نفسه لا يعيد الصفحة إلى أعلاها
+    if (route.name === 'dist' && route.scene) return;
     window.scrollTo(0, 0);
     document.querySelector<HTMLElement>('main h1')?.focus({ preventScroll: true });
     const titles: Record<string, string> = { choose: 'أي توزيع أختار؟', cards: 'بطاقات المراجعة', map: 'خريطة العلاقات', refs: 'المراجع والمنهج' };
     const h1 = document.querySelector('main h1')?.textContent;
     document.title = route.name === 'home' ? 'حكاية توزيع — افهم الحكاية… يثبت القانون' : `${titles[route.name] ?? h1 ?? ''} · حكاية توزيع`;
-  }, [route]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pageKey]);
 
   const page = (() => {
     switch (route.name) {
       case 'home': return <HomePage />;
-      case 'dist': return <DistPage key={route.id} id={route.id} />;
+      case 'dist': {
+        const ch = CHAPTERS[route.id as keyof typeof CHAPTERS];
+        return ch ? <ChapterPage key={route.id} ch={ch} scene={route.scene} /> : <DistPage key={route.id} id={route.id} />;
+      }
       case 'choose': return <ChooserPage />;
       case 'cards': return <CardsPage />;
-      case 'map': return <MapPage />;
+      case 'map': return <HomePage />;
       case 'refs': return <RefsPage />;
       default: return <NotFound />;
     }

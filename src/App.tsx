@@ -90,7 +90,7 @@ export default function App() {
           <p className="sig-name">عبدالله المسفر</p>
           <p className="sig-role">طالب إحصاء</p>
           <p className="sig-copy">
-            <bdi dir="ltr">© {new Date().getFullYear()}</bdi> · <bdi dir="ltr">95%</bdi> من الحقوق تعود إلى Claude، و<bdi dir="ltr">5%</bdi> لعبدالله <bdi dir="ltr">(±5%)</bdi>
+            <bdi dir="ltr">© {new Date().getFullYear()}</bdi> · <bdi dir="ltr">95%</bdi> من الحقوق تعود إلى Claude، و<bdi dir="ltr">5%</bdi> قيد المراجعة
           </p>
         </div>
       </footer>

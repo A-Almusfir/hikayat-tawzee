@@ -15,8 +15,9 @@ import { FitLab } from '../components/scenes/FitLab';
 import { GaltonTry, LlnTry, MemoryTry, PointsTry, WaitsTry } from '../components/scenes/TryKinds';
 import { Cites, Scene, SCENES } from '../components/scenes/Scene';
 import { ArtView } from '../components/scenes/Art';
+import { ZTable } from '../components/scenes/ZTable';
 import { DistCardView, FormulaSection, Quiz } from '../components/sections';
-import { Rich } from '../components/Tex';
+import { Rich, Tex } from '../components/Tex';
 import { href, scrollToId } from '../lib/router';
 
 export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
@@ -114,6 +115,13 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
 
       <BuildScene id={ch.id} headline={ch.build.headline} law={ch.build.law} steps={ch.build.steps} note={ch.build.note} color={color} />
       <ExamScene headline={ch.exam.headline} problems={ch.exam.problems} tricks={ch.exam.tricks} />
+      {ch.extra === 'ztable' && (
+        <section className="ch-extra" aria-labelledby="z-h">
+          <h2 id="z-h">الطبيعي المعياري: من <Tex tex="x" /> إلى <Tex tex="z" /> إلى <Tex tex="\Phi(z)" /></h2>
+          <Rich as="p" text="كل توزيع طبيعي يتحول إلى $Z \sim N(0, 1)$ بطرح المتوسط والقسمة على الانحراف المعياري. ثم نقرأ المساحة من جدول واحد." />
+          <ZTable />
+        </section>
+      )}
       <AnchorScene ch={ch} next={nextInJourney(ch.id)} color={color} />
 
       <section className="reference" aria-labelledby="ref-h">

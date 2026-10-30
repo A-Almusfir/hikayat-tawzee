@@ -99,4 +99,6 @@ export interface Chapter {
     bridge: string;
   };
   reference: { labTitle: string };
+  /** أداة إضافية بعد مسألة الاختبار (مثل جدول Φ في الطبيعي). */
+  extra?: 'ztable';
 }

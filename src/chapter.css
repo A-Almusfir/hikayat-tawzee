@@ -441,3 +441,15 @@ main:has(.exam-night) { max-width: 72rem; }
 .run-t { font: 700 13px var(--font); fill: var(--ink-2); }
 .run-t.win { fill: #fff; }
 .run-n { font: 500 11px var(--font); fill: var(--ink-2); }
+
+/* ——— جدول Φ في فصل الطبيعي ——— */
+.ztable-wrap { overflow-x: auto; margin: .5rem 0; border: 1px solid var(--rule); border-radius: 10px; }
+.ztable-wrap:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.ztab { border-collapse: collapse; font-size: .82rem; font-variant-numeric: tabular-nums; min-width: 100%; }
+.ztab th, .ztab td { padding: .3rem .4rem; text-align: center; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+.ztab th { color: var(--ink-2); font-weight: 500; }
+.ztab th.hl { color: var(--c); font-weight: 700; }
+.ztab td.on { background: var(--c); color: #fff; font-weight: 700; border-radius: 4px; }
+.z-rules { margin: .4rem 0; padding-inline-start: 1.2rem; }
+.ch-extra { padding: 1.6rem 0 1rem; border-top: 1px solid var(--rule); }
+.ch-extra h2 { font-family: var(--font); font-weight: 700; font-size: clamp(1.35rem, 5vw, 1.8rem); margin: .2rem 0 .6rem; }

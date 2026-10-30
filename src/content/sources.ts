@@ -218,6 +218,18 @@ export const sources: Source[] = [
     url: 'https://www2.math.utah.edu/~treiberg/M3074MunitionsEg.pdf',
     verified: 'search-snippet',
   },
+  {
+    id: 'erlang-eom',
+    cite: 'Encyclopedia of Mathematics — Erlang, Agner Krarup (طريقة «المراحل المتتالية»، وتوزيع إرلانغ مجموعًا لمتغيرات أسية مستقلة متماثلة)',
+    url: 'https://encyclopediaofmath.org/wiki/Erlang,_Agner_Krarup',
+    verified: 'search-snippet',
+  },
+  {
+    id: 'informs-queueing',
+    cite: 'INFORMS — Queueing Models (History of O.R.)',
+    url: 'https://www.informs.org/Explore/History-of-O.R.-Excellence/O.R.-Methodologies/Queueing-Models',
+    verified: 'search-snippet',
+  },
 ];
 
 export const sourceById = Object.fromEntries(sources.map((s) => [s.id, s])) as Record<string, Source>;

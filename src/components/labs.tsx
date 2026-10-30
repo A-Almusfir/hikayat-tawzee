@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ComponentType } from 'react';
-import { bernoulli, binomial, discreteUpper, exponential, fmt, geometric, hypergeometric, negbin, normal, poisson, sample } from '../lib/dist';
+import { bernoulli, binomial, discreteUpper, exponential, fmt, gammaDist, geometric, hypergeometric, negbin, normal, poisson, sample } from '../lib/dist';
 import { RANGES, SIM_BATCH, SIM_MAX } from '../lib/ranges';
 import { BarChart, CurveChart, Legend, type Bin } from './charts';
 import { Rich, Tex } from './Tex';
@@ -530,6 +530,66 @@ export function NegbinLab() {
   );
 }
 
+// ———————— غاما: الانتظار حتى الحدث رقم α ————————
+export function GammaLab() {
+  const [alpha, setAlpha] = useState(3);
+  const [beta, setBeta] = useState(2);
+  const [waits, setWaits] = useState<number[]>([]);
+  const [one, setOne] = useState<number[] | null>(null);
+  useEffect(() => (setWaits([]), setOne(null)), [alpha, beta]);
+  // نهاية العرض: المتوسط + 4 انحرافات معيارية
+  const xMax = alpha / beta + 4 * Math.sqrt(alpha) / beta;
+  const hist: Bin[] | null = useMemo(() => {
+    if (waits.length < MIN_SIM) return null;
+    const B = 30, w = xMax / B;
+    const c = new Array(B).fill(0);
+    for (const x of waits) if (x < xMax) c[Math.floor(x / w)]++;
+    return c.map((n, i) => ({ x0: i * w, x1: (i + 1) * w, density: n / (waits.length * w) }));
+  }, [waits, xMax]);
+  const stats = useMemo(() => {
+    const n = waits.length;
+    if (!n) return null;
+    const m = waits.reduce((a, b) => a + b, 0) / n;
+    return { n, mean: m, variance: n > 1 ? waits.reduce((a, x) => a + (x - m) ** 2, 0) / (n - 1) : 0 };
+  }, [waits]);
+  const stages = () => Array.from({ length: alpha }, () => sample.exponential(beta));
+  const add = (k: number) => {
+    const runs = Array.from({ length: k }, stages);
+    if (k === 1) setOne(runs[0]);
+    setWaits((w) => w.concat(runs.map((r) => r.reduce((a, b) => a + b, 0))).slice(0, SIM_MAX));
+  };
+  return (
+    <div className="lab">
+      <div className="slider-grid">
+        <Slider label="ننتظر الحدث رقم" symbol="\alpha" value={alpha} onChange={setAlpha} min={1} max={8} step={1} digits={0} />
+        <Slider label="المعدل (أحداث في الدقيقة)" symbol="\beta" value={beta} onChange={setBeta} min={0.5} max={3} step={0.5} digits={1} />
+      </div>
+      <CurveChart
+        f={(x) => gammaDist.pdf(x, alpha, beta)}
+        xMin={0}
+        xMax={xMax}
+        hist={hist}
+        markers={[{ x: alpha / beta, label: 'E[X]' }]}
+        ariaLabel={`كثافة غاما α=${alpha}, β=${fmt(beta)}، ومتوسطها ${fmt(alpha / beta)} دقيقة`}
+        xLabel="زمن الانتظار حتى الحدث رقم α (دقيقة)"
+      />
+      <Legend items={hist ? ['curve', 'hist'] : ['curve']} />
+      <div className="btn-row">
+        <button type="button" className="btn" onClick={() => add(1)} disabled={waits.length >= SIM_MAX}>▶ انتظر مرة واحدة</button>
+        <button type="button" className="btn" onClick={() => add(SIM_BATCH)} disabled={waits.length >= SIM_MAX}>▶▶ انتظر {SIM_BATCH} مرة</button>
+        <button type="button" className="btn btn-quiet" onClick={() => (setWaits([]), setOne(null))} disabled={!waits.length}>مسح المحاكاة</button>
+      </div>
+      {one && (
+        <p className="result-line">
+          <Rich text={`المراحل: $${one.map((x) => fmt(x, 2)).join(' + ')} = ${fmt(one.reduce((a, b) => a + b, 0), 2)}$ دقيقة.`} />
+        </p>
+      )}
+      <SimNote count={waits.length} max={SIM_MAX} />
+      <Stats mean={gammaDist.mean(alpha, beta)} variance={gammaDist.variance(alpha, beta)} meanTex="\tfrac{\alpha}{\beta}" varTex="\tfrac{\alpha}{\beta^2}" sim={enough(stats)} unit="دقيقة" />
+    </div>
+  );
+}
+
 /** المختبر المرجعي لكل فصل قديم. الفصول الجديدة تضع تجربتها في المشهد الثاني مباشرة (kind: 'lab'). */
 export const labs: Partial<Record<DistId, ComponentType>> = {
   bernoulli: BernoulliLab,
@@ -540,4 +600,5 @@ export const labs: Partial<Record<DistId, ComponentType>> = {
   normal: NormalLab,
   hypergeometric: HypergeometricLab,
   negbin: NegbinLab,
+  gamma: GammaLab,
 };

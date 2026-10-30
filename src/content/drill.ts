@@ -1,4 +1,4 @@
-import { binomial, exponential, geometric, hypergeometric, negbin, normal, poisson } from '../lib/dist';
+import { binomial, exponential, gammaDist, geometric, hypergeometric, negbin, normal, poisson } from '../lib/dist';
 import type { Choice } from './chapterTypes';
 import type { Leaf } from './decision';
 import type { NumericCheck } from './types';
@@ -391,6 +391,81 @@ export const drill: DrillItem[] = [
         { text: '$(0.9)^{3}(0.1) = 0.0729$', why: 'هذا الهندسي: أول معيبة في الرابعة.' },
       ],
       check: { compute: () => negbin.pmf(4, 2, 0.1), shown: 0.0243, digits: 4 },
+    },
+  },
+  {
+    id: 'd-gam-msgs',
+    answer: 'gamma',
+    text: 'تصل رسائل إلى خادم بمعدل 3 في الدقيقة، مستقلة وبمعدل ثابت. ما احتمال أن تصل **الرسالة الثانية** خلال الدقيقة الأولى؟',
+    why: 'زمن انتظار مستمر حتى الحدث رقم 2 في عملية بمعدل ثابت.',
+    trap: 'exponential',
+    trapWhy: 'الأسي للانتظار حتى الحدث الأول فقط؛ هنا ننتظر الثاني.',
+    param: {
+      prompt: 'ما المعلمات؟',
+      options: [
+        { text: '$\\alpha = 2$، $\\beta = 3$', correct: true, why: 'ننتظر الحدث الثاني، والمعدل 3 في الدقيقة.' },
+        { text: '$\\alpha = 3$، $\\beta = 2$', why: 'تبادلت المعلمتان: $\\alpha$ رقم الحدث المنتظر.' },
+        { text: '$\\theta = 3$ لأسي', why: 'الأسي حتى الرسالة الأولى فقط.' },
+      ],
+    },
+    calc: {
+      prompt: 'ما $P(X \\le 1)$؟',
+      options: [
+        { text: '$1 - e^{-3}(1 + 3) = 1 - 4e^{-3} \\approx 0.8009$', correct: true, why: 'الثانية خلال دقيقة ⇔ رسالتان على الأقل في دقيقة، بمتوسط $\\beta x = 3$.' },
+        { text: '$1 - e^{-3} \\approx 0.9502$', why: 'هذا احتمال وصول الرسالة **الأولى** خلال دقيقة.' },
+        { text: '$3e^{-3} \\approx 0.1494$', why: 'هذا احتمال رسالة واحدة بالضبط في الدقيقة.' },
+      ],
+      check: { compute: () => 1 - poisson.cdf(1, 3), shown: 0.8009, digits: 4 },
+    },
+  },
+  {
+    id: 'd-gam-service',
+    answer: 'gamma',
+    text: 'خدمة الزبون في مكتب حكومي أربع مراحل متتالية مستقلة، وكل مرحلة تستغرق زمنًا عشوائيًا بلا ذاكرة متوسطه دقيقتان. ما تباين زمن الخدمة الكلي؟',
+    why: 'مجموع 4 أزمنة انتظار مستقلة، كل منها بلا ذاكرة وبالمعدل نفسه.',
+    trap: 'exponential',
+    trapWhy: 'كل مرحلة وحدها أسية، لكن مجموع المراحل الأربع ليس أسيًا.',
+    param: {
+      prompt: 'ما المعلمات؟',
+      options: [
+        { text: '$\\alpha = 4$، $\\beta = 0.5$', correct: true, why: 'أربع مراحل، والمعدل مقلوب المتوسط: $\\frac{1}{2}$ لكل دقيقة.' },
+        { text: '$\\alpha = 4$، $\\beta = 2$', why: '2 متوسط المرحلة، والمعدل مقلوبه $0.5$.' },
+        { text: '$\\alpha = 2$، $\\beta = 4$', why: 'عدد المراحل 4 هو $\\alpha$.' },
+      ],
+    },
+    calc: {
+      prompt: 'ما $\\mathrm{Var}(X)$؟',
+      options: [
+        { text: '$\\frac{\\alpha}{\\beta^{2}} = \\frac{4}{0.25} = 16$', correct: true, why: 'أو: تباين كل مرحلة $2^{2} = 4$، والمراحل مستقلة فالتباينات تُجمع: $4 \\times 4 = 16$.' },
+        { text: '$8$', why: 'هذا المتوسط $\\frac{\\alpha}{\\beta}$.' },
+        { text: '$1$', why: 'استعملت $\\beta = 2$: المتوسط مكان المعدل.' },
+      ],
+      check: { compute: () => gammaDist.variance(4, 0.5), shown: 16, digits: 0 },
+    },
+  },
+  {
+    id: 'd-gam-third',
+    answer: 'gamma',
+    text: 'يصل الزبائن إلى متجر بمعدل 6 في الساعة، مستقلين وبمعدل ثابت. فتح المالك المتجر الآن. ما احتمال أن ينتظر **أكثر من نصف ساعة** حتى يصل **الزبون الثالث**؟',
+    why: 'انتظار مستمر حتى الحدث رقم 3 بمعدل ثابت.',
+    trap: 'poisson',
+    trapWhy: 'الحساب يمر ببواسون، لكن المتغير المسؤول عنه زمن الانتظار حتى الزبون الثالث.',
+    param: {
+      prompt: 'ما المعلمات؟',
+      options: [
+        { text: '$\\alpha = 3$، $\\beta = 6$ لكل ساعة', correct: true, why: 'ننتظر الزبون الثالث، بمعدل 6 في الساعة.' },
+        { text: '$\\alpha = 3$، $\\beta = \\frac{1}{6}$', why: '$\\frac{1}{6}$ ساعة متوسط الزمن بين زبونين، والمعدل 6.' },
+        { text: '$\\alpha = 6$، $\\beta = 3$', why: 'تبادلت المعلمتان.' },
+      ],
+    },
+    calc: {
+      prompt: 'ما $P(X > 0.5)$؟',
+      options: [
+        { text: '$e^{-3}\\left(1 + 3 + \\frac{9}{2}\\right) \\approx 0.4232$', correct: true, why: 'أقل من 3 زبائن في نصف ساعة، بمتوسط $\\beta x = 3$.' },
+        { text: '$e^{-3} \\approx 0.0498$', why: 'هذا احتمال ألا يصل أحد: الانتظار حتى **الأول**.' },
+        { text: '$1 - 0.4232 = 0.5768$', why: 'هذا احتمال وصول الثالث **خلال** نصف ساعة.' },
+      ],
+      check: { compute: () => poisson.cdf(2, 3), shown: 0.4232, digits: 4 },
     },
   },
   {

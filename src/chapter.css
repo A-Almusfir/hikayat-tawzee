@@ -453,3 +453,11 @@ main:has(.exam-night) { max-width: 72rem; }
 .z-rules { margin: .4rem 0; padding-inline-start: 1.2rem; }
 .ch-extra { padding: 1.6rem 0 1rem; border-top: 1px solid var(--rule); }
 .ch-extra h2 { font-family: var(--font); font-weight: 700; font-size: clamp(1.35rem, 5vw, 1.8rem); margin: .2rem 0 .6rem; }
+
+/* ——— جدول المشاهد والمتوقع (مربع كاي) ——— */
+.obs-exp { border-collapse: collapse; margin: .6rem 0; font-variant-numeric: tabular-nums; width: 100%; max-width: 28rem; }
+.obs-exp th, .obs-exp td { border-bottom: 1px solid var(--rule); padding: .35rem .5rem; text-align: center; }
+.obs-exp caption { caption-side: top; text-align: start; }
+.verdict { font-weight: 700; border-inline-start: 5px solid; padding: .3rem .7rem; border-radius: 6px; }
+.verdict.ok { border-color: var(--ok, #2e6b3a); background: #eef5ee; }
+.verdict.no { border-color: var(--no); background: #f8ecea; }

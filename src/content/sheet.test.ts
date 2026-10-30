@@ -1,6 +1,6 @@
 import katex from 'katex';
 import { describe, expect, it } from 'vitest';
-import { betaDist, betaFn, gammaFn, hypergeometric, lgamma } from '../lib/dist';
+import { betaDist, betaFn, chiSquare, fisherF, gammaDist, gammaFn, hypergeometric, lgamma, quantile, studentT } from '../lib/dist';
 import { sheet, sheetById, sheetFixes, symbols, type SheetRow } from './sheet';
 
 // تكامل سمبسون المركّب على [a, b].
@@ -137,5 +137,34 @@ describe('ورقة القوانين', () => {
     const texs = [...sheetFixes.map((f) => f.text), ...symbols.map((s) => s.meaning)].flatMap((t) => [...t.matchAll(/\$([^$]+?)\$/g)].map((m) => m[1]));
     texs.push(...symbols.map((s) => s.sym));
     for (const t of texs) expect(() => katex.renderToString(t, { throwOnError: true, strict: 'ignore' }), t).not.toThrow();
+  });
+});
+
+describe('التراكميات غير المغلقة: غاما وبيتا غير الكاملتين وقيم الجداول', () => {
+  it('تطابق تكامل الكثافة', () => {
+    close(gammaDist.cdf(1.7, 2.5, 1.5), simpson((y) => gammaDist.pdf(y, 2.5, 1.5), 0, 1.7), 1e-8);
+    close(chiSquare.cdf(4.2, 5), simpson((y) => chiSquare.pdf(y, 5), 0, 4.2), 1e-8);
+    close(betaDist.cdf(0.3, 2.5, 4), simpson((y) => betaDist.pdf(y, 2.5, 4), 0, 0.3), 1e-8);
+    close(studentT.cdf(1.1, 8), 0.5 + simpson((y) => studentT.pdf(y, 8), 0, 1.1), 1e-8);
+    close(studentT.cdf(-0.7, 8), 0.5 - simpson((y) => studentT.pdf(y, 8), 0, 0.7), 1e-8);
+    close(fisherF.cdf(1.3, 6, 12), simpson((y) => fisherF.pdf(y, 6, 12), 0, 1.3), 1e-8);
+    close(betaDist.cdf(0.5, 2, 3), 11 / 16, 1e-12);
+  });
+  it('قيم الجداول المعروفة', () => {
+    // مربع كاي: 3.841 (v=1) و5.991 (v=2) و18.307 (v=10) عند 0.95
+    close(chiSquare.cdf(3.841459, 1), 0.95, 1e-6);
+    close(chiSquare.cdf(5.991465, 2), 0.95, 1e-6);
+    close(chiSquare.cdf(18.307038, 10), 0.95, 1e-6);
+    // t: 2.262 (v=9) و2.228 (v=10) و1.96 (v كبير) عند 0.975
+    close(studentT.cdf(2.262157, 9), 0.975, 1e-6);
+    close(studentT.cdf(2.228139, 10), 0.975, 1e-6);
+    close(studentT.cdf(1.959964, 1e6), 0.975, 1e-5);
+    // F(3, 10) عند 0.95: 3.708
+    close(fisherF.cdf(3.708265, 3, 10), 0.95, 1e-6);
+    close(quantile((x) => studentT.cdf(x, 9), 0.975, 0, 10), 2.262157, 1e-5);
+  });
+  it('علاقات: χ²(2) أسي بمعدل ½، وT² يتبع F(1, v)', () => {
+    close(chiSquare.cdf(3, 2), 1 - Math.exp(-1.5), 1e-12);
+    close(fisherF.cdf(2.5 ** 2, 1, 7), studentT.cdf(2.5, 7) - studentT.cdf(-2.5, 7), 1e-10);
   });
 });

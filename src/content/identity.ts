@@ -2,7 +2,7 @@ import type { DistId } from './types';
 
 // هوية كل توزيع: لون محايد + شكل يتكرران في كل مكان (الشجرة، الرسوم، العناوين).
 // الشكل يحمل المعنى أيضًا حتى لا يعتمد التمييز على اللون وحده. التباين ≥ 4.5:1 مفحوص في الاختبارات.
-export type Shape = 'coin' | 'triangle' | 'cups' | 'steps' | 'stairs' | 'dots' | 'decay' | 'hump' | 'bell';
+export type Shape = 'coin' | 'triangle' | 'cups' | 'steps' | 'stairs' | 'dots' | 'decay' | 'hump' | 'flat' | 'bell' | 'squares' | 'heavy';
 
 export const identity: Record<DistId, { color: string; shape: Shape }> = {
   bernoulli: { color: '#8A4B22', shape: 'coin' },
@@ -13,7 +13,10 @@ export const identity: Record<DistId, { color: string; shape: Shape }> = {
   poisson: { color: '#1E5F6E', shape: 'dots' },
   exponential: { color: '#7D2E2E', shape: 'decay' },
   gamma: { color: '#8A3457', shape: 'hump' },
+  uniform: { color: '#3F5B70', shape: 'flat' },
   normal: { color: '#6B5A1E', shape: 'bell' },
+  chisquare: { color: '#7A3B12', shape: 'squares' },
+  t: { color: '#3D3F86', shape: 'heavy' },
 };
 
 export const PAPER = '#fbf7f0';
@@ -41,5 +44,5 @@ export function contrast(a: string, b: string) {
 /** ترتيب الفصول في الرحلة (منطقي لا تاريخي). */
 // الفصل الجديد يُدرج بعد أقرب فصل إليه: فوق الهندسي بعد ذي الحدين، وغاما بعد الأسي، وذو الحدين السالب بعد الهندسي.
 // لا يُضاف توزيع هنا قبل أن يكتمل فصله (الاختبارات تشترط فصلًا لكل توزيع في الرحلة).
-export const journey: DistId[] = ['bernoulli', 'binomial', 'hypergeometric', 'poisson', 'exponential', 'gamma', 'geometric', 'negbin', 'normal'];
+export const journey: DistId[] = ['bernoulli', 'binomial', 'hypergeometric', 'poisson', 'exponential', 'gamma', 'geometric', 'negbin', 'normal', 'chisquare'];
 

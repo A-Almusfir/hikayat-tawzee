@@ -1,4 +1,4 @@
-import { binomial, exponential, gammaDist, geometric, hypergeometric, negbin, normal, poisson } from '../lib/dist';
+import { binomial, chiSquare, exponential, gammaDist, geometric, hypergeometric, negbin, normal, poisson } from '../lib/dist';
 import type { Choice } from './chapterTypes';
 import type { Leaf } from './decision';
 import type { NumericCheck } from './types';
@@ -466,6 +466,81 @@ export const drill: DrillItem[] = [
         { text: '$1 - 0.4232 = 0.5768$', why: 'هذا احتمال وصول الثالث **خلال** نصف ساعة.' },
       ],
       check: { compute: () => poisson.cdf(2, 3), shown: 0.4232, digits: 4 },
+    },
+  },
+  {
+    id: 'd-chi-var',
+    answer: 'chisquare',
+    text: 'عينة من 16 قطعة من مجتمع أطوالها طبيعية، وتباين العينة $s^{2} = 9$. نريد اختبار أن تباين المجتمع $\\sigma^{2} = 5$. ما توزيع الإحصاءة المناسبة، وما قيمتها؟',
+    why: 'السؤال عن **تباين** مجتمع طبيعي: $\\frac{(n-1)S^{2}}{\\sigma^{2}}$.',
+    trap: 't',
+    trapWhy: 't للمتوسط حين يكون $\\sigma$ مجهولًا؛ هنا نختبر التباين نفسه.',
+    param: {
+      prompt: 'كم درجة حرية؟',
+      options: [
+        { text: '$15$', correct: true, why: '$n - 1 = 16 - 1$.' },
+        { text: '$16$', why: 'نفقد درجة لأننا نقيس الانحرافات عن متوسط العينة.' },
+        { text: '$14$', why: 'لم نقدّر إلا المتوسط، فنطرح واحدًا فقط.' },
+      ],
+    },
+    calc: {
+      prompt: 'ما قيمة $\\frac{(n-1)s^{2}}{\\sigma^{2}}$؟',
+      options: [
+        { text: '$\\frac{15 \\times 9}{5} = 27$', correct: true, why: 'ثم نقارنها بجدول مربع كاي بـ 15 درجة حرية.' },
+        { text: '$\\frac{16 \\times 9}{5} = 28.8$', why: 'المضروب $n - 1$ لا $n$.' },
+        { text: '$\\frac{9}{5} = 1.8$', why: 'نسيت الضرب في $n - 1$.' },
+      ],
+      check: { compute: () => (15 * 9) / 5, shown: 27, digits: 0 },
+    },
+  },
+  {
+    id: 'd-chi-die',
+    answer: 'chisquare',
+    text: 'رُمي نرد 60 مرة، فظهرت الأوجه من 1 إلى 6 بالتكرارات: 8، 9، 12، 11، 6، 14. نريد اختبار أن النرد متوازن. ما الإحصاءة المناسبة؟',
+    why: 'مقارنة تكرارات مشاهدة بتكرارات متوقعة في فئات: اختبار المطابقة $\\sum \\frac{(O-E)^{2}}{E}$.',
+    trap: 'binomial',
+    trapWhy: 'عدد مرات ظهور وجه واحد ذو حدين، لكن السؤال عن الأوجه الستة معًا.',
+    param: {
+      prompt: 'المتوقع لكل وجه 10. كم درجة حرية؟',
+      options: [
+        { text: '$5$', correct: true, why: 'ست فئات ناقص واحد، ولم نقدّر أي معلمة من البيانات.' },
+        { text: '$6$', why: 'مجموع التكرارات ثابت (60)، فننقص واحدًا.' },
+        { text: '$59$', why: 'درجات الحرية من عدد **الفئات** لا عدد الرميات.' },
+      ],
+    },
+    calc: {
+      prompt: 'ما قيمة $\\chi^{2}$؟',
+      options: [
+        { text: '$\\frac{4 + 1 + 4 + 1 + 16 + 16}{10} = 4.2$', correct: true, why: 'أقل من $\\chi^{2}_{5,\\,0.05} = 11.07$، فلا دليل على أن النرد غير متوازن.' },
+        { text: '$42$', why: 'نسيت القسمة على المتوقع $E = 10$.' },
+        { text: '$0$', why: 'مجموع الفروق صفر، لكن مجموع **مربعاتها** ليس صفرًا.' },
+      ],
+      check: { compute: () => [8, 9, 12, 11, 6, 14].reduce((s, o) => s + (o - 10) ** 2 / 10, 0), shown: 4.2, digits: 1 },
+    },
+  },
+  {
+    id: 'd-chi-z2',
+    answer: 'chisquare',
+    text: '$Z$ متغير طبيعي معياري. ما احتمال أن يتجاوز **مربعه** $Z^{2}$ القيمة $3.841$؟',
+    why: 'مربع متغير طبيعي معياري يتبع مربع كاي بدرجة حرية واحدة.',
+    trap: 'normal',
+    trapWhy: 'يمكن الحل من $Z$ نفسه، لكن المتغير المسؤول عنه $Z^{2}$، وتوزيعه $\\chi^{2}_{1}$.',
+    param: {
+      prompt: 'كم درجة حرية؟',
+      options: [
+        { text: '$1$', correct: true, why: 'مربع متغير واحد.' },
+        { text: '$2$', why: 'هذا لمجموع مربعين مستقلين.' },
+        { text: '$0$', why: 'أقل درجات الحرية 1.' },
+      ],
+    },
+    calc: {
+      prompt: 'ما $P(Z^{2} > 3.841)$؟',
+      options: [
+        { text: '$0.05$', correct: true, why: 'من جدول $\\chi^{2}_{1}$. ويطابق $P(|Z| > 1.96) = 0.05$، لأن $1.96^{2} \\approx 3.841$.' },
+        { text: '$0.025$', why: 'هذا ذيل واحد لـ $Z$؛ $Z^{2} > 3.841$ يشمل الذيلين.' },
+        { text: '$0.95$', why: 'هذا $P(Z^{2} \\le 3.841)$.' },
+      ],
+      check: { compute: () => 1 - chiSquare.cdf(3.841, 1), shown: 0.05, digits: 2 },
     },
   },
   {

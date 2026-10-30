@@ -3,6 +3,7 @@ import { journey } from '../identity';
 import type { DistId } from '../types';
 import { bernoulliChapter } from './bernoulli';
 import { binomialChapter } from './binomial';
+import { chisquareChapter } from './chisquare';
 import { exponentialChapter } from './exponential';
 import { gammaChapter } from './gamma';
 import { geometricChapter } from './geometric';
@@ -22,6 +23,7 @@ export const chapters: Partial<Record<DistId, Chapter>> = {
   geometric: geometricChapter,
   negbin: negbinChapter,
   normal: normalChapter,
+  chisquare: chisquareChapter,
 };
 
 export const chapterNumber = (id: DistId) => journey.indexOf(id) + 1;

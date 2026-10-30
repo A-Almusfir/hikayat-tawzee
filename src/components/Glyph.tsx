@@ -58,6 +58,20 @@ function paths(shape: Shape) {
       return <path d="M3 4 C 6 15, 11 19, 21 20" fill="none" strokeWidth="2.4" strokeLinecap="round" />;
     case 'hump':
       return <path d="M2 20 C 5 20, 6 6, 9 6 C 12 6, 15 17, 22 19" fill="none" strokeWidth="2.4" strokeLinecap="round" />;
+    case 'flat':
+      return <path d="M2 20 H5 V9 H19 V20 H22" fill="none" strokeWidth="2.2" strokeLinejoin="round" />;
+    case 'squares':
+      // مربعات متزايدة: مجموع مربعات
+      return (
+        <>
+          <rect x="2" y="15" width="5" height="5" stroke="none" />
+          <rect x="9" y="11" width="9" height="9" fill="none" strokeWidth="2" />
+          <path d="M20 4 h2 M21 3 v2" strokeWidth="1.6" />
+        </>
+      );
+    case 'heavy':
+      // جرس أقصر بذيلين أثقل
+      return <path d="M1 17 C 6 16, 8 6, 12 6 C 16 6, 18 16, 23 17" fill="none" strokeWidth="2.4" strokeLinecap="round" />;
     case 'bell':
       return <path d="M2 20 C 7 20, 8 4, 12 4 C 16 4, 17 20, 22 20" fill="none" strokeWidth="2.4" strokeLinecap="round" />;
   }

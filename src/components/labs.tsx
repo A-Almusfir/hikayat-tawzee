@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState, type ComponentType } from 'react';
 import { bernoulli, binomial, discreteUpper, exponential, fmt, gammaDist, geometric, hypergeometric, negbin, normal, poisson, sample } from '../lib/dist';
+import { CHI1_95, chiFit } from '../content/horsekicks';
 import { RANGES, SIM_BATCH, SIM_MAX } from '../lib/ranges';
 import { BarChart, CurveChart, Legend, type Bin } from './charts';
 import { Rich, Tex } from './Tex';
@@ -591,6 +592,46 @@ export function GammaLab() {
   );
 }
 
+// ———————— مربع كاي: مطابقة بواسون لركلات الخيل ————————
+
+export function ChiSquareLab() {
+  const [l, setL] = useState(1.0);
+  const f = chiFit(l);
+  const labels = ['0', '1', '2 فأكثر'];
+  const reject = f.stat > CHI1_95;
+  return (
+    <div className="lab">
+      <Slider label="متوسط الوفيات في الفيلق-السنة" symbol="\lambda" value={l} onChange={setL} min={0.3} max={1.3} step={0.01} />
+      <table className="obs-exp">
+        <caption className="hint"><Rich text="ما وقع ($O$) وما يتوقعه بواسون ($E$) في كل فئة" /></caption>
+        <thead>
+          <tr>
+            <th scope="col">الوفيات</th>
+            <th scope="col"><Tex tex="O" /></th>
+            <th scope="col"><Tex tex="E" /></th>
+            <th scope="col"><Tex tex="\tfrac{(O-E)^2}{E}" /></th>
+          </tr>
+        </thead>
+        <tbody>
+          {labels.map((lab, i) => (
+            <tr key={lab}>
+              <th scope="row">{lab}</th>
+              <td>{f.O[i]}</td>
+              <td>{fmt(f.E[i], 2)}</td>
+              <td>{fmt(f.parts[i], 3)}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+      <ProbLine tex={`\\chi^{2} = \\sum \\tfrac{(O-E)^{2}}{E}`} value={f.stat} />
+      <p className={`verdict ${reject ? 'no' : 'ok'}`} aria-live="polite">
+        <Rich text={reject ? `$${fmt(f.stat, 3)} > ${CHI1_95}$: البعد كبير؛ نرفض أن البيانات من بواسون بهذا المتوسط.` : `$${fmt(f.stat, 3)} \\le ${CHI1_95}$: البعد صغير؛ لا دليل ضد بواسون بهذا المتوسط.`} />
+      </p>
+      <Rich as="p" className="hint" text={`درجات الحرية $3 - 1 - 1 = 1$: ثلاث فئات، ناقص واحد لأن المجموع ثابت (200)، وناقص واحد لأننا قدّرنا $\\lambda$ من البيانات. والقيمة الحرجة عند $0.05$ هي $${CHI1_95}$. احتمال بعد كهذا أو أكبر لو صح النموذج: ${f.p < 0.001 ? 'أقل من $0.001$' : `$${fmt(f.p, 3)}$`}.`} />
+    </div>
+  );
+}
+
 /** المختبر المرجعي لكل فصل قديم. الفصول الجديدة تضع تجربتها في المشهد الثاني مباشرة (kind: 'lab'). */
 export const labs: Partial<Record<DistId, ComponentType>> = {
   bernoulli: BernoulliLab,
@@ -602,4 +643,5 @@ export const labs: Partial<Record<DistId, ComponentType>> = {
   hypergeometric: HypergeometricLab,
   negbin: NegbinLab,
   gamma: GammaLab,
+  chisquare: ChiSquareLab,
 };

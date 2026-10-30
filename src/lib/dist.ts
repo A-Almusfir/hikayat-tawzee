@@ -134,6 +134,84 @@ export function lgamma(x: number): number {
 export const gammaFn = (x: number) => Math.exp(lgamma(x));
 export const betaFn = (a: number, b: number) => Math.exp(lgamma(a) + lgamma(b) - lgamma(a + b));
 
+// ———————— غاما وبيتا غير الكاملتين المنتظمتين (Numerical Recipes) — للتراكمي وقيم الجداول ————————
+const TINY = 1e-300;
+
+/** P(a, x) = γ(a, x)/Γ(a): متسلسلة حين x < a + 1، وكسر مستمر لما بعدها. */
+export function gammaP(a: number, x: number): number {
+  if (x <= 0) return 0;
+  const front = Math.exp(-x + a * Math.log(x) - lgamma(a));
+  if (x < a + 1) {
+    let ap = a, del = 1 / a, sum = del;
+    for (let n = 0; n < 500 && Math.abs(del) > Math.abs(sum) * 1e-16; n++) {
+      ap++;
+      del *= x / ap;
+      sum += del;
+    }
+    return sum * front;
+  }
+  let b = x + 1 - a, c = 1 / TINY, d = 1 / b, h = d;
+  for (let i = 1; i < 500; i++) {
+    const an = -i * (i - a);
+    b += 2;
+    d = an * d + b;
+    if (Math.abs(d) < TINY) d = TINY;
+    c = b + an / c;
+    if (Math.abs(c) < TINY) c = TINY;
+    d = 1 / d;
+    const del = d * c;
+    h *= del;
+    if (Math.abs(del - 1) < 1e-16) break;
+  }
+  return 1 - front * h;
+}
+
+function betacf(a: number, b: number, x: number): number {
+  const qab = a + b, qap = a + 1, qam = a - 1;
+  let c = 1, d = 1 - (qab * x) / qap;
+  if (Math.abs(d) < TINY) d = TINY;
+  d = 1 / d;
+  let h = d;
+  for (let m = 1; m < 500; m++) {
+    const m2 = 2 * m;
+    let aa = (m * (b - m) * x) / ((qam + m2) * (a + m2));
+    d = 1 + aa * d;
+    if (Math.abs(d) < TINY) d = TINY;
+    c = 1 + aa / c;
+    if (Math.abs(c) < TINY) c = TINY;
+    d = 1 / d;
+    h *= d * c;
+    aa = (-(a + m) * (qab + m) * x) / ((a + m2) * (qap + m2));
+    d = 1 + aa * d;
+    if (Math.abs(d) < TINY) d = TINY;
+    c = 1 + aa / c;
+    if (Math.abs(c) < TINY) c = TINY;
+    d = 1 / d;
+    const del = d * c;
+    h *= del;
+    if (Math.abs(del - 1) < 1e-16) break;
+  }
+  return h;
+}
+
+/** I_x(a, b): تراكمي بيتا، ومنه تراكميا t وF. */
+export function betaI(x: number, a: number, b: number): number {
+  if (x <= 0) return 0;
+  if (x >= 1) return 1;
+  const bt = Math.exp(lgamma(a + b) - lgamma(a) - lgamma(b) + a * Math.log(x) + b * Math.log1p(-x));
+  return x < (a + 1) / (a + b + 2) ? (bt * betacf(a, b, x)) / a : 1 - (bt * betacf(b, a, 1 - x)) / b;
+}
+
+/** معكوس تراكمي متزايد بالتنصيف (للقيم الحرجة المعروضة؛ الدقة نحو 1e-10). */
+export function quantile(cdf: (x: number) => number, q: number, lo: number, hi: number): number {
+  for (let i = 0; i < 200; i++) {
+    const m = (lo + hi) / 2;
+    if (cdf(m) < q) lo = m;
+    else hi = m;
+  }
+  return (lo + hi) / 2;
+}
+
 // القيم غير الموجودة (مثل متوسط t عند v ≤ 1) تُعاد NaN.
 
 // ———————— ذو الحدين السالب: X = عدد المحاولات حتى النجاح رقم r (كما في ورقة المقرر) ————————
@@ -169,6 +247,7 @@ export const uniform = {
 export const gammaDist = {
   pdf: (x: number, alpha: number, beta: number) =>
     x <= 0 ? 0 : Math.exp(alpha * Math.log(beta) - lgamma(alpha) + (alpha - 1) * Math.log(x) - beta * x),
+  cdf: (x: number, alpha: number, beta: number) => gammaP(alpha, beta * x),
   mean: (alpha: number, beta: number) => alpha / beta,
   variance: (alpha: number, beta: number) => alpha / (beta * beta),
 };
@@ -177,6 +256,7 @@ export const gammaDist = {
 export const chiSquare = {
   pdf: (x: number, v: number) =>
     x <= 0 ? 0 : Math.exp(-(v / 2) * Math.LN2 - lgamma(v / 2) + (v / 2 - 1) * Math.log(x) - x / 2),
+  cdf: (x: number, v: number) => gammaP(v / 2, x / 2),
   mean: (v: number) => v,
   variance: (v: number) => 2 * v,
 };
@@ -195,6 +275,10 @@ export const weibull = {
 export const studentT = {
   pdf: (x: number, v: number) =>
     Math.exp(lgamma((v + 1) / 2) - lgamma(v / 2) - 0.5 * Math.log(v * Math.PI) - ((v + 1) / 2) * Math.log1p((x * x) / v)),
+  cdf: (t: number, v: number) => {
+    const tail = betaI(v / (v + t * t), v / 2, 0.5) / 2;
+    return t > 0 ? 1 - tail : tail;
+  },
   mean: (v: number) => (v > 1 ? 0 : NaN),
   variance: (v: number) => (v > 2 ? v / (v - 2) : NaN),
 };
@@ -203,6 +287,7 @@ export const studentT = {
 export const betaDist = {
   pdf: (x: number, a: number, b: number) =>
     x <= 0 || x >= 1 ? 0 : Math.exp((a - 1) * Math.log(x) + (b - 1) * Math.log1p(-x) - lgamma(a) - lgamma(b) + lgamma(a + b)),
+  cdf: (x: number, a: number, b: number) => betaI(x, a, b),
   mean: (a: number, b: number) => a / (a + b),
   variance: (a: number, b: number) => (a * b) / ((a + b + 1) * (a + b) ** 2),
   /** العزم E(X^r) = B(a + r, b) / B(a, b) — وهو ما يظهر في عمود M_X(t) في الورقة. */
@@ -217,6 +302,7 @@ export const fisherF = {
       : Math.exp(
           (r / 2) * Math.log(r / v) + (r / 2 - 1) * Math.log(x) - ((r + v) / 2) * Math.log1p((r / v) * x) - Math.log(betaFn(r / 2, v / 2)),
         ),
+  cdf: (x: number, r: number, v: number) => (x <= 0 ? 0 : betaI((r * x) / (r * x + v), r / 2, v / 2)),
   mean: (_r: number, v: number) => (v > 2 ? v / (v - 2) : NaN),
   variance: (r: number, v: number) => (v > 4 ? (2 * v * v * (r + v - 2)) / (r * (v - 2) ** 2 * (v - 4)) : NaN),
 };

@@ -230,6 +230,48 @@ export const sources: Source[] = [
     url: 'https://www.informs.org/Explore/History-of-O.R.-Excellence/O.R.-Methodologies/Queueing-Models',
     verified: 'search-snippet',
   },
+  {
+    id: 'fisher-history-mactutor',
+    cite: 'MacTutor — R. A. Fisher: History of Statistics (توزيع مربع كاي: أصله عند هلمرت، وأعاد بيرسون اكتشافه عام 1900)',
+    url: 'https://mathshistory.st-andrews.ac.uk/Extras/Fisher_Statistics_History',
+    verified: 'search-snippet',
+  },
+  {
+    id: 'helmert-wiki',
+    cite: 'Friedrich Robert Helmert — Wikipedia (اكتشافه توزيع مربع كاي عام 1876)',
+    url: 'https://en.wikipedia.org/wiki/Friedrich_Robert_Helmert',
+    verified: 'multiple-search-snippets',
+  },
+  {
+    id: 'gosset-wiki',
+    cite: 'William Sealy Gosset — Wikipedia («Student»، مصنع غينيس، The Probable Error of a Mean, Biometrika 1908)',
+    url: 'https://en.wikipedia.org/wiki/William_Sealy_Gosset',
+    verified: 'multiple-search-snippets',
+  },
+  {
+    id: 'gosset-eom',
+    cite: 'Encyclopedia of Mathematics — Gosset, William Sealy',
+    url: 'https://encyclopediaofmath.org/wiki/Gosset,_William_Sealy',
+    verified: 'search-snippet',
+  },
+  {
+    id: 'gosset-usu',
+    cite: 'Utah State University, History of Statistics — William Sealy Gosset',
+    url: 'https://www.usu.edu/math/schneit/StatsHistory/ModernStatisticians/Gosset',
+    verified: 'search-snippet',
+  },
+  {
+    id: 'buffon-eom',
+    cite: 'Encyclopedia of Mathematics — Buffon problem (إبرة طولها l وخطوط متوازية بينها d ≥ l: الاحتمال 2l/(πd))',
+    url: 'https://encyclopediaofmath.org/wiki/Buffon_problem',
+    verified: 'multiple-search-snippets',
+  },
+  {
+    id: 'buffon-proofwiki',
+    cite: 'ProofWiki — Buffon’s Needle: Historical Note (Essai d’arithmétique morale, 1777؛ ولابلاس وتقدير π)',
+    url: 'https://proofwiki.org/wiki/Buffon%27s_Needle/Historical_Note',
+    verified: 'search-snippet',
+  },
 ];
 
 export const sourceById = Object.fromEntries(sources.map((s) => [s.id, s])) as Record<string, Source>;

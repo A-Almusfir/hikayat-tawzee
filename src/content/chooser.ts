@@ -12,13 +12,16 @@ export const choiceLabels: Record<ChoiceId, string> = {
   poisson: 'بواسون',
   exponential: 'الأسي',
   gamma: 'غاما',
+  uniform: 'المنتظم',
+  chisquare: 'مربع كاي',
+  t: 't (ستيودنت)',
   normal: 'الطبيعي',
   insufficient: 'المعطيات أو الشروط غير كافية',
 };
 
 /** ترتيب الخيارات في أسئلة «أي توزيع؟»: التوزيعات المنشورة فقط (من الرحلة)، ثم «غير كافية». */
 export const choiceOrder = (): ChoiceId[] => [
-  ...(['bernoulli', 'binomial', 'hypergeometric', 'geometric', 'negbin', 'poisson', 'exponential', 'gamma', 'normal'] as DistId[]).filter((d) => journey.includes(d)),
+  ...(['bernoulli', 'binomial', 'hypergeometric', 'geometric', 'negbin', 'poisson', 'exponential', 'gamma', 'uniform', 'normal', 'chisquare', 't'] as DistId[]).filter((d) => journey.includes(d)),
   'insufficient',
 ];
 

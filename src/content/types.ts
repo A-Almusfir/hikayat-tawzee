@@ -9,7 +9,10 @@ export type DistId =
   | 'poisson'
   | 'exponential'
   | 'gamma'
-  | 'normal';
+  | 'uniform'
+  | 'normal'
+  | 'chisquare'
+  | 't';
 
 /** تحقق رقمي يُستخدم في الاختبارات الآلية لضمان اتساق الإجابة مع الحساب. */
 export interface NumericCheck {

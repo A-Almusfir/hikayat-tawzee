@@ -109,7 +109,7 @@ export function DrillPage() {
             )}
           </div>
           <p className="hint">
-            تبي تذكير؟ <a href={href.exam}>ليلة الاختبار</a> فيها مخطط القرار والجدول.
+            تبي تذكير؟ <a href={href.exam}>ليلة الاختبار</a> فيها كل القوانين ومخطط القرار.
           </p>
         </>
       ) : null}

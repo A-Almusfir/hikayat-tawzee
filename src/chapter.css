@@ -338,7 +338,12 @@ main:has(.exam-night) { max-width: 72rem; }
 /* ——— ليلة الاختبار: بطاقات القوانين ——— */
 .view-tabs { display: flex; gap: 6px; margin: 1rem 0 .4rem; position: sticky; top: 0; z-index: 2; background: var(--paper); padding: .4rem 0; overflow-x: auto; }
 .view-tabs .seg-tab { min-height: 44px; white-space: nowrap; flex: none; }
-@media (max-width: 480px) { .view-tabs .seg-tab { padding-inline: .7rem; font-size: .86rem; } }
+.view-l { align-self: center; font-size: .86rem; color: var(--ink-2); flex: none; }
+html:has(.exam-night) { scroll-padding-top: 64px; }
+.law-card:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
+.jump .seg-tab { border-color: var(--rule); color: var(--ink-2); background: transparent; }
+.jump-to select { font: inherit; font-size: .85rem; min-height: 44px; border: 1.5px solid var(--rule); border-radius: 999px; padding: 0 .8rem; background: #fffdf8; color: var(--ink); }
+@media (max-width: 480px) { .view-tabs { gap: 4px; } .view-tabs .seg-tab { padding-inline: .55rem; font-size: .82rem; } .view-l { font-size: .8rem; } }
 .law-cards.view-law dt, .law-cards.view-mgf dt { display: none; }
 .law-cards.view-law dl > div, .law-cards.view-mgf dl > div { grid-template-columns: 1fr; }
 .law-cards { display: grid; gap: 12px; }
@@ -365,6 +370,7 @@ main:has(.exam-night) { max-width: 72rem; }
   .law-card dl > div { padding: 1pt 0; }
   .law-warn { background: none; padding: 1pt 3pt; }
   .view-tabs { display: none; }
+  .exam-night h2 { break-after: avoid; }
 }
 .symbols > div { display: grid; grid-template-columns: 6rem 1fr; gap: .6rem; padding: .35rem 0; border-top: 1px dotted var(--rule); }
 .symbols dt { direction: ltr; text-align: end; }

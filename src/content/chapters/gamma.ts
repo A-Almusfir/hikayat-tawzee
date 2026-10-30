@@ -84,7 +84,7 @@ export const gammaChapter: Chapter = {
             { text: '$\\beta e^{-\\beta x}$: الأسي.', correct: true, why: '$\\beta^{1}$، و$\\Gamma(1) = 0! = 1$، و$x^{0} = 1$.' },
             { text: '$e^{-\\beta x}$', why: 'هذا $P(X > x)$ للأسي، لا الكثافة.' },
             { text: '$\\beta x\\,e^{-\\beta x}$', why: 'هذا عند $\\alpha = 2$.' },
-            { text: '$\\frac{1}{\\beta}e^{-x/\\beta}$', why: 'هذه صيغة الأسي بالمقياس؛ في ورقتكم $\\beta$ معدل.' },
+            { text: '$\\frac{1}{\\beta}e^{-x/\\beta}$', why: 'هذه صيغة الأسي بالمقياس؛ و$\\beta$ هنا معدل.' },
           ],
         },
       },
@@ -119,7 +119,7 @@ export const gammaChapter: Chapter = {
     ],
     tricks: [
       '$\\alpha$ صحيح؟ حوّل سؤال غاما إلى بواسون: $P(X > x) = P(N(x) \\le \\alpha - 1)$ بمتوسط $\\beta x$.',
-      'في ورقتكم $\\beta$ **معدل**: المتوسط $\\frac{\\alpha}{\\beta}$. إن أُعطي متوسط الزمن بين الأحداث فالمعدل مقلوبه.',
+      'هنا $\\beta$ **معدل**: المتوسط $\\frac{\\alpha}{\\beta}$. إن أُعطي متوسط الزمن بين الأحداث فالمعدل مقلوبه.',
       '$\\Gamma(n) = (n-1)!$، و$\\Gamma(\\frac{1}{2}) = \\sqrt{\\pi}$، و$\\Gamma(\\alpha + 1) = \\alpha\\,\\Gamma(\\alpha)$.',
     ],
   },
@@ -149,7 +149,7 @@ export const gammaChapter: Chapter = {
         prompt: 'إذا كان $X$ غاما بـ $\\alpha = 5$ و$\\beta = 2$، فما المتوسط؟',
         options: [
           { text: '$2.5$', correct: true, why: '$\\frac{\\alpha}{\\beta} = \\frac{5}{2}$.' },
-          { text: '$10$', why: 'هذا $\\alpha\\beta$: صيغة المقياس، و$\\beta$ في ورقتكم معدل.' },
+          { text: '$10$', why: 'هذا $\\alpha\\beta$: صيغة المقياس، و$\\beta$ هنا معدل.' },
           { text: '$1.25$', why: 'هذا التباين $\\frac{\\alpha}{\\beta^{2}}$.' },
           { text: '$0.4$', why: 'هذا $\\frac{\\beta}{\\alpha}$.' },
         ],
@@ -159,7 +159,7 @@ export const gammaChapter: Chapter = {
         id: 'ch-gam-r3',
         prompt: 'كيف يرتبط مربع كاي بغاما؟',
         options: [
-          { text: 'مربع كاي بـ $v$ درجة حرية هو غاما بـ $\\alpha = \\frac{v}{2}$ و$\\beta = \\frac{1}{2}$.', correct: true, why: 'عوّض في كثافة غاما: تحصل على كثافة مربع كاي في الورقة حرفيًا.' },
+          { text: 'مربع كاي بـ $v$ درجة حرية هو غاما بـ $\\alpha = \\frac{v}{2}$ و$\\beta = \\frac{1}{2}$.', correct: true, why: 'عوّض في كثافة غاما: تحصل على كثافة مربع كاي حرفيًا.' },
           { text: 'مربع كاي هو غاما بـ $\\alpha = 1$.', why: 'هذا الأسي.' },
           { text: 'لا علاقة بينهما.', why: 'قارن الدالتين المولدتين: $(1 - 2t)^{-v/2} = (1 - \\frac{t}{1/2})^{-v/2}$.' },
           { text: 'مربع كاي هو مربع متغير غاما.', why: 'مربع كاي مربع متغير **طبيعي معياري** (وبـ $v$ درجة: مجموع $v$ منها).' },
@@ -168,6 +168,6 @@ export const gammaChapter: Chapter = {
     ],
     bridge: 'اجعل الانتظار متقطعًا: بدل الدقائق، عدد المحاولات حتى أول نجاح. هنا الهندسي، نظير الأسي بلا ذاكرة؛ وبعده ذو الحدين السالب، نظير غاما.',
   },
-  trap: 'خلط $\\beta$ المعدل بالمقياس: المتوسط في ورقتكم $\\frac{\\alpha}{\\beta}$ لا $\\alpha\\beta$.',
+  trap: 'خلط $\\beta$ المعدل بالمقياس: هنا المتوسط $\\frac{\\alpha}{\\beta}$ لا $\\alpha\\beta$.',
   reference: { labTitle: 'تجربة المراحل' },
 };

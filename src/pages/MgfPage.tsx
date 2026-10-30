@@ -94,7 +94,7 @@ function DeriveCard({ item }: { item: DeriveItem }) {
       {shown === -1 && (
         <p className="callout">
           <strong>الخلاصة: </strong>
-          <Tex tex={row.mean} />، <Tex tex={row.variance} /> — كما في <a href={href.exam}>بطاقة القوانين</a>.
+          <Tex tex={row.mean} />، <Tex tex={row.variance} /> — كما في <a href={href.exam}>بطاقات القوانين</a>.
         </p>
       )}
     </div>

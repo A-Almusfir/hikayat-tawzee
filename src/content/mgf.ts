@@ -272,7 +272,7 @@ export const derive: DeriveItem[] = [
         prompt: 'ما $E(X) = R\'(0)$؟',
         options: [
           { text: r`$\dfrac{\alpha}{\beta}$`, correct: true, why: '$\\beta$ هنا **معدل**، فالمتوسط $\\frac{\\alpha}{\\beta}$.', value: ({ al, be }) => al / be },
-          { text: r`$\alpha\beta$`, why: 'هذا متوسط غاما حين يكون $\\beta$ **مقياسًا** (كتب أخرى). في ورقتكم $\\beta$ معدل.', value: ({ al, be }) => al * be },
+          { text: r`$\alpha\beta$`, why: 'هذا متوسط غاما حين يكون $\\beta$ **مقياسًا** (كتب أخرى). وهنا $\\beta$ معدل.', value: ({ al, be }) => al * be },
           { text: r`$\dfrac{\beta}{\alpha}$`, why: 'مقلوب الصحيح.', value: ({ al, be }) => be / al },
           { text: r`$\dfrac{\alpha}{\beta^{2}}$`, why: 'هذا التباين.', value: ({ al, be }) => al / (be * be) },
         ],

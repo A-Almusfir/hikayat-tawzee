@@ -16,8 +16,8 @@ export function MorePage({ focus }: { focus?: string }) {
   return (
     <article className="more-page">
       <header className="page-head">
-        <h1 tabIndex={-1}>توزيعات أخرى في الورقة</h1>
-        <p className="lead">ويبل وبيتا وF: لكل منها بطاقة من الورقة، ومتى يظهر، وعلاقته بتوزيع آخر، ومثال محلول، ومنحنى تغيّر معلماته.</p>
+        <h1 tabIndex={-1}>توزيعات أخرى</h1>
+        <p className="lead">ويبل وبيتا وF: لكل منها بطاقة قوانين، ومتى يظهر، وعلاقته بتوزيع آخر، ومثال محلول، ومنحنى تغيّر معلماته.</p>
         <p className="hint">والطبيعي المعياري في <a href={href.dist('normal')}>فصل الطبيعي</a> مع جدول Φ، وكل القوانين في <a href={href.exam}>ليلة الاختبار</a>.</p>
       </header>
       {moreCards.map((c) => (

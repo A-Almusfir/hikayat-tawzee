@@ -226,7 +226,7 @@ export function RefsPage() {
           <li><Rich text="فوق الهندسي: مجتمع $N$ فيه $k$ نجاحًا، ونسحب $n$ دون إرجاع." /></li>
           <li><Rich text="ذو الحدين السالب: $X$ عدد **المحاولات** حتى النجاح رقم $r$، و$x \ge r$ (برامج مثل R تعدّ الإخفاقات)." /></li>
           <li><Rich text="غاما: $\alpha$ شكل و$\beta$ **معدل**؛ المتوسط $\alpha/\beta$." /></li>
-          <li><Rich text="ويبل (بصيغة الورقة): $f(x) = \alpha\beta x^{\beta-1}e^{-\alpha x^{\beta}}$، و$\beta$ هو الشكل." /></li>
+          <li><Rich text="ويبل (بصيغتنا): $f(x) = \alpha\beta x^{\beta-1}e^{-\alpha x^{\beta}}$، و$\beta$ هو الشكل." /></li>
           <li><Rich text="مربع كاي وt وF: $v$ (و$r$ للبسط في F) درجات الحرية." /></li>
           <li><Rich text="الطبيعي: $N(\mu, \sigma^2)$ حيث $\sigma$ الانحراف المعياري و$\sigma^2$ التباين." /></li>
         </ul>

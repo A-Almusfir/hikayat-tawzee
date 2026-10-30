@@ -1,4 +1,5 @@
-import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { flushSync } from 'react-dom';
 import type { DistId } from '../content/types';
 import { decisionNote, decisionTree, hint, type DecisionNode, type Leaf } from '../content/decision';
 import { choiceLabels } from '../content/chooser';
@@ -36,7 +37,19 @@ export function ExamNightPage() {
       </header>
 
       <nav className="jump no-print" aria-label="أقسام الصفحة">
-        {[['cards-discrete', 'المتقطعة'], ['cards-continuous', 'المستمرة'], ['sym-h', 'الرموز'], ['decision-h', 'المخطط'], ['twins-h', 'التوائم']].map(([id, t]) => (
+        <label className="jump-to">
+          <span className="sr-only">روح لتوزيع</span>
+          <select
+            value=""
+            onChange={(e) => {
+              if (e.target.value) jump(`law-${e.target.value}`);
+            }}
+          >
+            <option value="">روح لتوزيع…</option>
+            {sheet.map((s) => <option key={s.id} value={s.id}>{s.nameAr}</option>)}
+          </select>
+        </label>
+        {[['sym-h', 'الرموز'], ['decision-h', 'المخطط'], ['twins-h', 'التوائم']].map(([id, t]) => (
           <button key={id} type="button" className="seg-tab" onClick={() => jump(id)}>{t}</button>
         ))}
       </nav>
@@ -119,11 +132,26 @@ const VIEWS: [View, string][] = [['all', 'الكل'], ['law', 'القانون'],
 /** بطاقة لكل توزيع، كاملة بنفسها. والأزرار تعرض حقلًا واحدًا في كل البطاقات للمقارنة. */
 function LawCards() {
   const [view, setView] = useState<View>('all');
+  const top = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    // الطباعة دائمًا بالبطاقات كاملة، ويُرسم ذلك قبل أن يلتقط المتصفح الصفحة
+    const on = () => flushSync(() => setView('all'));
+    window.addEventListener('beforeprint', on);
+    return () => window.removeEventListener('beforeprint', on);
+  }, []);
+  const choose = (v: View) => {
+    setView(v);
+    // من عمق الصفحة: ارجع إلى أول البطاقات حتى لا يضيع مكانك بعد تغيّر الطول
+    const el = top.current;
+    if (el && el.getBoundingClientRect().top < 0) requestAnimationFrame(() => el.scrollIntoView({ block: 'start' }));
+  };
   return (
     <>
-      <div className="view-tabs no-print" role="group" aria-label="وش تعرض البطاقات؟">
+      <div ref={top} />
+      <div className="view-tabs no-print" role="group" aria-labelledby="view-l">
+        <span id="view-l" className="view-l">اعرض:</span>
         {VIEWS.map(([v, t]) => (
-          <button key={v} type="button" className={`seg-tab${view === v ? ' on' : ''}`} aria-pressed={view === v} onClick={() => setView(v)}>{t}</button>
+          <button key={v} type="button" className={`seg-tab${view === v ? ' on' : ''}`} aria-pressed={view === v} onClick={() => choose(v)}>{t}</button>
         ))}
       </div>
       {view === 'mgf' && (
@@ -149,9 +177,9 @@ function LawCard({ s, view }: { s: SheetRow; view: View }) {
   const show = (f: SheetField) => view === 'all' || view === f;
   const warn = s.warn && show(s.warn.on) ? s.warn : undefined;
   return (
-    <article className="law-card" style={{ '--c': dist ? identity[dist].color : 'var(--ink-2)' } as CSSProperties}>
+    <article className="law-card" id={`law-${s.id}`} tabIndex={-1} aria-labelledby={`law-h-${s.id}`} style={{ '--c': dist ? identity[dist].color : 'var(--ink-2)' } as CSSProperties}>
       <header>
-        <h3>
+        <h3 id={`law-h-${s.id}`}>
           {dist && <Glyph id={dist} size={20} />} {s.nameAr} <span className="en" lang="en" dir="ltr">{s.nameEn}</span>
         </h3>
         {view === 'all' && <p className="law-when"><strong>متى؟ </strong><Rich text={s.when} /></p>}
@@ -179,7 +207,7 @@ function LawCard({ s, view }: { s: SheetRow; view: View }) {
             <dd>
               {s.mgf.kind === 'closed' ? (
                 <>
-                  <Tex tex={`M_X(t) = ${s.mgf.tex}`} />
+                  <Tex tex={`M_${s.id === 'stdnormal' ? 'Z' : 'X'}(t) = ${s.mgf.tex}`} />
                   <span className="sub">{s.mgf.domain.startsWith('لكل') ? '' : 'بشرط '}<Rich text={s.mgf.domain} /></span>
                 </>
               ) : (
@@ -198,7 +226,11 @@ function LawCard({ s, view }: { s: SheetRow; view: View }) {
         )}
       </dl>
       {warn && <p className="law-warn"><strong>انتبه: </strong><Rich text={warn.text} /></p>}
-      {view === 'all' && link && <a className="law-link no-print" href={link}>{rowLink(s.id)?.startsWith('#/more') ? 'البطاقة الكاملة' : 'افتح الفصل'} ←</a>}
+      {view === 'all' && link && (
+        <a className="law-link no-print" href={link} aria-label={link.startsWith('#/more') ? `البطاقة الكاملة لـ${s.nameAr}` : `افتح فصل ${s.nameAr}`}>
+          {link.startsWith('#/more') ? 'البطاقة الكاملة' : 'افتح الفصل'} ←
+        </a>
+      )}
     </article>
   );
 }

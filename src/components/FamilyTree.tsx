@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { sheetById } from '../content/sheet';
-import { edges } from '../content/family';
+import { edges, type Panel } from '../content/family';
 import { identity } from '../content/identity';
 import { sourceById } from '../content/sources';
 import type { DistId } from '../content/types';
@@ -9,44 +9,100 @@ import { GlyphPaths } from './Glyph';
 import { Rich, Tex } from './Tex';
 
 // المحور السيني LTR داخل SVG؛ النصوص العربية تُرسم بـ direction="rtl".
-const POS: Partial<Record<DistId, { x: number; y: number; name: 'above' | 'below' | 'left' | 'right' }>> = {
-  bernoulli: { x: 250, y: 72, name: 'above' },
-  geometric: { x: 120, y: 198, name: 'left' },
-  binomial: { x: 330, y: 198, name: 'right' },
-  exponential: { x: 120, y: 354, name: 'below' },
-  poisson: { x: 270, y: 354, name: 'below' },
-  normal: { x: 404, y: 354, name: 'below' },
+// ثلاث لوحات بمواضع يدوية (يفحص سكربت الواجهة عدم تقاطع التسميات في كل لوحة).
+// التوزيع الذي يظهر في لوحتين بوابة بينهما (مثل الهندسي وبواسون وذي الحدين في لوحة المستمرة).
+type Place = { x: number; y: number; name: 'above' | 'below' | 'left' | 'right' };
+const PANELS: Record<Panel, { title: string; first: string; pos: Partial<Record<DistId, Place>>; label: Record<string, { x: number; y: number }> }> = {
+  discrete: {
+    title: 'المتقطعة',
+    first: 'bin-poi',
+    pos: {
+      bernoulli: { x: 200, y: 72, name: 'above' },
+      hypergeometric: { x: 400, y: 72, name: 'above' },
+      geometric: { x: 112, y: 210, name: 'left' },
+      binomial: { x: 310, y: 210, name: 'right' },
+      negbin: { x: 112, y: 360, name: 'below' },
+      poisson: { x: 310, y: 360, name: 'below' },
+    },
+    label: {
+      'bern-bin': { x: 288, y: 128 },
+      'bern-geo': { x: 130, y: 128 },
+      'hyp-bin': { x: 394, y: 150 },
+      'geo-nb': { x: 158, y: 290 },
+      'bin-poi': { x: 354, y: 290 },
+    },
+  },
+  continuous: {
+    title: 'من العدّ إلى القياس',
+    first: 'poi-exp',
+    pos: {
+      uniform: { x: 80, y: 72, name: 'above' },
+      geometric: { x: 230, y: 72, name: 'above' },
+      poisson: { x: 380, y: 72, name: 'above' },
+      exponential: { x: 230, y: 222, name: 'right' },
+      binomial: { x: 410, y: 222, name: 'above' },
+      gamma: { x: 120, y: 360, name: 'below' },
+      normal: { x: 380, y: 360, name: 'below' },
+    },
+    label: {
+      'uni-exp': { x: 128, y: 160 },
+      'geo-exp': { x: 262, y: 150 },
+      'poi-exp': { x: 344, y: 130 },
+      'exp-gam': { x: 148, y: 284 },
+      'bin-norm': { x: 432, y: 298 },
+    },
+  },
+  sampling: {
+    title: 'المعاينة',
+    first: 'norm-chi',
+    pos: {
+      normal: { x: 110, y: 90, name: 'above' },
+      gamma: { x: 350, y: 90, name: 'above' },
+      chisquare: { x: 230, y: 232, name: 'right' },
+      t: { x: 110, y: 370, name: 'below' },
+    },
+    label: {
+      'norm-chi': { x: 200, y: 148 },
+      'gam-chi': { x: 316, y: 182 },
+      'chi-t': { x: 206, y: 318 },
+      't-norm': { x: 66, y: 232 },
+    },
+  },
 };
-// مواضع التسميات بعيدًا عن الخطوط والأسماء (يفحص سكربت الواجهة عدم تقاطعها)
-const LABEL: Record<string, { x: number; y: number }> = {
-  'bern-bin': { x: 318, y: 128 },
-  'bern-geo': { x: 152, y: 128 },
-  'bin-poi': { x: 270, y: 280 },
-  'bin-norm': { x: 404, y: 280 },
-  'geo-exp': { x: 92, y: 282 },
-  'poi-exp': { x: 195, y: 430 },
-};
+const PANEL_ORDER: Panel[] = ['discrete', 'continuous', 'sampling'];
 const NAME_OFFSET = { above: [0, -42], below: [0, 50], left: [-70, 6], right: [76, 6] } as const;
 const R = 30;
 
 export function FamilyTree({ initial = 'bin-poi' }: { initial?: string }) {
+  const [panel, setPanel] = useState<Panel>(() => edges.find((x) => x.id === initial)?.panel ?? 'discrete');
   const [sel, setSel] = useState(initial);
-  const e = edges.find((x) => x.id === sel)!;
+  const P = PANELS[panel];
+  const POS = P.pos, LABEL = P.label;
+  const shown = edges.filter((x) => x.panel === panel);
+  const e = shown.find((x) => x.id === sel) ?? shown.find((x) => x.id === P.first)!;
+  const pick = (p: Panel) => (setPanel(p), setSel(PANELS[p].first));
   return (
     <div className="tree">
-      <svg viewBox="0 0 460 444" className="tree-svg" role="group" aria-label="شجرة التوزيعات: اضغط على سهم لترى العلاقة وشرطها، أو على توزيع لتفتح فصله" direction="ltr">
+      <div className="seg-tabs tree-tabs" role="group" aria-label="لوحات الشجرة">
+        {PANEL_ORDER.map((p) => (
+          <button key={p} type="button" className={`seg-tab ${p === panel ? 'on' : ''}`} aria-pressed={p === panel} onClick={() => pick(p)}>
+            {PANELS[p].title}
+          </button>
+        ))}
+      </div>
+      <svg viewBox="0 0 460 444" className="tree-svg" role="group" aria-label={`شجرة التوزيعات، لوحة ${P.title}: اضغط على سهم لترى العلاقة وشرطها، أو على توزيع لتفتح فصله`} direction="ltr">
         <defs>
           <marker id="tarr" viewBox="0 0 10 10" refX="8.5" refY="5" markerWidth="11" markerHeight="11" markerUnits="userSpaceOnUse" orient="auto-start-reverse">
             <path d="M0,0 L10,5 L0,10 z" fill="currentColor" />
           </marker>
         </defs>
-        {edges.map((ed) => {
+        {shown.map((ed) => {
           const a = POS[ed.from]!, b = POS[ed.to]!;
           const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy);
           const pad = R + 6;
           const x1 = a.x + (dx / len) * pad, y1 = a.y + (dy / len) * pad;
           const x2 = b.x - (dx / len) * (pad + 2), y2 = b.y - (dy / len) * (pad + 2);
-          const active = ed.id === sel;
+          const active = ed.id === e.id;
           const lp = LABEL[ed.id];
           return (
             <g

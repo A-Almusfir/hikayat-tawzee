@@ -94,8 +94,13 @@ describe('أرقام الفصل تطابق الحساب', () => {
 });
 
 describe('الشجرة والهوية والرحلة', () => {
-  it('الأسهم الست موجودة، والتقريبية منها تحمل شرطًا', () => {
-    expect(edges.map((e) => e.id).sort()).toEqual(['bern-bin', 'bern-geo', 'bin-norm', 'bin-poi', 'geo-exp', 'poi-exp']);
+  it('الأسهم المتفق عليها موجودة، وكل منها يحمل شرطًا', () => {
+    expect(edges.map((e) => e.id).sort()).toEqual(
+      ['bern-bin', 'bern-geo', 'bin-norm', 'bin-poi', 'chi-t', 'exp-gam', 'gam-chi', 'geo-exp', 'geo-nb', 'hyp-bin', 'norm-chi', 'poi-exp', 't-norm', 'uni-exp'],
+    );
+    // كل توزيع في الرحلة يظهر في الشجرة
+    const inTree = new Set(edges.flatMap((e) => [e.from, e.to]));
+    for (const d of journey) expect(inTree.has(d), d).toBe(true);
     for (const e of edges) expect(e.condition.length).toBeGreaterThan(20);
   });
   it('كل فصل مسجل في الرحلة والعكس، ولكل فصل جسر وهوية وصف في ورقة القوانين', () => {

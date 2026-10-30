@@ -22,7 +22,7 @@ export function HomePage() {
 
       <section className="h2-tree" aria-labelledby="tree-h">
         <h2 id="tree-h">شجرة العائلة</h2>
-        <p className="hint">اضغط على أي سهم لترى العلاقة وشرطها، أو على أي توزيع لتفتح فصله.</p>
+        <p className="hint">ثلاث لوحات: المتقطعة، ثم من العدّ إلى القياس، ثم المعاينة. اضغط على أي سهم لترى العلاقة وشرطها، أو على أي توزيع لتفتح فصله.</p>
         <FamilyTree />
       </section>
 

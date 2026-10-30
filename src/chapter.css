@@ -486,3 +486,5 @@ main:has(.exam-night) { max-width: 72rem; }
 .more-example h3 { margin: .4rem 0; font-size: 1rem; }
 .more-example .ex-step { margin: .4rem 0; }
 .more-example .answer { font-weight: 700; }
+
+.tree-tabs { grid-column: 1 / -1; justify-content: center; flex-wrap: wrap; }

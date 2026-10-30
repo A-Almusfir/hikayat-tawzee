@@ -45,6 +45,10 @@ async function texOverflow(page, tag, route) {
     // الشجرة: لا تتقاطع التسميات مع الأسماء أو الدوائر
     await page.goto(BASE + '#/');
     await page.waitForTimeout(300);
+    // كل لوحة من لوحات الشجرة على حدة
+    const tabs = page.locator('.tree-tabs .seg-tab');
+    for (let ti = 0; ti < Math.max(1, await tabs.count()); ti++) {
+    if (await tabs.count()) { await tabs.nth(ti).click(); await page.waitForTimeout(150); }
     const overlaps = await page.evaluate(() => {
       const box = (el) => el.getBoundingClientRect();
       const hit = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
@@ -55,7 +59,14 @@ async function texOverflow(page, tag, route) {
       for (let i = 0; i < labels.length; i++) for (let j = i + 1; j < labels.length; j++) if (hit(labels[i][1], labels[j][1])) out.push(`${labels[i][0]} × ${labels[j][0]}`);
       return out;
     });
-    overlaps.forEach((o) => fail(`[${tag}] الشجرة: تداخل ${o}`));
+    overlaps.forEach((o) => fail(`[${tag}] الشجرة (لوحة ${ti + 1}): تداخل ${o}`));
+    // لا يخرج أي اسم أو تسمية عن حدود الرسم
+    const outside = await page.evaluate(() => {
+      const svg = document.querySelector('.tree-svg').getBoundingClientRect();
+      return [...document.querySelectorAll('.t-label, .t-name')].filter((e) => { const r = e.getBoundingClientRect(); return r.left < svg.left - 1 || r.right > svg.right + 1 || r.top < svg.top - 1 || r.bottom > svg.bottom + 1; }).map((e) => e.textContent);
+    });
+    outside.forEach((o) => fail(`[${tag}] الشجرة (لوحة ${ti + 1}): «${o}» خارج الرسم`));
+    }
 
     if (tag === 'mobile') {
       for (const ch of CHAPTERS) {

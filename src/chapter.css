@@ -264,21 +264,6 @@ html:has(.chapter) { scroll-padding-top: 64px; }
 /* ——— ليلة الاختبار ——— */
 main:has(.exam-night) { max-width: 72rem; }
 .exam-night h2 { font-family: var(--font); font-weight: 700; margin-top: 1.6rem; }
-.cheat { width: 100%; border-collapse: collapse; font-size: .92rem; }
-.cheat th, .cheat td { border-bottom: 1px solid var(--rule); padding: .45rem .5rem; text-align: start; vertical-align: top; }
-.cheat thead th { font-size: .8rem; color: var(--ink-2); font-weight: 500; }
-.cheat tbody th { white-space: nowrap; border-inline-start: 5px solid var(--c); }
-.cheat tbody th a { color: var(--ink); font-weight: 700; text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
-.cheat .tag { margin-inline-start: 0; margin-top: .2rem; }
-@media (max-width: 899px) {
-  .cheat thead { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
-  .cheat, .cheat tbody, .cheat tr, .cheat th, .cheat td { display: block; width: 100%; }
-  .cheat tr { border: 1.5px solid var(--rule); border-inline-start: 6px solid var(--c); border-radius: 12px; margin-bottom: .7rem; background: #fffdf8; padding: .3rem .2rem; }
-  .cheat tbody th { border: none; display: flex; justify-content: space-between; align-items: center; }
-  .cheat td { border: none; padding: .15rem .6rem; display: grid; grid-template-columns: 6.5rem 1fr; gap: 6px; }
-  .cheat td::before { content: attr(data-label); color: var(--ink-2); font-size: .82rem; }
-  .cheat td > * { min-width: 0; }
-}
 .decision { overflow-x: auto; }
 .dnode { border-inline-start: 2px solid var(--ink-2); padding-inline-start: .8rem; margin: .3rem 0; }
 .dq { font-weight: 700; margin: .2rem 0; }
@@ -304,45 +289,23 @@ main:has(.exam-night) { max-width: 72rem; }
 
 @media print {
   .exam-night .page-head .lead, .exam-night .btn-row { display: none !important; }
-  .cheat { font-size: 9pt; }
-  .cheat tbody tr { break-inside: avoid; }
   .exam-night section { break-inside: avoid-page; }
   .twins { grid-template-columns: 1fr 1fr; }
   .twin { break-inside: avoid; }
-}
-.cheat td .tex { display: inline-block; white-space: nowrap; }
-.cheat td[data-label='القانون'] { overflow-x: auto; }
-@media (max-width: 899px) {
-  .cheat { font-size: .86rem; }
-  .cheat tr { padding: .2rem 0; margin-bottom: .5rem; }
-  .cheat td { grid-template-columns: 4.6rem 1fr; padding: .08rem .55rem; line-height: 1.55; }
-  .cheat td[data-label='ماذا يسأل؟'] { font-weight: 500; }
 }
 /* صفحات الأدوات خارج الفصول: لون محايد للعناصر التي تستعمل لون الفصل */
 .drill, .exam-night, .chooser, .mgf { --c: var(--ink); --c-tint: #f1ede4; --c-tint2: #e6e1d6; }
 .twin-side > .tex { display: block; text-align: right; overflow-x: auto; overflow-y: hidden; font-size: .9em; padding-bottom: 2px; }
 @media (max-width: 520px) { .twin-pair { grid-template-columns: 1fr; gap: 10px; } }
-/* المعادلة بجانب تسميتها في بطاقات الجوال، والتسمية لا تُقرأ مرتين */
-@media (max-width: 899px) {
-  .cheat td > .tex { justify-self: start; }
-  .cheat td::before { content: attr(data-label); content: attr(data-label) / ''; }
-}
 .drill-card .scenario { font-size: 1.12rem; background: #fffdf8; border: 1.5px solid var(--ink); border-radius: 12px; padding: .2rem 1rem; }
 .drill-card .scenario:focus { outline: 3px solid var(--focus); outline-offset: 2px; }
 .btn[aria-disabled='true'] { opacity: .45; cursor: not-allowed; }
 
-/* طباعة ليلة الاختبار: جدول حقيقي بالعرض، دون صفحة أولى فارغة */
+/* طباعة ليلة الاختبار: بطاقات بثلاثة أعمدة بالعرض، دون صفحة أولى فارغة */
 @page exam { size: A4 landscape; margin: 10mm; }
 @media print {
   .exam-night { page: exam; }
   .exam-night section { break-inside: auto !important; }
-  .cheat { display: table !important; width: 100%; }
-  .cheat thead { display: table-header-group !important; position: static !important; width: auto !important; height: auto !important; overflow: visible !important; clip: auto !important; }
-  .cheat tbody { display: table-row-group !important; }
-  .cheat tr { display: table-row !important; border: none !important; padding: 0 !important; margin: 0 !important; background: none !important; }
-  .cheat th, .cheat td { display: table-cell !important; width: auto !important; padding: 3pt 4pt !important; border-bottom: 1px solid #999 !important; }
-  .cheat td::before { content: none !important; }
-  .cheat tbody th { border-inline-start: 4px solid var(--c) !important; }
 }
 .numeric label.pq { display: block; margin: .3rem 0; }
 .num-row { display: flex; gap: 8px; align-items: center; }
@@ -372,33 +335,37 @@ main:has(.exam-night) { max-width: 72rem; }
 @media print { .exam-night .fold > summary { break-after: avoid; } .exam-night .fold { break-inside: auto; } }
 @media print { .exam-night details::details-content { content-visibility: visible; display: block; } }
 
-/* ——— ليلة الاختبار: جدولا ورقة القوانين ——— */
-.sheet-table td > .tex { display: block; text-align: right; margin: .25rem 0; }
-.sheet-table .sub { display: block; color: var(--ink-2); font-size: .85em; }
-.sheet-note .tex { white-space: normal; }
-.sheet-table tbody th { white-space: normal; min-width: 8.5rem; }
-.sheet-table thead .tex { color: var(--ink); font-size: 1.05em; }
-.sheet-table tbody tr:focus { outline: 3px solid var(--focus); outline-offset: -3px; }
-.sheet-name { display: flex; flex-direction: column; gap: 2px; }
-.sheet-name a, .sheet-name .nolink { color: var(--ink); font-weight: 700; text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
-.sheet-name a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
-.sheet-name .en { font-size: .8rem; color: var(--ink-2); font-weight: 400; }
-.sheet-marks { display: flex; flex-wrap: wrap; gap: 4px; margin-top: .3rem; align-items: center; }
-.fix-mark { font: inherit; font-size: .78rem; font-weight: 700; min-width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid currentColor; color: var(--ink-2); background: #fffdf8; cursor: pointer; padding: 0 4px; }
-@media (pointer: coarse) { .fix-mark { min-width: 36px; height: 36px; font-size: .85rem; } .sheet-marks { gap: 8px; } }
-.fix-mark:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
-.sheet-note { display: block; font-size: .86rem; color: var(--ink-2); }
-.sheet-note strong { color: var(--ink); }
-.sheet-fixes ol { padding-inline-start: 2rem; }
-.sheet-fixes li { margin: .45rem 0; line-height: 1.75; }
-.sheet-fixes li:focus { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
-.fix-kind { display: inline-block; font-size: .75rem; font-weight: 700; border-radius: 6px; padding: 0 .4rem; border: 1px solid currentColor; }
-.fix-kind.error, .fix-mark.error { color: var(--no); }
-.fix-kind.add, .fix-mark.add { color: var(--ok); }
-.fix-kind.clarify, .fix-mark.clarify { color: var(--ink); }
-.fix-kind.notation, .fix-mark.notation { color: var(--ink-2); }
-.fix-mark.error { background: #fbeae6; }
-.fix-mark.notation, .fix-kind.notation { border-style: dashed; }
+/* ——— ليلة الاختبار: بطاقات القوانين ——— */
+.view-tabs { display: flex; gap: 6px; margin: 1rem 0 .4rem; position: sticky; top: 0; z-index: 2; background: var(--paper); padding: .4rem 0; overflow-x: auto; }
+.view-tabs .seg-tab { min-height: 44px; white-space: nowrap; flex: none; }
+@media (max-width: 480px) { .view-tabs .seg-tab { padding-inline: .7rem; font-size: .86rem; } }
+.law-cards.view-law dt, .law-cards.view-mgf dt { display: none; }
+.law-cards.view-law dl > div, .law-cards.view-mgf dl > div { grid-template-columns: 1fr; }
+.law-cards { display: grid; gap: 12px; }
+@media (min-width: 900px) { .law-cards { grid-template-columns: 1fr 1fr; } .law-cards.view-mgf, .law-cards.view-moments { grid-template-columns: 1fr 1fr 1fr; } }
+.law-card { border: 1.5px solid var(--rule); border-inline-start: 6px solid var(--c); border-radius: 12px; background: #fffdf8; padding: .7rem .9rem; display: flex; flex-direction: column; gap: .35rem; min-width: 0; }
+.law-card h3 { margin: 0; font-size: 1.08rem; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.law-card h3 .en { font-size: .8rem; color: var(--ink-2); font-weight: 400; }
+.law-when { margin: 0; font-size: .92rem; color: var(--ink-2); }
+.law-when strong { color: var(--ink); }
+.law-card dl { margin: 0; display: grid; gap: .15rem; }
+.law-card dl > div { display: grid; grid-template-columns: 5.6rem 1fr; gap: 8px; padding: .3rem 0; border-top: 1px dotted var(--rule); align-items: start; }
+.law-card dt { color: var(--ink-2); font-size: .85rem; padding-top: .15rem; }
+.law-card dd { margin: 0; min-width: 0; }
+.law-card dd > .tex { display: block; text-align: right; overflow-x: auto; overflow-y: hidden; padding-bottom: 2px; }
+.law-card .sub { display: block; color: var(--ink-2); font-size: .86em; }
+.law-note { display: block; font-size: .9rem; }
+.law-note .tex { white-space: normal; }
+.law-warn { margin: .2rem 0 0; font-size: .9rem; background: #fbf1df; border-inline-start: 3px solid var(--accent); border-radius: 6px; padding: .35rem .6rem; }
+.law-link { align-self: flex-start; font-size: .9rem; font-weight: 700; color: var(--ink); }
+@media (max-width: 420px) { .law-card dl > div { grid-template-columns: 1fr; gap: 2px; } }
+@media print {
+  .law-cards { grid-template-columns: 1fr 1fr 1fr !important; gap: 4pt; font-size: 8pt; }
+  .law-card { break-inside: avoid; padding: 3pt 5pt; border-width: 1px; border-inline-start-width: 4px; }
+  .law-card dl > div { padding: 1pt 0; }
+  .law-warn { background: none; padding: 1pt 3pt; }
+  .view-tabs { display: none; }
+}
 .symbols > div { display: grid; grid-template-columns: 6rem 1fr; gap: .6rem; padding: .35rem 0; border-top: 1px dotted var(--rule); }
 .symbols dt { direction: ltr; text-align: end; }
 .symbols dd { margin: 0; }
@@ -408,17 +375,6 @@ main:has(.exam-night) { max-width: 72rem; }
 .traps a { color: var(--ink); font-weight: 700; display: inline-flex; gap: 6px; align-items: center; }
 .trap-q { display: block; color: var(--ink-2); font-size: .9rem; }
 .traps p { margin: .25rem 0; font-size: .92rem; }
-@media (max-width: 899px) {
-  .sheet-table td { display: block; padding: .3rem .7rem; }
-  .sheet-table td::before { display: block; font-size: .75rem; }
-  .sheet-table tbody th { flex-direction: column; align-items: flex-start; gap: 2px; }
-}
-@media print {
-  .sheet-table { font-size: 8pt; }
-  .fix-mark { border-width: 1px; min-width: 0; height: auto; padding: 0 3pt; }
-  .sheet-fixes { font-size: 9pt; }
-  .sheet-fixes li { margin: 1pt 0; line-height: 1.4; }
-}
 
 /* ——— الدالة المولدة ——— */
 .mgf h2 { font-family: var(--font); font-weight: 700; margin-top: 1.6rem; }

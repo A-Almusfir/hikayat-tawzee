@@ -690,7 +690,7 @@ export const identify: IdentifyItem[] = [
       prompt: 'ما المعلمات؟',
       options: [
         { text: '$\\alpha = 2$، $\\beta = 3$', correct: true, why: 'القوة $-\\alpha$، والمقسوم عليه $t$ هو المعدل $\\beta$.', p: { al: 2, be: 3 } },
-        { text: '$\\alpha = 2$، $\\beta = \\frac{1}{3}$', why: 'في صيغة الورقة $\\beta$ معدل: $1 - \\frac{t}{\\beta}$، فـ $\\beta = 3$.', p: { al: 2, be: 1 / 3 } },
+        { text: '$\\alpha = 2$، $\\beta = \\frac{1}{3}$', why: 'في صيغتنا $\\beta$ معدل: $1 - \\frac{t}{\\beta}$، فـ $\\beta = 3$.', p: { al: 2, be: 1 / 3 } },
         { text: '$\\alpha = 3$، $\\beta = 2$', why: 'تبادلت المعلمتان.', p: { al: 3, be: 2 } },
       ],
     },

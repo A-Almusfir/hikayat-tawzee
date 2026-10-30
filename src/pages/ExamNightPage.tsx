@@ -6,7 +6,7 @@ import { distById } from '../content/distributions';
 import { chapters } from '../content/chapters';
 import { identity, journey } from '../content/identity';
 import { moreCards } from '../content/more';
-import { sheet, sheetById, sheetFixes, symbols, type SheetRow } from '../content/sheet';
+import { sheet, sheetById, symbols, type SheetField, type SheetRow } from '../content/sheet';
 import { twins } from '../content/twins';
 import { Glyph } from '../components/Glyph';
 import { Rich, Tex } from '../components/Tex';
@@ -18,7 +18,7 @@ export function ExamNightPage() {
     <article className="exam-night">
       <header className="page-head">
         <h1 tabIndex={-1}>ليلة الاختبار</h1>
-        <p className="lead">ورقة القوانين كاملة بترتيبها وأعمدتها: {sheet.filter((s) => !s.extra).length} توزيعًا، ومعها ملاحظات تكمل ما ينقصها وتصحح خطأها. ثم قاموس الرموز، ومخطط يحدد التوزيع من نص المسألة.</p>
+        <p className="lead">كل القوانين في بطاقات: {sheet.length} توزيعًا، لكل واحد متى نستعمله وقانونه ومتوسطه وتباينه ودالته المولدة. ثم قاموس الرموز، ومخطط يحدد التوزيع من نص المسألة.</p>
         <div className="btn-row no-print">
           <button
             type="button"
@@ -36,28 +36,11 @@ export function ExamNightPage() {
       </header>
 
       <nav className="jump no-print" aria-label="أقسام الصفحة">
-        {[['sheet-discrete', 'المتقطعة'], ['sheet-continuous', 'المستمرة'], ['fix-h', 'الملاحظات'], ['sym-h', 'الرموز'], ['decision-h', 'المخطط'], ['twins-h', 'التوائم']].map(([id, t]) => (
+        {[['cards-discrete', 'المتقطعة'], ['cards-continuous', 'المستمرة'], ['sym-h', 'الرموز'], ['decision-h', 'المخطط'], ['twins-h', 'التوائم']].map(([id, t]) => (
           <button key={id} type="button" className="seg-tab" onClick={() => jump(id)}>{t}</button>
         ))}
       </nav>
-      <p className="hint">الأرقام بجانب أسماء التوزيعات = ملاحظات على الورقة تحت الجدولين: الأحمر خطأ في الورقة، والأخضر إضافة، والكحلي توضيح، والمتقطع اختلاف رموز.</p>
-      <SheetTable group="discrete" title="المتقطعة" />
-      <SheetTable group="continuous" title="المستمرة" />
-
-      <section aria-labelledby="fix-h" className="sheet-fixes">
-        <h2 id="fix-h">ورقة القوانين: ما ينقصها وما يحتاج تصحيحًا</h2>
-        <p>الجدولان أعلاه بترتيب ورقة قوانين المقرر وأعمدتها، لكننا عبّأنا فيهما ما تتركه الورقة فارغًا وصحّحنا خطأها، فقد يختلفان عن ورقتك المطبوعة. هذه القائمة تبيّن كل فرق وسببه: خانات فارغة، وشروط غير مذكورة، وخطأ واحد في المضمون، وأخطاء كتابة بسيطة، حتى لا تنقل الخطأ إلى إجابتك. الرقم بجانب اسم التوزيع يوصلك إلى ملاحظته، و«↑ ارجع للجدول» يرجعك.</p>
-        <ol>
-          {sheetFixes.map((f) => (
-            <li key={f.id} id={`fix-${f.id}`} tabIndex={-1}>
-              <span className={`fix-kind ${f.kind}`}>{FIX_KIND[f.kind]}</span> <Rich text={f.text} />{' '}
-              <button type="button" className="link-btn no-print" onClick={() => scrollToId(`row-${f.rows[0]}`)}>
-                ↑ ارجع للجدول
-              </button>
-            </li>
-          ))}
-        </ol>
-      </section>
+      <LawCards />
 
       <section aria-labelledby="sym-h">
         <h2 id="sym-h">قاموس الرموز</h2>
@@ -125,86 +108,98 @@ function jump(id: string) {
   scrollToId(id);
 }
 
-const FIX_KIND = { error: 'خطأ في الورقة', add: 'إضافة', clarify: 'توضيح', notation: 'اختلاف رموز' } as const;
-const fixNumbers = (id: SheetRow['id']) => sheetFixes.flatMap((f, i) => (f.rows.includes(id) ? [{ n: i + 1, id: f.id, kind: f.kind }] : []));
 const isDist = (id: string): id is DistId => id in identity;
-/** وجهة صف الورقة: فصله إن نُشر، وإلا بطاقته في «توزيعات أخرى»، والمعياري إلى فصل الطبيعي. */
+/** وجهة البطاقة: فصلها إن نُشر، وإلا بطاقتها في «توزيعات أخرى»، والمعياري إلى فصل الطبيعي. */
 const rowLink = (id: SheetRow['id']) =>
   isDist(id) && chapters[id] ? href.dist(id) : id === 'stdnormal' ? href.dist('normal') : moreCards.some((c) => c.id === id) ? href.more(id) : undefined;
 
-/** جدول بأعمدة ورقة المقرر نفسها. الرابط إلى الفصل يظهر فقط إن كان الفصل منشورًا. */
-function SheetTable({ group, title }: { group: SheetRow['group']; title: string }) {
-  const rows = sheet.filter((s) => s.group === group);
-  const cont = group === 'continuous';
+type View = 'all' | SheetField;
+const VIEWS: [View, string][] = [['all', 'الكل'], ['law', 'القانون'], ['moments', 'المتوسط والتباين'], ['mgf', 'الدالة المولدة']];
+
+/** بطاقة لكل توزيع، كاملة بنفسها. والأزرار تعرض حقلًا واحدًا في كل البطاقات للمقارنة. */
+function LawCards() {
+  const [view, setView] = useState<View>('all');
   return (
-    <section aria-labelledby={`sheet-${group}`}>
-      <h2 id={`sheet-${group}`}>{title}</h2>
-      <table className="cheat sheet-table" role="table">
-        <thead role="rowgroup">
-          <tr role="row">
-            <th scope="col" role="columnheader">التوزيع</th>
-            <th scope="col" role="columnheader">{cont ? <Tex tex="f(x)" /> : <Tex tex="f(x) = P(X = x)" />}</th>
-            <th scope="col" role="columnheader">المتوسط والتباين</th>
-            <th scope="col" role="columnheader"><Tex tex="M_X(t)" /></th>
-            {cont && <th scope="col" role="columnheader"><Tex tex="F(x)" /></th>}
-          </tr>
-        </thead>
-        <tbody role="rowgroup">
-          {rows.map((s) => {
-            const dist = isDist(s.id) ? s.id : undefined;
-            const name = (
-              <>
-                {dist && <Glyph id={dist} size={20} />} {s.nameAr}
-              </>
-            );
-            return (
-              <tr key={s.id} id={`row-${s.id}`} tabIndex={-1} role="row" style={{ '--c': dist ? identity[dist].color : 'var(--ink-2)' } as CSSProperties}>
-                <th scope="row" role="rowheader">
-                  <span className="sheet-name">
-                    {rowLink(s.id) ? <a href={rowLink(s.id)}>{name}</a> : <span className="nolink">{name}</span>}
-                    <span className="en" lang="en" dir="ltr">{s.nameEn}</span>
-                  </span>
-                  <span className="sheet-marks">
-                    {s.extra && <span className="tag">ليس في الورقة</span>}
-                    {fixNumbers(s.id).map((f) => (
-                      <button key={f.id} type="button" className={`fix-mark ${f.kind}`} aria-label={`ملاحظة ${f.n} (${FIX_KIND[f.kind]}): انتقل إليها`} onClick={() => scrollToId(`fix-${f.id}`)}>
-                        {f.n}
-                      </button>
-                    ))}
-                  </span>
-                </th>
-                <td role="cell" data-label="القانون">
-                  <Tex tex={s.f} />
-                  <span className="sub"><Tex tex={s.support} /></span>
-                  <Rich className="sub" text={s.params} />
-                </td>
-                <td role="cell" data-label="المتوسط والتباين">
-                  <Tex tex={s.mean} />
-                  <Tex tex={s.variance} />
-                </td>
-                <td role="cell" data-label="الدالة المولدة">
-                  {s.mgf.kind === 'closed' ? (
-                    <>
-                      <Tex tex={s.mgf.tex} />
-                      <Rich className="sub" text={s.mgf.domain} />
-                    </>
-                  ) : (
-                    <span className="sheet-note">
-                      <strong>{s.mgf.kind === 'none' ? 'غير موجودة' : 'بلا صيغة بسيطة'}</strong> <Rich text={s.mgf.note} />
-                    </span>
-                  )}
-                </td>
-                {cont && (
-                  <td role="cell" data-label="التراكمي">
-                    {!s.cdf ? null : s.cdf.kind === 'closed' ? <Tex tex={s.cdf.tex} /> : <span className="sheet-note"><Rich text={s.cdf.note} /></span>}
-                  </td>
-                )}
-              </tr>
-            );
-          })}
-        </tbody>
-      </table>
-    </section>
+    <>
+      <div className="view-tabs no-print" role="group" aria-label="وش تعرض البطاقات؟">
+        {VIEWS.map(([v, t]) => (
+          <button key={v} type="button" className={`seg-tab${view === v ? ' on' : ''}`} aria-pressed={view === v} onClick={() => setView(v)}>{t}</button>
+        ))}
+      </div>
+      {view === 'mgf' && (
+        <p className="hint">
+          تبي تطلع المتوسط والتباين من <Tex tex="M_X(t)" /> خطوة خطوة؟ <a href={href.mgf}>صفحة الدالة المولدة</a>.
+        </p>
+      )}
+      {(['discrete', 'continuous'] as const).map((g) => (
+        <section key={g} aria-labelledby={`cards-${g}`}>
+          <h2 id={`cards-${g}`} tabIndex={-1}>{g === 'discrete' ? 'المتقطعة' : 'المستمرة'}</h2>
+          <div className={`law-cards view-${view}`}>
+            {sheet.filter((s) => s.group === g).map((s) => <LawCard key={s.id} s={s} view={view} />)}
+          </div>
+        </section>
+      ))}
+    </>
+  );
+}
+
+function LawCard({ s, view }: { s: SheetRow; view: View }) {
+  const dist = isDist(s.id) ? s.id : undefined;
+  const link = rowLink(s.id);
+  const show = (f: SheetField) => view === 'all' || view === f;
+  const warn = s.warn && show(s.warn.on) ? s.warn : undefined;
+  return (
+    <article className="law-card" style={{ '--c': dist ? identity[dist].color : 'var(--ink-2)' } as CSSProperties}>
+      <header>
+        <h3>
+          {dist && <Glyph id={dist} size={20} />} {s.nameAr} <span className="en" lang="en" dir="ltr">{s.nameEn}</span>
+        </h3>
+        {view === 'all' && <p className="law-when"><strong>متى؟ </strong><Rich text={s.when} /></p>}
+      </header>
+      <dl>
+        {show('law') && (
+          <div>
+            <dt>القانون</dt>
+            <dd>
+              <Tex tex={s.f} />
+              <span className="sub"><Tex tex={s.support} /></span>
+              <Rich className="sub" text={s.params} />
+            </dd>
+          </div>
+        )}
+        {show('moments') && (
+          <>
+            <div><dt>المتوسط</dt><dd><Tex tex={s.mean} /></dd></div>
+            <div><dt>التباين</dt><dd><Tex tex={s.variance} /></dd></div>
+          </>
+        )}
+        {show('mgf') && (
+          <div>
+            <dt>الدالة المولدة</dt>
+            <dd>
+              {s.mgf.kind === 'closed' ? (
+                <>
+                  <Tex tex={`M_X(t) = ${s.mgf.tex}`} />
+                  <span className="sub">{s.mgf.domain.startsWith('لكل') ? '' : 'بشرط '}<Rich text={s.mgf.domain} /></span>
+                </>
+              ) : (
+                <span className="law-note">
+                  <strong>{s.mgf.kind === 'none' ? 'غير موجودة.' : 'بلا صيغة بسيطة.'}</strong> <Rich text={s.mgf.note} />
+                </span>
+              )}
+            </dd>
+          </div>
+        )}
+        {view === 'all' && s.cdf && (
+          <div>
+            <dt>التراكمي</dt>
+            <dd>{s.cdf.kind === 'closed' ? <Tex tex={`F(x) = ${s.cdf.tex}`} /> : <span className="law-note"><Rich text={s.cdf.note} /></span>}</dd>
+          </div>
+        )}
+      </dl>
+      {warn && <p className="law-warn"><strong>انتبه: </strong><Rich text={warn.text} /></p>}
+      {view === 'all' && link && <a className="law-link no-print" href={link}>{rowLink(s.id)?.startsWith('#/more') ? 'البطاقة الكاملة' : 'افتح الفصل'} ←</a>}
+    </article>
   );
 }
 

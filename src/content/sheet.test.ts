@@ -1,7 +1,7 @@
 import katex from 'katex';
 import { describe, expect, it } from 'vitest';
 import { betaDist, betaFn, chiSquare, fisherF, gammaDist, gammaFn, hypergeometric, lgamma, quantile, studentT } from '../lib/dist';
-import { sheet, sheetById, sheetFixes, symbols, type SheetRow } from './sheet';
+import { sheet, sheetById, symbols, type SheetRow } from './sheet';
 
 // تكامل سمبسون المركّب على [a, b].
 function simpson(f: (x: number) => number, a: number, b: number, n = 200000) {
@@ -106,7 +106,7 @@ describe('ورقة القوانين', () => {
     expect(['hypergeometric', 'weibull', 'beta'].map((id) => sheetById[id as 'beta'].mgf.kind)).toEqual(['no-closed-form', 'no-closed-form', 'no-closed-form']);
   });
 
-  it('عمود بيتا في الورقة هو العزم E(X^r) = B(a+r,b)/B(a,b)', () => {
+  it('عزوم بيتا: E(X^r) = B(a+r,b)/B(a,b)', () => {
     const row = sheetById.beta;
     for (const k of [1, 2, 3]) close(betaDist.moment(k, 2.5, 4), expect_(row, (x) => x ** k), 1e-6);
   });
@@ -124,7 +124,7 @@ describe('ورقة القوانين', () => {
     expect(sheetById.f.V({ r: 3, v: 4 })).toBeNaN();
   });
 
-  it('غاما بـ α صحيح: التراكمي = 1 − مجموع بواسون (كما في الملاحظة)', () => {
+  it('غاما بـ α صحيح: التراكمي = 1 − مجموع بواسون (كما في بطاقته)', () => {
     const al = 3, be = 2, x = 1.7;
     const g = sheetById.gamma;
     let poi = 0;
@@ -132,9 +132,9 @@ describe('ورقة القوانين', () => {
     close(1 - poi, simpson((y) => g.pdf(y, { al, be }), 0, x), 1e-8);
   });
 
-  it('الملاحظات تخص صفوفًا موجودة، والقاموس والملاحظات تُعرض في KaTeX', () => {
-    for (const f of sheetFixes) for (const id of f.rows) expect(sheetById[id], f.id).toBeDefined();
-    const texs = [...sheetFixes.map((f) => f.text), ...symbols.map((s) => s.meaning)].flatMap((t) => [...t.matchAll(/\$([^$]+?)\$/g)].map((m) => m[1]));
+  it('«متى؟» والتنبيهات والقاموس تُعرض في KaTeX', () => {
+    const rich = sheet.flatMap((s) => [s.when, s.params, s.warn?.text ?? '', s.mgf.kind === 'closed' ? s.mgf.domain : s.mgf.note, s.cdf && s.cdf.kind !== 'closed' ? s.cdf.note : '']);
+    const texs = [...rich, ...symbols.map((s) => s.meaning)].flatMap((t) => [...t.matchAll(/\$([^$]+?)\$/g)].map((m) => m[1]));
     texs.push(...symbols.map((s) => s.sym));
     for (const t of texs) expect(() => katex.renderToString(t, { throwOnError: true, strict: 'ignore' }), t).not.toThrow();
   });

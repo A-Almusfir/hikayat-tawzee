@@ -18,7 +18,7 @@ export function MorePage({ focus }: { focus?: string }) {
       <header className="page-head">
         <h1 tabIndex={-1}>توزيعات أخرى في الورقة</h1>
         <p className="lead">ويبل وبيتا وF: لكل منها بطاقة من الورقة، ومتى يظهر، وعلاقته بتوزيع آخر، ومثال محلول، ومنحنى تغيّر معلماته.</p>
-        <p className="hint">والطبيعي المعياري في <a href={href.dist('normal')}>فصل الطبيعي</a> مع جدول Φ، والورقة كاملة في <a href={href.exam}>ليلة الاختبار</a>.</p>
+        <p className="hint">والطبيعي المعياري في <a href={href.dist('normal')}>فصل الطبيعي</a> مع جدول Φ، وكل القوانين في <a href={href.exam}>ليلة الاختبار</a>.</p>
       </header>
       {moreCards.map((c) => (
         <MoreSection key={c.id} c={c} />

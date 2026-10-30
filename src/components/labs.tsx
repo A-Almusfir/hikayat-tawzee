@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ComponentType } from 'react';
 import { bernoulli, binomial, discreteUpper, exponential, fmt, gammaDist, geometric, hypergeometric, negbin, normal, poisson, sample, studentT, type Rng } from '../lib/dist';
 import { CHI1_95, chiFit } from '../content/horsekicks';
+import { NeedleField } from './scenes/Art';
 import { RANGES, SIM_BATCH, SIM_MAX } from '../lib/ranges';
 import { BarChart, CurveChart, Legend, type Bin } from './charts';
 import { Rich, Tex } from './Tex';
@@ -685,6 +686,45 @@ export function TLab() {
   );
 }
 
+// ———————— المنتظم: إبرة بوفون ————————
+export function BuffonLab() {
+  const d = 40, W = 300, rows = 4;
+  const [ratio, setRatio] = useState(0.8);
+  const l = ratio * d;
+  const [needles, setNeedles] = useState<[number, number, number][]>([]);
+  const [count, setCount] = useState({ n: 0, hits: 0 });
+  useEffect(() => (setNeedles([]), setCount({ n: 0, hits: 0 })), [ratio]);
+  const drop = (k: number) => {
+    // الموضع والزاوية منتظمان مستقلان
+    const fresh = Array.from({ length: k }, (): [number, number, number] => [l / 2 + Math.random() * (W - l), Math.random() * rows * d, Math.random() * Math.PI]);
+    const hits = fresh.filter(([, y, a]) => Math.floor((y - (l / 2) * Math.sin(a)) / d) !== Math.floor((y + (l / 2) * Math.sin(a)) / d)).length;
+    setNeedles((ns) => ns.concat(fresh).slice(-120));
+    setCount((c) => ({ n: c.n + k, hits: c.hits + hits }));
+  };
+  const theory = (2 * ratio) / Math.PI;
+  const est = count.n ? count.hits / count.n : null;
+  return (
+    <div className="lab">
+      <Slider label="طول الإبرة نسبة إلى المسافة بين الخطين" symbol="l/d" value={ratio} onChange={setRatio} min={0.2} max={1} step={0.05} />
+      <div className="needle-box">
+        <NeedleField needles={needles} l={l} d={d} W={W} rows={rows} label={`${count.n} إبرة مرمية، قطعت منها ${count.hits} خطًا`} />
+      </div>
+      <div className="btn-row">
+        <button type="button" className="btn" onClick={() => drop(10)} disabled={count.n >= SIM_MAX}>▶ ارمِ 10 إبر</button>
+        <button type="button" className="btn" onClick={() => drop(SIM_BATCH)} disabled={count.n >= SIM_MAX}>▶▶ ارمِ {SIM_BATCH}</button>
+        <button type="button" className="btn btn-quiet" onClick={() => (setNeedles([]), setCount({ n: 0, hits: 0 }))} disabled={!count.n}>مسح</button>
+      </div>
+      <ProbLine tex={`\\tfrac{2l}{\\pi d} = \\tfrac{2 \\times ${fmt(ratio)}}{\\pi}`} value={theory} label="النظرية:" />
+      {est !== null && (
+        <p className="prob-line" aria-live="polite">
+          <Rich text={`المحاكاة: $${count.hits} / ${count.n} = ${fmt(est, 3)}$${count.hits ? `، ومنها تقدير $\\pi \\approx \\frac{2l}{d \\cdot ${fmt(est, 3)}} = ${fmt((2 * ratio) / est, 3)}$` : ''}.`} />
+        </p>
+      )}
+      <Rich as="p" className="hint" text="الرسم يعرض آخر 120 إبرة. كل رمية: موضع المركز منتظم، والزاوية منتظمة على $(0, \pi)$، ومستقلان." />
+    </div>
+  );
+}
+
 /** المختبر المرجعي لكل فصل قديم. الفصول الجديدة تضع تجربتها في المشهد الثاني مباشرة (kind: 'lab'). */
 export const labs: Partial<Record<DistId, ComponentType>> = {
   bernoulli: BernoulliLab,
@@ -698,4 +738,5 @@ export const labs: Partial<Record<DistId, ComponentType>> = {
   gamma: GammaLab,
   chisquare: ChiSquareLab,
   t: TLab,
+  uniform: BuffonLab,
 };

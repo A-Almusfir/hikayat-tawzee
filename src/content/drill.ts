@@ -1,4 +1,4 @@
-import { binomial, chiSquare, exponential, studentT, gammaDist, geometric, hypergeometric, negbin, normal, poisson } from '../lib/dist';
+import { binomial, chiSquare, exponential, studentT, uniform, gammaDist, geometric, hypergeometric, negbin, normal, poisson } from '../lib/dist';
 import type { Choice } from './chapterTypes';
 import { tCrit } from './chapters/t';
 import type { Leaf } from './decision';
@@ -617,6 +617,81 @@ export const drill: DrillItem[] = [
         { text: '$0.95$', why: 'هذا $P(T \\le 2.015)$.' },
       ],
       check: { compute: () => 1 - studentT.cdf(2.015, 5), shown: 0.05, digits: 2 },
+    },
+  },
+  {
+    id: 'd-uni-train',
+    answer: 'uniform',
+    text: 'يمر قطار بالمحطة كل 12 دقيقة بالضبط، وتصل أنت في لحظة عشوائية. ما احتمال أن تنتظر **أقل من 3 دقائق**؟',
+    why: 'الانتظار بين 0 و12 دقيقة، وكل لحظة فيها متساوية الاحتمال.',
+    trap: 'exponential',
+    trapWhy: 'القطار منتظم المواعيد: الانتظار لا يتجاوز 12 دقيقة. الأسي للانتظار بلا حد أعلى في عملية عشوائية بمعدل ثابت.',
+    param: {
+      prompt: 'ما المجال؟',
+      options: [
+        { text: '$a = 0$، $b = 12$', correct: true, why: 'أقل انتظار 0 وأطوله 12 دقيقة.' },
+        { text: '$\\theta = \\frac{1}{12}$', why: 'هذا معدل أسي؛ الانتظار هنا محدود.' },
+        { text: '$a = 3$، $b = 12$', why: '3 حد الفترة المطلوبة، لا حد المجال.' },
+      ],
+    },
+    calc: {
+      prompt: 'ما $P(X < 3)$؟',
+      options: [
+        { text: '$\\frac{3}{12} = 0.25$', correct: true, why: 'الطول المطلوب ÷ الطول الكلي.' },
+        { text: '$1 - e^{-3/12} \\approx 0.2212$', why: 'هذا الأسي؛ المواعيد منتظمة.' },
+        { text: '$0.75$', why: 'هذا احتمال انتظار أكثر من 3 دقائق.' },
+      ],
+      check: { compute: () => uniform.cdf(3, 0, 12), shown: 0.25, digits: 2 },
+    },
+  },
+  {
+    id: 'd-uni-round',
+    answer: 'uniform',
+    text: 'تُقرَّب الأطوال إلى أقرب سنتيمتر، فيكون خطأ التقريب بين $-0.5$ و$0.5$ سم، وكل قيمة فيه متساوية الاحتمال. ما تباين خطأ التقريب؟',
+    why: 'متغير مستمر في فترة محددة، وكل قيمة فيها متساوية الاحتمال.',
+    trap: 'normal',
+    trapWhy: 'الخطأ هنا محدود ومتساوي الاحتمال، لا جرسي.',
+    param: {
+      prompt: 'ما المجال؟',
+      options: [
+        { text: '$a = -0.5$، $b = 0.5$', correct: true, why: 'طول المجال 1.' },
+        { text: '$a = 0$، $b = 0.5$', why: 'الخطأ قد يكون سالبًا أيضًا.' },
+        { text: '$\\mu = 0$، $\\sigma = 0.5$', why: 'هذه معلمات جرسية؛ المجال هنا محدود.' },
+      ],
+    },
+    calc: {
+      prompt: 'ما $\\mathrm{Var}(X)$؟',
+      options: [
+        { text: '$\\frac{1^{2}}{12} \\approx 0.0833$', correct: true, why: '$\\frac{(b-a)^{2}}{12}$ و$b - a = 1$.' },
+        { text: '$0.2887$', why: 'هذا الانحراف المعياري $\\sqrt{1/12}$.' },
+        { text: '$0.5$', why: 'هذا نصف طول المجال.' },
+      ],
+      check: { compute: () => uniform.variance(-0.5, 0.5), shown: 0.0833, digits: 4 },
+    },
+  },
+  {
+    id: 'd-uni-parcel',
+    answer: 'uniform',
+    text: 'يصل طرد في لحظة ما بين اليوم الثالث واليوم الثامن من الطلب، وكل لحظة في هذه الفترة متساوية الاحتمال. ما احتمال أن يصل **بعد** اليوم السادس؟',
+    why: 'فترة محددة $(3, 8)$ وكل لحظة فيها متساوية الاحتمال.',
+    trap: 'normal',
+    trapWhy: 'لا شيء يجعل منتصف الفترة أرجح من طرفيها.',
+    param: {
+      prompt: 'ما المجال؟',
+      options: [
+        { text: '$a = 3$، $b = 8$', correct: true, why: 'الطول 5 أيام.' },
+        { text: '$a = 0$، $b = 8$', why: 'لا يصل قبل اليوم الثالث.' },
+        { text: '$a = 6$، $b = 8$', why: 'هذه الفترة المطلوبة لا المجال.' },
+      ],
+    },
+    calc: {
+      prompt: 'ما $P(X > 6)$؟',
+      options: [
+        { text: '$\\frac{8 - 6}{8 - 3} = 0.4$', correct: true, why: 'يومان من خمسة.' },
+        { text: '$0.6$', why: 'هذا $P(X < 6)$.' },
+        { text: '$0.25$', why: 'هذا $\\frac{2}{8}$: القسمة على طول المجال $5$ لا على $8$.' },
+      ],
+      check: { compute: () => 1 - uniform.cdf(6, 3, 8), shown: 0.4, digits: 1 },
     },
   },
   {

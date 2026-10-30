@@ -12,6 +12,7 @@ import { negbinChapter } from './negbin';
 import { normalChapter } from './normal';
 import { poissonChapter } from './poisson';
 import { tChapter } from './t';
+import { uniformChapter } from './uniform';
 
 // سجل الفصول المكتوبة بالتصميم الجديد.
 export const chapters: Partial<Record<DistId, Chapter>> = {
@@ -23,6 +24,7 @@ export const chapters: Partial<Record<DistId, Chapter>> = {
   gamma: gammaChapter,
   geometric: geometricChapter,
   negbin: negbinChapter,
+  uniform: uniformChapter,
   normal: normalChapter,
   chisquare: chisquareChapter,
   t: tChapter,

@@ -467,3 +467,10 @@ main:has(.exam-night) { max-width: 72rem; }
 .smp-mu { stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 4 3; }
 .smp-dot { fill: var(--c-tint2); stroke: var(--c); stroke-width: 1.5; }
 .smp-mean { stroke: var(--c); stroke-width: 3; }
+
+/* ——— إبرة بوفون (المنتظم) ——— */
+.ndl-line { stroke: var(--ink-2); stroke-width: 1; }
+.ndl { stroke: var(--ink-2); stroke-width: 2.2; stroke-linecap: round; opacity: .55; }
+.ndl.hit { stroke: var(--c); opacity: 1; stroke-width: 2.6; }
+.needle-box { border: 1.5px solid var(--rule); border-radius: 10px; background: #fffdf8; padding: 4px; margin: .5rem 0; }
+.needle-box svg { width: 100%; height: auto; display: block; }

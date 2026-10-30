@@ -12,6 +12,7 @@ export function ArtView({ art }: { art: Art }) {
       {art.kind === 'cups' && <Cups a={art} />}
       {art.kind === 'runs' && <Runs a={art} />}
       {art.kind === 'samples' && <Samples a={art} />}
+      {art.kind === 'needles' && <NeedleField needles={art.needles} l={art.l} d={art.d} label={art.ariaLabel} />}
       {art.kind === 'pascal' && <Pascal a={art} />}
       {art.kind === 'timeline' && <Timeline a={art} />}
       {art.kind === 'streak' && <Streak a={art} />}
@@ -107,6 +108,21 @@ function Runs({ a }: { a: Of<'runs'> }) {
             <text x={x + S / 2} y={S + 18} textAnchor="middle" className="run-n">{i + 1}</text>
           </g>
         );
+      })}
+    </svg>
+  );
+}
+
+/** إبر بوفون: خطوط أفقية كل d، والإبرة التي تقطع خطًا أغمق. تُستعمل في رسم الحكاية وفي التجربة. */
+export function NeedleField({ needles, l, d, label, W = 300, rows = 4 }: { needles: [number, number, number][]; l: number; d: number; label: string; W?: number; rows?: number }) {
+  const H = rows * d;
+  const crosses = ([, y, a]: [number, number, number]) => Math.floor((y - (l / 2) * Math.sin(a)) / d) !== Math.floor((y + (l / 2) * Math.sin(a)) / d);
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={label} direction="ltr">
+      {Array.from({ length: rows + 1 }, (_, i) => <line key={i} x1={0} y1={i * d} x2={W} y2={i * d} className="ndl-line" />)}
+      {needles.map((n, i) => {
+        const [x, y, a] = n, dx = (l / 2) * Math.cos(a), dy = (l / 2) * Math.sin(a);
+        return <line key={i} x1={x - dx} y1={y - dy} x2={x + dx} y2={y + dy} className={crosses(n) ? 'ndl hit' : 'ndl'} />;
       })}
     </svg>
   );

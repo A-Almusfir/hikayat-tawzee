@@ -4,7 +4,7 @@
 // مشهد أطول من شاشة ونصف قبل الكشف، أخطاء في الكونسول، أو تسجيل إجابة بمجرد التنقل بالأسهم.
 const { chromium } = require('playwright');
 const BASE = process.env.BASE_URL || 'http://localhost:4173/';
-const CHAPTERS = ['bernoulli', 'binomial', 'hypergeometric', 'poisson', 'exponential', 'gamma', 'geometric', 'negbin', 'normal', 'chisquare', 't'];
+const CHAPTERS = ['bernoulli', 'binomial', 'hypergeometric', 'poisson', 'exponential', 'gamma', 'geometric', 'negbin', 'uniform', 'normal', 'chisquare', 't'];
 const problems = [];
 const fail = (m) => problems.push(m);
 

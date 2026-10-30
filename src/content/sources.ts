@@ -272,6 +272,12 @@ export const sources: Source[] = [
     url: 'https://proofwiki.org/wiki/Buffon%27s_Needle/Historical_Note',
     verified: 'search-snippet',
   },
+  {
+    id: 'buffon-laplace-mathworld',
+    cite: 'Wolfram MathWorld — Buffon–Laplace Needle Problem (حل بوفون للشبكة المتعامدة فيه خطأ، وصححه لابلاس 1812)',
+    url: 'https://mathworld.wolfram.com/Buffon-LaplaceNeedleProblem.html',
+    verified: 'search-snippet',
+  },
 ];
 
 export const sourceById = Object.fromEntries(sources.map((s) => [s.id, s])) as Record<string, Source>;

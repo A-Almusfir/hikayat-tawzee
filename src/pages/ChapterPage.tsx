@@ -43,6 +43,9 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
   useEffect(() => {
     if (!('IntersectionObserver' in window)) return;
     const els = SCENES.map((_, i) => document.getElementById(`scene-${i + 1}`)).filter(Boolean) as HTMLElement[];
+    // الأداة الإضافية (مثل جدول Φ) تتبع مشهد المسألة
+    const extra = document.querySelector<HTMLElement>('.ch-extra');
+    if (extra) els.push(extra);
     const io = new IntersectionObserver(
       (entries) => {
         for (const en of entries) if (en.isIntersecting) setActive(Number(en.target.getAttribute('data-n')));
@@ -116,7 +119,7 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
       <BuildScene id={ch.id} headline={ch.build.headline} law={ch.build.law} steps={ch.build.steps} note={ch.build.note} color={color} />
       <ExamScene headline={ch.exam.headline} problems={ch.exam.problems} tricks={ch.exam.tricks} />
       {ch.extra === 'ztable' && (
-        <section className="ch-extra" aria-labelledby="z-h">
+        <section className="ch-extra" data-n={4} aria-labelledby="z-h">
           <h2 id="z-h">الطبيعي المعياري: من <Tex tex="x" /> إلى <Tex tex="z" /> إلى <Tex tex="\Phi(z)" /></h2>
           <Rich as="p" text="كل توزيع طبيعي يتحول إلى $Z \sim N(0, 1)$ بطرح المتوسط والقسمة على الانحراف المعياري. ثم نقرأ المساحة من جدول واحد." />
           <ZTable />

@@ -305,7 +305,7 @@ export const drill: DrillItem[] = [
       options: [
         { text: '$\\frac{\\binom{13}{2}\\binom{39}{3}}{\\binom{52}{5}} = \\frac{78 \\times 9139}{2598960} \\approx 0.2743$', correct: true, why: 'قلبان من 13، وثلاث من الأوراق الـ 39 الأخرى.' },
         { text: '$\\binom{5}{2}(0.25)^{2}(0.75)^{3} \\approx 0.2637$', why: 'هذا ذو الحدين: قريب لكنه ليس الدقيق.' },
-        { text: '$\\frac{\\binom{13}{2}}{\\binom{52}{5}} \\approx 0.0000$', why: 'نسيت طرق اختيار الأوراق الثلاث الأخرى.' },
+        { text: '$\\frac{\\binom{13}{2}}{\\binom{52}{5}} \\approx 0.00003$', why: 'نسيت طرق اختيار الأوراق الثلاث الأخرى.' },
       ],
       check: { compute: () => hypergeometric.pmf(2, 52, 13, 5), shown: 0.2743, digits: 4 },
     },

@@ -174,7 +174,7 @@ export const normalChapter: Chapter = {
         ],
       },
     ],
-    bridge: 'أنهيت الحكايات الست. الآن ميّز بينها في مواقف جديدة.',
+    bridge: 'أنهيت حكايات الرحلة كلها. الآن ميّز بينها في مواقف جديدة.',
   },
   extra: 'ztable',
   reference: { labTitle: 'المختبر الكامل: μ و σ والفترة' },

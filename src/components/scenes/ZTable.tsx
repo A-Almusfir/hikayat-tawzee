@@ -13,7 +13,7 @@ export function ZTable() {
   const [sigma, setSigma] = useState(15);
   const [x, setX] = useState(120);
   const lo = mu - 3.4 * sigma, hi = mu + 3.4 * sigma;
-  const xx = Math.min(hi, Math.max(lo, x));
+  const xx = Math.min(Math.floor(hi), Math.max(Math.ceil(lo), x));
   // الجدول يقرأ z بمنزلتين عشريتين
   const z = Math.round(((xx - mu) / sigma) * 100) / 100;
   const a = Math.abs(z);

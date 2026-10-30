@@ -419,7 +419,7 @@ function CupStrip({ N, k, picked }: { N: number; k: number; picked: number[] }) 
   const hits = picked.filter((i) => i < k).length;
   return (
     <div className="strip-wrap">
-      <ol className="strip cups-strip" aria-label={`${N} كوبًا، اخترت ${picked.length} منها، أصبت ${hits}`}>
+      <ol className="strip cups-strip" role="img" aria-label={`${N} كوبًا، اخترت ${picked.length} منها، أصبت ${hits}`}>
         {Array.from({ length: N }, (_, i) => (
           <li key={i} className={`${i < k ? 'ok' : 'no'} ${picked.includes(i) ? 'picked' : ''}`} aria-hidden="true">
             {i < k ? 'ح' : 'ش'}
@@ -444,6 +444,7 @@ export function HypergeometricLab() {
   const [lo, hi] = hypergeometric.support(N, kk, nn);
   const xs = range(0, hi);
   const bars = xs.map((x) => ({ x, p: hypergeometric.pmf(x, N, kk, nn) }));
+  const xm = xs.reduce((m, x) => (hypergeometric.pmf(x, N, kk, nn) > hypergeometric.pmf(m, N, kk, nn) ? x : m), lo);
   const runOne = () => {
     const pick = sample.drawWithout(N, nn);
     setOne(pick);
@@ -453,14 +454,14 @@ export function HypergeometricLab() {
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="عدد الأكواب" symbol="N" value={N} onChange={setN} min={4} max={20} step={1} digits={0} />
+        <Slider label="عدد الأكواب" symbol="N" value={N} onChange={setN} min={4} max={40} step={1} digits={0} />
         <Slider label="أكواب «حليب أولًا»، وتختار العدد نفسه" symbol="k = n" value={kk} onChange={setK} min={1} max={N - 1} step={1} digits={0} />
       </div>
       <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === hi} ariaLabel={`فوق الهندسي N=${N}, k=${kk}, n=${nn}. احتمال إصابة ${hi} كلها بالتخمين ${fmt(hypergeometric.pmf(hi, N, kk, nn))}`} xLabel="عدد الإصابات بالتخمين x" />
       <Legend items={enough(sim.stats) ? ['theory', 'highlight', 'sim'] : ['theory', 'highlight']} />
       {lo > 0 && <Rich as="p" className="hint" text={`لاحظ: $x$ لا يقل عن $${lo}$، لأنك تختار $${nn}$ ولا يوجد إلا $${N - kk}$ من النوع الآخر.`} />}
       <ProbLine tex={`P(X=${hi}) = \\frac{\\binom{${kk}}{${hi}}\\binom{${N - kk}}{${nn - hi}}}{\\binom{${N}}{${nn}}}`} value={hypergeometric.pmf(hi, N, kk, nn)} />
-      <ProbLine tex={`P_{\\mathrm{Bin}}(X=${hi})`} value={binomial.pmf(hi, nn, kk / N)} label="لو أُعيد كل كوب بعد اختياره (ذو الحدين):" />
+      <ProbLine tex={`P(X=${xm}) = ${fmt(hypergeometric.pmf(xm, N, kk, nn), 4)},\\quad P_{\\mathrm{Bin}}(X=${xm})`} value={binomial.pmf(xm, nn, kk / N)} label="عند أرجح قيمة، مقارنة بذي الحدين (لو أُعيد كل كوب):" />
       <SimButtons onOne={runOne} oneLabel="خمّن مرة واحدة" onBatch={batch} batchLabel={`خمّن ${SIM_BATCH} مرة`} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
       {one && (
         <>

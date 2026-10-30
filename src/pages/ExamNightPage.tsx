@@ -67,13 +67,13 @@ export function ExamNightPage() {
       <Fold title="ماذا يسأل كل توزيع، والفخ الشائع">
         <ul className="traps">
           {journey.map((id) => {
-            const d = distById[id];
-            if (!d) return null;
+            // الفصول الجديدة بلا بطاقة قديمة: السؤال وأول حيلة من الفصل نفسه
+            const d = distById[id], ch = chapters[id]!;
             return (
               <li key={id} style={{ '--c': identity[id].color } as CSSProperties}>
-                <a href={href.dist(id)}><Glyph id={id} size={20} /> {d.nameAr}</a>
-                <span className="trap-q">{d.question}</span>
-                <Rich as="p" text={d.card.mistake} />
+                <a href={href.dist(id)}><Glyph id={id} size={20} /> {sheetById[id].nameAr}</a>
+                <span className="trap-q">{ch.question}</span>
+                <Rich as="p" text={d ? d.card.mistake : ch.exam.tricks[0]} />
               </li>
             );
           })}

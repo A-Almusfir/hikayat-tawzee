@@ -1,5 +1,6 @@
-import { binomial, chiSquare, exponential, gammaDist, geometric, hypergeometric, negbin, normal, poisson } from '../lib/dist';
+import { binomial, chiSquare, exponential, studentT, gammaDist, geometric, hypergeometric, negbin, normal, poisson } from '../lib/dist';
 import type { Choice } from './chapterTypes';
+import { tCrit } from './chapters/t';
 import type { Leaf } from './decision';
 import type { NumericCheck } from './types';
 
@@ -541,6 +542,81 @@ export const drill: DrillItem[] = [
         { text: '$0.95$', why: 'هذا $P(Z^{2} \\le 3.841)$.' },
       ],
       check: { compute: () => 1 - chiSquare.cdf(3.841, 1), shown: 0.05, digits: 2 },
+    },
+  },
+  {
+    id: 'd-t-ci',
+    answer: 't',
+    text: 'عينة من 9 طلاب من مجتمع درجاته طبيعية: متوسطها 72 وانحرافها المعياري 6، والانحراف المعياري للمجتمع **مجهول**. ما هامش الخطأ لفترة ثقة 95% لمتوسط المجتمع؟',
+    why: 'متوسط عينة صغيرة من مجتمع طبيعي، و$\\sigma$ مجهول فنستعمل $s$.',
+    trap: 'normal',
+    trapWhy: 'لو كان $\\sigma$ معلومًا لاستعملنا $Z$ و$1.96$؛ هنا نقدّره بـ $s$.',
+    param: {
+      prompt: 'كم درجة حرية؟',
+      options: [
+        { text: '$8$', correct: true, why: '$n - 1 = 9 - 1$.' },
+        { text: '$9$', why: 'درجات الحرية $n - 1$.' },
+        { text: 'لا درجات حرية: نستعمل $Z$', why: '$\\sigma$ مجهول.' },
+      ],
+    },
+    calc: {
+      prompt: 'ما هامش الخطأ $t_{8,\\,0.025}\\,\\frac{s}{\\sqrt{n}}$؟',
+      options: [
+        { text: '$2.306 \\times \\frac{6}{3} \\approx 4.612$', correct: true, why: '$t_{8,\\,0.025} = 2.306$ من الجدول.' },
+        { text: '$1.96 \\times \\frac{6}{3} = 3.92$', why: 'هذه قيمة $Z$؛ مع $\\sigma$ مجهول وعينة صغيرة تكون أوسع.' },
+        { text: '$2.306 \\times 6 \\approx 13.836$', why: 'نسيت القسمة على $\\sqrt{n} = 3$.' },
+      ],
+      check: { compute: () => tCrit(8, 0.025) * 2, shown: 4.612, digits: 3 },
+    },
+  },
+  {
+    id: 'd-t-test',
+    answer: 't',
+    text: 'تقول شركة إن متوسط وزن قطعها 10 غرامات. في عينة من 25 قطعة (والأوزان طبيعية) كان المتوسط 10.4 والانحراف المعياري 1.5. ما قيمة إحصاءة الاختبار؟',
+    why: 'اختبار متوسط مجتمع طبيعي و$\\sigma$ مجهول: $\\frac{\\bar{x} - \\mu}{s/\\sqrt{n}}$.',
+    trap: 'chisquare',
+    trapWhy: 'مربع كاي لاختبار **التباين**؛ هنا نختبر المتوسط.',
+    param: {
+      prompt: 'كم درجة حرية؟',
+      options: [
+        { text: '$24$', correct: true, why: '$n - 1$.' },
+        { text: '$25$', why: 'درجات الحرية $n - 1$.' },
+        { text: '$5$', why: '$5 = \\sqrt{25}$ يدخل في الحساب، لا في درجات الحرية.' },
+      ],
+    },
+    calc: {
+      prompt: 'ما قيمة $t$؟',
+      options: [
+        { text: '$\\frac{10.4 - 10}{1.5/5} \\approx 1.333$', correct: true, why: 'أقل من $t_{24,\\,0.025} = 2.064$، فلا دليل ضد ادعاء الشركة بذيلين عند 0.05.' },
+        { text: '$\\frac{0.4}{1.5} \\approx 0.267$', why: 'نسيت $\\sqrt{n}$: الخطأ المعياري للمتوسط $\\frac{s}{\\sqrt{n}}$.' },
+        { text: '$\\frac{0.4 \\times 25}{1.5} \\approx 6.667$', why: 'ضربت في $n$ بدل $\\sqrt{n}$.' },
+      ],
+      check: { compute: () => 0.4 / (1.5 / 5), shown: 1.333, digits: 3 },
+    },
+  },
+  {
+    id: 'd-t-tail',
+    answer: 't',
+    text: 'تُوزن 6 عبوات من خط إنتاج أوزانه طبيعية، وتباين المجتمع مجهول. ما احتمال أن تتجاوز $\\frac{\\bar{X} - \\mu}{S/\\sqrt{6}}$ القيمة $2.015$؟',
+    why: 'متوسط عينة صغيرة و$S$ مكان $\\sigma$: t بـ 5 درجات حرية.',
+    trap: 'normal',
+    trapWhy: 'مع $S$ لا $\\sigma$ ليس هذا طبيعيًا معياريًا، وذيله أثقل.',
+    param: {
+      prompt: 'كم درجة حرية؟',
+      options: [
+        { text: '$5$', correct: true, why: '$6 - 1$.' },
+        { text: '$6$', why: '$n - 1$ لا $n$.' },
+        { text: '$\\infty$', why: 'هذا لو كان $\\sigma$ معلومًا.' },
+      ],
+    },
+    calc: {
+      prompt: 'ما $P(T > 2.015)$؟',
+      options: [
+        { text: '$0.05$', correct: true, why: '$2.015 = t_{5,\\,0.05}$ في الجدول.' },
+        { text: '$0.022$', why: 'هذا من جدول **الطبيعي**: $1 - \\Phi(2.015)$؛ t ذيله أثقل.' },
+        { text: '$0.95$', why: 'هذا $P(T \\le 2.015)$.' },
+      ],
+      check: { compute: () => 1 - studentT.cdf(2.015, 5), shown: 0.05, digits: 2 },
     },
   },
   {

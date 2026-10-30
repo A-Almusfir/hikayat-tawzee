@@ -461,3 +461,9 @@ main:has(.exam-night) { max-width: 72rem; }
 .verdict { font-weight: 700; border-inline-start: 5px solid; padding: .3rem .7rem; border-radius: 6px; }
 .verdict.ok { border-color: var(--ok, #2e6b3a); background: #eef5ee; }
 .verdict.no { border-color: var(--no); background: #f8ecea; }
+
+/* ——— عينات صغيرة (t) ——— */
+.smp-axis { stroke: var(--rule); stroke-width: 1; }
+.smp-mu { stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.smp-dot { fill: var(--c-tint2); stroke: var(--c); stroke-width: 1.5; }
+.smp-mean { stroke: var(--c); stroke-width: 3; }

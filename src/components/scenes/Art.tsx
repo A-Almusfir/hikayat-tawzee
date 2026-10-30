@@ -11,6 +11,7 @@ export function ArtView({ art }: { art: Art }) {
       {art.kind === 'urn' && <Urn a={art} />}
       {art.kind === 'cups' && <Cups a={art} />}
       {art.kind === 'runs' && <Runs a={art} />}
+      {art.kind === 'samples' && <Samples a={art} />}
       {art.kind === 'pascal' && <Pascal a={art} />}
       {art.kind === 'timeline' && <Timeline a={art} />}
       {art.kind === 'streak' && <Streak a={art} />}
@@ -104,6 +105,26 @@ function Runs({ a }: { a: Of<'runs'> }) {
             <rect x={x + 2} y={2} width={S - 4} height={S - 4} rx="5" className={t ? (last ? 'run win last' : 'run win') : 'run loss'} />
             <text x={x + S / 2} y={S / 2 + 6} textAnchor="middle" className={t ? 'run-t win' : 'run-t'}>{t ? wins : 'خ'}</text>
             <text x={x + S / 2} y={S + 18} textAnchor="middle" className="run-n">{i + 1}</text>
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
+/** عينات صغيرة من المجتمع نفسه: النقاط قيم العينة، والخط القصير متوسطها، والمحور العمودي المتوسط الحقيقي. */
+function Samples({ a }: { a: Of<'samples'> }) {
+  const W = 300, rowH = 26, H = a.rows.length * rowH + 16, x = (v: number) => W / 2 + v * 38;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={a.ariaLabel} direction="ltr">
+      <line x1={W / 2} y1={2} x2={W / 2} y2={H - 4} className="smp-mu" />
+      {a.rows.map((row, i) => {
+        const y = 14 + i * rowH, m = row.reduce((s, v) => s + v, 0) / row.length;
+        return (
+          <g key={i}>
+            <line x1={8} y1={y} x2={W - 8} y2={y} className="smp-axis" />
+            {row.map((v, j) => <circle key={j} cx={x(v)} cy={y} r="4" className="smp-dot" />)}
+            <line x1={x(m)} y1={y - 9} x2={x(m)} y2={y + 9} className="smp-mean" />
           </g>
         );
       })}

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ComponentType } from 'react';
-import { bernoulli, binomial, discreteUpper, exponential, fmt, gammaDist, geometric, hypergeometric, negbin, normal, poisson, sample } from '../lib/dist';
+import { bernoulli, binomial, discreteUpper, exponential, fmt, gammaDist, geometric, hypergeometric, negbin, normal, poisson, sample, studentT, type Rng } from '../lib/dist';
 import { CHI1_95, chiFit } from '../content/horsekicks';
 import { RANGES, SIM_BATCH, SIM_MAX } from '../lib/ranges';
 import { BarChart, CurveChart, Legend, type Bin } from './charts';
@@ -632,6 +632,59 @@ export function ChiSquareLab() {
   );
 }
 
+// ———————— t: عينات صغيرة وσ مجهول ————————
+/** طبيعي معياري بطريقة بوكس–مولر. */
+const gauss = (rng: Rng = Math.random) => Math.sqrt(-2 * Math.log(1 - rng())) * Math.cos(2 * Math.PI * rng());
+
+export function TLab() {
+  const [n, setN] = useState(5);
+  const [ts, setTs] = useState<number[]>([]);
+  useEffect(() => setTs([]), [n]);
+  const v = n - 1, X = 5;
+  const tStat = () => {
+    const xs = Array.from({ length: n }, () => gauss());
+    const m = xs.reduce((a, b) => a + b, 0) / n;
+    const s2 = xs.reduce((a, x) => a + (x - m) ** 2, 0) / (n - 1);
+    return m / Math.sqrt(s2 / n);
+  };
+  const hist: Bin[] | null = useMemo(() => {
+    if (ts.length < MIN_SIM) return null;
+    const B = 40, w = (2 * X) / B;
+    const c = new Array(B).fill(0);
+    for (const t of ts) if (t > -X && t < X) c[Math.floor((t + X) / w)]++;
+    return c.map((k, i) => ({ x0: -X + i * w, x1: -X + (i + 1) * w, density: k / (ts.length * w) }));
+  }, [ts]);
+  const far = ts.length ? ts.filter((t) => Math.abs(t) > 1.96).length / ts.length : null;
+  const theory = 2 * (1 - studentT.cdf(1.96, v));
+  return (
+    <div className="lab">
+      <Slider label="حجم العينة" symbol="n" value={n} onChange={setN} min={3} max={30} step={1} digits={0} />
+      <CurveChart
+        f={(x) => studentT.pdf(x, v)}
+        xMin={-X}
+        xMax={X}
+        hist={hist}
+        markers={[{ x: -1.96, label: '−1.96' }, { x: 1.96, label: '1.96' }]}
+        ariaLabel={`كثافة t بـ ${v} درجات حرية، ومدرّج قيم T من المحاكاة`}
+        xLabel="T = (X̄ − μ) / (S/√n)"
+      />
+      <Legend items={hist ? ['curve', 'hist'] : ['curve']} />
+      <div className="btn-row">
+        <button type="button" className="btn" onClick={() => setTs((a) => a.concat(Array.from({ length: SIM_BATCH }, tStat)).slice(0, SIM_MAX))} disabled={ts.length >= SIM_MAX}>
+          ▶▶ اسحب {SIM_BATCH} عينة بحجم {n}
+        </button>
+        <button type="button" className="btn btn-quiet" onClick={() => setTs([])} disabled={!ts.length}>مسح المحاكاة</button>
+      </div>
+      <Rich
+        as="p"
+        className="prob-line"
+        text={`الطبيعي يقول $P(|T| > 1.96) = 0.05$. لكن t بـ $${v}$ درجات حرية يقول $${fmt(theory, 3)}$${far !== null ? `، والمحاكاة $${fmt(far, 3)}$` : ''}.`}
+      />
+      <SimNote count={ts.length} max={SIM_MAX} />
+    </div>
+  );
+}
+
 /** المختبر المرجعي لكل فصل قديم. الفصول الجديدة تضع تجربتها في المشهد الثاني مباشرة (kind: 'lab'). */
 export const labs: Partial<Record<DistId, ComponentType>> = {
   bernoulli: BernoulliLab,
@@ -644,4 +697,5 @@ export const labs: Partial<Record<DistId, ComponentType>> = {
   negbin: NegbinLab,
   gamma: GammaLab,
   chisquare: ChiSquareLab,
+  t: TLab,
 };

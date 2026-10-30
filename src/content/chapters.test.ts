@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { binomial, fmt, normal, poisson } from '../lib/dist';
+import { binomial, chiSquare, fmt, normal, poisson, quantile, studentT } from '../lib/dist';
 import { chapters } from './chapters';
 import type { Chapter } from './chapterTypes';
 import { edges } from './family';
@@ -116,6 +116,18 @@ describe('الشجرة والهوية والرحلة', () => {
   });
   it('حدود الخلايا الفارغة ≥ 3:1 (عنصر غير نصي)', () => {
     expect(contrast('#968a74', PAPER)).toBeGreaterThanOrEqual(3);
+  });
+});
+
+describe('قيم الجداول المذكورة في فصول المعاينة والتدريب', () => {
+  it('مربع كاي وt من التراكمي نفسه', () => {
+    const q = (cdf: (x: number) => number, p: number) => quantile(cdf, p, 0, 60);
+    expect(fmt(q((x) => chiSquare.cdf(x, 1), 0.95), 3)).toBe('3.841');
+    expect(fmt(q((x) => chiSquare.cdf(x, 9), 0.95), 3)).toBe('16.919');
+    expect(fmt(q((x) => chiSquare.cdf(x, 5), 0.95), 2)).toBe('11.07');
+    for (const [v, a, s] of [[9, 0.05, '1.833'], [15, 0.025, '2.131'], [9, 0.025, '2.262'], [8, 0.025, '2.306'], [24, 0.025, '2.064'], [5, 0.05, '2.015']] as const)
+      expect(fmt(q((x) => studentT.cdf(x, v), 1 - a), 3), `t ${v} ${a}`).toBe(s);
+    expect(fmt(1 - normal.cdf(2.015, 0, 1), 3)).toBe('0.022');
   });
 });
 

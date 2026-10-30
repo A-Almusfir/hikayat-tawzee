@@ -11,6 +11,7 @@ import { hypergeometricChapter } from './hypergeometric';
 import { negbinChapter } from './negbin';
 import { normalChapter } from './normal';
 import { poissonChapter } from './poisson';
+import { tChapter } from './t';
 
 // سجل الفصول المكتوبة بالتصميم الجديد.
 export const chapters: Partial<Record<DistId, Chapter>> = {
@@ -24,6 +25,7 @@ export const chapters: Partial<Record<DistId, Chapter>> = {
   negbin: negbinChapter,
   normal: normalChapter,
   chisquare: chisquareChapter,
+  t: tChapter,
 };
 
 export const chapterNumber = (id: DistId) => journey.indexOf(id) + 1;

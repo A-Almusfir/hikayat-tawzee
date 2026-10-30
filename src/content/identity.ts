@@ -44,5 +44,5 @@ export function contrast(a: string, b: string) {
 /** ترتيب الفصول في الرحلة (منطقي لا تاريخي). */
 // الفصل الجديد يُدرج بعد أقرب فصل إليه: فوق الهندسي بعد ذي الحدين، وغاما بعد الأسي، وذو الحدين السالب بعد الهندسي.
 // لا يُضاف توزيع هنا قبل أن يكتمل فصله (الاختبارات تشترط فصلًا لكل توزيع في الرحلة).
-export const journey: DistId[] = ['bernoulli', 'binomial', 'hypergeometric', 'poisson', 'exponential', 'gamma', 'geometric', 'negbin', 'normal', 'chisquare'];
+export const journey: DistId[] = ['bernoulli', 'binomial', 'hypergeometric', 'poisson', 'exponential', 'gamma', 'geometric', 'negbin', 'normal', 'chisquare', 't'];
 

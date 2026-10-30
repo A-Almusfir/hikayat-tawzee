@@ -280,7 +280,7 @@ export const sources: Source[] = [
   },
   {
     id: 'weibull-wiki',
-    cite: 'Waloddi Weibull — Wikipedia (ورقته في متانة المواد 1951، وسبق Rosin وRammler عام 1933)',
+    cite: 'Waloddi Weibull — Wikipedia (متانة المواد 1939، وورقة التوزيع العامة 1951، وسبق Rosin وRammler عام 1933)',
     url: 'https://en.wikipedia.org/wiki/Waloddi_Weibull',
     verified: 'search-snippet',
   },

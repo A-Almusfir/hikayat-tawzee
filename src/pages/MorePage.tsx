@@ -36,7 +36,7 @@ function MoreSection({ c }: { c: MoreCard }) {
   return (
     <section className="more-card" id={`more-${c.id}`} aria-labelledby={`more-${c.id}-h`}>
       <h2 id={`more-${c.id}-h`} tabIndex={-1}>
-        {s.nameAr} <span className="en" lang="en" dir="ltr">{s.nameEn}</span>
+        {s.nameAr} {!s.nameAr.includes(s.nameEn) && <span className="en" lang="en" dir="ltr">{s.nameEn}</span>}
       </h2>
       <p className="more-q">{c.question}</p>
       <SheetCard id={c.id} />
@@ -59,7 +59,7 @@ function MoreSection({ c }: { c: MoreCard }) {
             <Slider key={x.key} label={x.label} symbol={x.symbol} value={vals[x.key]} onChange={(v) => setVals({ ...vals, [x.key]: v })} min={x.min} max={x.max} step={x.step} digits={x.step < 1 ? 1 : 0} />
           ))}
         </div>
-        <CurveChart f={(x) => c.pdf(x, p)} xMin={0} xMax={xMax} ariaLabel={`كثافة ${s.nameAr}. ${c.caption(p).replace(/\$/g, '').replace(/\\/g, '')}`} xLabel="x" />
+        <CurveChart f={(x) => c.pdf(x, p)} xMin={xMax / 400} xMax={xMax} ariaLabel={`كثافة ${s.nameAr}. ${c.caption(p).replace(/\$/g, '').replace(/\\/g, '')}`} xLabel="x" />
         <Legend items={['curve']} />
         <Rich as="p" className="hint" text={c.caption(p)} />
       </div>

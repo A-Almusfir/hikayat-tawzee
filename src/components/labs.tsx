@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ComponentType } from 'react';
 import { bernoulli, binomial, discreteUpper, exponential, fmt, gammaDist, geometric, hypergeometric, negbin, normal, poisson, sample, studentT, type Rng } from '../lib/dist';
-import { CHI1_95, chiFit } from '../content/horsekicks';
+import { CHI1_95, CHI2_95, LAMBDA_HAT, chiFit } from '../content/horsekicks';
 import { NeedleField } from './scenes/Art';
 import { RANGES, SIM_BATCH, SIM_MAX } from '../lib/ranges';
 import { BarChart, CurveChart, Legend, type Bin } from './charts';
@@ -597,12 +597,20 @@ export function GammaLab() {
 
 export function ChiSquareLab() {
   const [l, setL] = useState(1.0);
-  const f = chiFit(l);
+  // λ المقدّرة من البيانات تُنقص درجة حرية؛ λ المفروضة مسبقًا لا تُنقصها
+  const est = Math.abs(l - LAMBDA_HAT) < 0.005;
+  const df = est ? 1 : 2, crit = est ? CHI1_95 : CHI2_95;
+  const f = chiFit(l, df);
   const labels = ['0', '1', '2 فأكثر'];
-  const reject = f.stat > CHI1_95;
+  const reject = f.stat > crit;
   return (
     <div className="lab">
       <Slider label="متوسط الوفيات في الفيلق-السنة" symbol="\lambda" value={l} onChange={setL} min={0.3} max={1.3} step={0.01} />
+      <div className="btn-row">
+        <button type="button" className="btn btn-quiet" onClick={() => setL(LAMBDA_HAT)} disabled={est}>
+          استعمل المقدَّرة من البيانات <Tex tex={`\\hat\\lambda = ${LAMBDA_HAT}`} />
+        </button>
+      </div>
       <table className="obs-exp">
         <caption className="hint"><Rich text="ما وقع ($O$) وما يتوقعه بواسون ($E$) في كل فئة" /></caption>
         <thead>
@@ -626,9 +634,9 @@ export function ChiSquareLab() {
       </table>
       <ProbLine tex={`\\chi^{2} = \\sum \\tfrac{(O-E)^{2}}{E}`} value={f.stat} />
       <p className={`verdict ${reject ? 'no' : 'ok'}`} aria-live="polite">
-        <Rich text={reject ? `$${fmt(f.stat, 3)} > ${CHI1_95}$: البعد كبير؛ نرفض أن البيانات من بواسون بهذا المتوسط.` : `$${fmt(f.stat, 3)} \\le ${CHI1_95}$: البعد صغير؛ لا دليل ضد بواسون بهذا المتوسط.`} />
+        <Rich text={reject ? `$${fmt(f.stat, 3)} > ${crit}$: البعد كبير؛ نرفض أن البيانات من بواسون بهذا المتوسط.` : `$${fmt(f.stat, 3)} \\le ${crit}$: البعد صغير؛ لا دليل ضد بواسون بهذا المتوسط.`} />
       </p>
-      <Rich as="p" className="hint" text={`درجات الحرية $3 - 1 - 1 = 1$: ثلاث فئات، ناقص واحد لأن المجموع ثابت (200)، وناقص واحد لأننا قدّرنا $\\lambda$ من البيانات. والقيمة الحرجة عند $0.05$ هي $${CHI1_95}$. احتمال بعد كهذا أو أكبر لو صح النموذج: ${f.p < 0.001 ? 'أقل من $0.001$' : `$${fmt(f.p, 3)}$`}.`} />
+      <Rich as="p" className="hint" text={`${est ? `درجات الحرية $3 - 1 - 1 = 1$: ثلاث فئات، ناقص واحد لأن المجموع ثابت (200)، وناقص واحد لأننا قدّرنا $\\lambda$ من البيانات.` : `هنا $\\lambda$ مفروضة مسبقًا لا مقدّرة، فدرجات الحرية $3 - 1 = 2$. وعند $\\hat\\lambda = ${LAMBDA_HAT}$ المقدّرة تصبح 1.`} والقيمة الحرجة عند $0.05$ هي $${crit}$. احتمال بعد كهذا أو أكبر لو صح النموذج: ${f.p < 0.001 ? 'أقل من $0.001$' : `$${fmt(f.p, 3)}$`}.`} />
     </div>
   );
 }
@@ -666,7 +674,7 @@ export function TLab() {
         xMax={X}
         hist={hist}
         markers={[{ x: -1.96, label: '−1.96' }, { x: 1.96, label: '1.96' }]}
-        ariaLabel={`كثافة t بـ ${v} درجات حرية، ومدرّج قيم T من المحاكاة`}
+        ariaLabel={`كثافة t بدرجات حرية v = ${v}، ومدرّج قيم T من المحاكاة`}
         xLabel="T = (X̄ − μ) / (S/√n)"
       />
       <Legend items={hist ? ['curve', 'hist'] : ['curve']} />
@@ -679,7 +687,7 @@ export function TLab() {
       <Rich
         as="p"
         className="prob-line"
-        text={`الطبيعي يقول $P(|T| > 1.96) = 0.05$. لكن t بـ $${v}$ درجات حرية يقول $${fmt(theory, 3)}$${far !== null ? `، والمحاكاة $${fmt(far, 3)}$` : ''}.`}
+        text={`الطبيعي يقول $P(|T| > 1.96) = 0.05$. لكن t بدرجات الحرية $v = ${v}$ يقول $${fmt(theory, 3)}$${far !== null ? `، والمحاكاة $${fmt(far, 3)}$` : ''}.`}
       />
       <SimNote count={ts.length} max={SIM_MAX} />
     </div>

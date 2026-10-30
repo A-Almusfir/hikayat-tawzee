@@ -31,7 +31,7 @@ export const moreCards: MoreCard[] = [
     where: 'أعمار المكونات والموثوقية. الشكل $\\beta$ يحكي القصة: $\\beta < 1$ أعطال مبكرة يقل خطرها مع الزمن، و$\\beta = 1$ خطر ثابت (الأسي)، و$\\beta > 1$ تآكل يزيد خطره مع العمر.',
     relation: 'ويبل بـ $\\beta = 1$ هو الأسي بمعدل $\\alpha$. وإذا كان $X$ ويبل فإن $X^{\\beta}$ أسي بمعدل $\\alpha$. وبالرموز الشائعة في كتب أخرى (الشكل $k$ والمقياس $\\lambda$): $\\alpha = \\lambda^{-k}$ و$\\beta = k$.',
     history: {
-      text: 'سُمّي باسم والودي ويبل، الذي نشر عنه عام 1951 في متانة المواد؛ وسبقه روزين ورملر (1933) إليه في وصف أحجام الجسيمات.',
+      text: 'سُمّي باسم والودي ويبل، الذي استعمله عام 1939 في متانة المواد، ثم نشره عام 1951 أداةً عامة؛ وسبقه روزين ورملر (1933) في وصف أحجام الجسيمات.',
       src: ['weibull-wiki'],
     },
     example: {
@@ -44,7 +44,7 @@ export const moreCards: MoreCard[] = [
       check: { compute: () => 1 - weibull.cdf(2, 0.5, 2), shown: 0.1353, digits: 4 },
     },
     sliders: [
-      { key: 'al', symbol: r`\alpha`, label: 'المقياس', min: 0.2, max: 2, step: 0.1, start: 0.5 },
+      { key: 'al', symbol: r`\alpha`, label: 'معامل المعدل', min: 0.2, max: 2, step: 0.1, start: 0.5 },
       { key: 'be', symbol: r`\beta`, label: 'الشكل', min: 0.5, max: 4, step: 0.1, start: 2 },
     ],
     toParams: (s) => s,
@@ -78,7 +78,7 @@ export const moreCards: MoreCard[] = [
     toParams: ({ s, f }) => ({ a: s + 1, b: f + 1 }),
     pdf: (x, { a, b }) => betaDist.pdf(x, a, b),
     xMax: () => 1,
-    caption: ({ a, b }) => `بيتا$(${a}, ${b})$: الاعتقاد في $p$ بعد ${a - 1} نجاحًا و${b - 1} إخفاقًا، ومتوسطه $${(a / (a + b)).toFixed(3)}$.`,
+    caption: ({ a, b }) => `بيتا$(${a}, ${b})$: الاعتقاد في $p$ بعد المشاهدات (نجاحات: ${a - 1}، إخفاقات: ${b - 1})، ومتوسطه $${(a / (a + b)).toFixed(3)}$.`,
   },
   {
     id: 'f',
@@ -106,6 +106,6 @@ export const moreCards: MoreCard[] = [
     toParams: (s) => s,
     pdf: (x, { r: a, v }) => fisherF.pdf(x, a, v),
     xMax: () => 5,
-    caption: ({ r: a, v }) => `$F(${a}, ${v})$${v > 2 ? `: المتوسط $${(v / (v - 2)).toFixed(3)}$، قريب من 1` : ': لا متوسط حين $v \\le 2$'}.`,
+    caption: ({ r: a, v }) => `$F(${a}, ${v})$${v > 2 ? `: المتوسط $${(v / (v - 2)).toFixed(3)}$${v >= 10 ? '، قريب من 1' : ''}` : ': لا متوسط حين $v \\le 2$'}.`,
   },
 ];

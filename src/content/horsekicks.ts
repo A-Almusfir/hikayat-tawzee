@@ -18,13 +18,16 @@ export const horseKickTotals = (() => {
 
 // مطابقة بواسون بمربع كاي (فصل مربع كاي).
 /** الفئات بعد الدمج: 0، 1، 2 فأكثر (المتوقع في 3 و4 أقل من 5). */
-export function chiFit(lambda: number) {
+/** df = 1 حين نستعمل λ المقدّرة من البيانات (0.61)، و2 حين تُفرض λ مسبقًا. */
+export function chiFit(lambda: number, df = 1) {
   const N = horseKicks.units, o = horseKicks.observed;
   const O = [o[0], o[1], o.slice(2).reduce((a, b) => a + b, 0)];
   const p0 = poisson.pmf(0, lambda), p1 = poisson.pmf(1, lambda);
   const E = [N * p0, N * p1, N * (1 - p0 - p1)];
   const parts = O.map((x, i) => (x - E[i]) ** 2 / E[i]);
   const stat = parts.reduce((a, b) => a + b, 0);
-  return { O, E, parts, stat, p: 1 - chiSquare.cdf(stat, 1) };
+  return { O, E, parts, stat, p: 1 - chiSquare.cdf(stat, df) };
 }
 export const CHI1_95 = 3.841;
+export const CHI2_95 = 5.991;
+export const LAMBDA_HAT = horseKicks.observed.reduce((s, n, k) => s + n * k, 0) / horseKicks.units;

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { choiceLabels, scenarios, type ChoiceId } from '../content/chooser';
+import { choiceLabels, choiceOrder, scenarios, type ChoiceId } from '../content/chooser';
 import { distById, distOrder } from '../content/distributions';
 import { references } from '../content/references';
 import { sources } from '../content/sources';
@@ -10,7 +10,7 @@ import { href } from '../lib/router';
 import { progress, useProgress, type CardStatus } from '../lib/storage';
 
 // ———————— أي توزيع أختار؟ ————————
-const CHOICES: ChoiceId[] = ['bernoulli', 'binomial', 'geometric', 'poisson', 'exponential', 'normal', 'insufficient'];
+const CHOICES: ChoiceId[] = choiceOrder();
 
 export function ChooserPage() {
   const saved = useProgress().chooser;
@@ -93,7 +93,7 @@ const FIELDS = [
 type FieldKey = (typeof FIELDS)[number]['key'];
 
 function FlashCard({ id }: { id: DistId }) {
-  const d = distById[id];
+  const d = distById[id]!;
   const status = useProgress().cards[id];
   const [open, setOpen] = useState<Record<FieldKey, boolean>>({ law: false, support: false, mean: false, variance: false, conditions: false });
   const all = FIELDS.every((f) => open[f.key]);

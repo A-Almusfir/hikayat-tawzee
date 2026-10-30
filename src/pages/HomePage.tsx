@@ -1,9 +1,8 @@
 import type { CSSProperties } from 'react';
-import { distById } from '../content/distributions';
 import { chapters } from '../content/chapters';
 import { identity, journey } from '../content/identity';
 import { scenarios } from '../content/chooser';
-import { sheet } from '../content/sheet';
+import { sheet, sheetById } from '../content/sheet';
 import { FamilyTree } from '../components/FamilyTree';
 import { Glyph } from '../components/Glyph';
 import { href } from '../lib/router';
@@ -15,7 +14,7 @@ export function HomePage() {
       <section className="h2-hero">
         <h1 tabIndex={-1}>حكاية توزيع</h1>
         <p className="h2-slogan">افهم الحكاية… يثبت القانون.</p>
-        <p className="h2-sub">ستة توزيعات احتمالية، وعائلة واحدة. لكل توزيع حكاية حقيقية: من أين جاء، ولماذا احتاجه الناس، وكيف يُبنى قانونه منها.</p>
+        <p className="h2-sub">{journey.length} توزيعات احتمالية، وعائلة واحدة. لكل توزيع حكاية حقيقية: من أين جاء، ولماذا احتاجه الناس، وكيف يُبنى قانونه منها.</p>
         <a className="btn btn-primary" href={href.dist('bernoulli')}>
           ابدأ الرحلة: جرة برنولي ←
         </a>
@@ -28,10 +27,10 @@ export function HomePage() {
       </section>
 
       <section className="h2-journey" aria-labelledby="j-h">
-        <h2 id="j-h">الرحلة: ستة فصول</h2>
+        <h2 id="j-h">الرحلة: {journey.length} فصول</h2>
         <ol>
           {journey.map((id, i) => {
-            const d = distById[id];
+            const d = sheetById[id];
             const story = chapters[id]?.story.headline;
             return (
               <li key={id} style={{ '--c': identity[id].color } as CSSProperties}>
@@ -42,7 +41,7 @@ export function HomePage() {
                     <span className="j-name">
                       {d.nameAr} <span className="en" lang="en" dir="ltr">{d.nameEn}</span>
                     </span>
-                    <span className="j-q">{story ? `${story} · ` : ''}{chapters[id]?.question ?? d.question}</span>
+                    <span className="j-q">{story ? `${story} · ` : ''}{chapters[id]?.question}</span>
                   </span>
                 </a>
               </li>
@@ -58,7 +57,7 @@ export function HomePage() {
             <a href={href.exam}>ليلة الاختبار</a> <span>ورقة القوانين كاملة ({sheet.filter((s) => !s.extra).length} توزيعًا) مع تنبيهات على ما ينقصها، ومخطط لتحديد التوزيع، و«التوائم» التي يُخلط بينها.</span>
           </li>
           <li>
-            <a href={href.drill}>تدريب مختلط</a> <span>مسائل من الستة معًا: اختر التوزيع، ثم المعلمات، ثم احسب.</span>
+            <a href={href.drill}>تدريب مختلط</a> <span>مسائل من كل الفصول معًا: اختر التوزيع، ثم المعلمات، ثم احسب.</span>
           </li>
           <li>
             <a href={href.mgf}>الدالة المولدة</a> <span>اشتق المتوسط والتباين من <Tex tex="M_X(t)" /> خطوة خطوة، وتعرّف على التوزيع من شكل دالته.</span>

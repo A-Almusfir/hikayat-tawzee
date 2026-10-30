@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { distById } from '../content/distributions';
+import { sheetById } from '../content/sheet';
 import { edges } from '../content/family';
 import { identity } from '../content/identity';
 import { sourceById } from '../content/sources';
@@ -9,7 +9,7 @@ import { GlyphPaths } from './Glyph';
 import { Rich, Tex } from './Tex';
 
 // المحور السيني LTR داخل SVG؛ النصوص العربية تُرسم بـ direction="rtl".
-const POS: Record<DistId, { x: number; y: number; name: 'above' | 'below' | 'left' | 'right' }> = {
+const POS: Partial<Record<DistId, { x: number; y: number; name: 'above' | 'below' | 'left' | 'right' }>> = {
   bernoulli: { x: 250, y: 72, name: 'above' },
   geometric: { x: 120, y: 198, name: 'left' },
   binomial: { x: 330, y: 198, name: 'right' },
@@ -41,7 +41,7 @@ export function FamilyTree({ initial = 'bin-poi' }: { initial?: string }) {
           </marker>
         </defs>
         {edges.map((ed) => {
-          const a = POS[ed.from], b = POS[ed.to];
+          const a = POS[ed.from]!, b = POS[ed.to]!;
           const dx = b.x - a.x, dy = b.y - a.y, len = Math.hypot(dx, dy);
           const pad = R + 6;
           const x1 = a.x + (dx / len) * pad, y1 = a.y + (dy / len) * pad;
@@ -73,15 +73,15 @@ export function FamilyTree({ initial = 'bin-poi' }: { initial?: string }) {
           );
         })}
         {(Object.keys(POS) as DistId[]).map((id) => {
-          const p = POS[id];
+          const p = POS[id]!;
           return (
-            <a key={id} href={href.dist(id)} className="t-node" aria-label={`افتح فصل ${distById[id].nameAr}`}>
+            <a key={id} href={href.dist(id)} className="t-node" aria-label={`افتح فصل ${sheetById[id].nameAr}`}>
               <circle cx={p.x} cy={p.y} r={R} fill="#fffdf8" stroke={identity[id].color} strokeWidth="2.5" />
               <svg x={p.x - 15} y={p.y - 15} width="30" height="30" viewBox="0 0 24 24" fill={identity[id].color} stroke={identity[id].color} aria-hidden="true">
                 <GlyphPaths id={id} />
               </svg>
               <text x={p.x + NAME_OFFSET[p.name][0]} y={p.y + NAME_OFFSET[p.name][1]} textAnchor="middle" direction="rtl" className="t-name" fill={identity[id].color}>
-                {distById[id].nameAr}
+                {sheetById[id].nameAr}
               </text>
             </a>
           );

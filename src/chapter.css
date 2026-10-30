@@ -425,3 +425,11 @@ main:has(.exam-night) { max-width: 72rem; }
 .mgf-rule p { margin: .3rem 0; font-size: .95rem; }
 .mgf .seg-tabs { flex-wrap: wrap; }
 .mgf-card .scenario .tex-block { margin: .2rem 0; }
+
+/* ——— أكواب الشاي (فوق الهندسي) ——— */
+.cup { fill: #fffdf8; stroke: var(--c); stroke-width: 2; }
+.cup.milk { fill: var(--c-tint2); }
+.cup-handle { fill: none; stroke: var(--c); stroke-width: 2; }
+.cup-l { font: 700 13px var(--font); fill: var(--ink-2); }
+.cup-l.on { fill: var(--c); }
+.cups-strip li.picked { outline: 3px solid var(--ink); outline-offset: 1px; }

@@ -19,6 +19,26 @@ function paths(shape: Shape) {
           ))}
         </>
       );
+    case 'cups':
+      // أربعة أكواب: اثنان ممتلئان واثنان مفرغان
+      return (
+        <>
+          {[3, 8.5, 14, 19.5].map((x, i) => (
+            <path key={x} d={`M${x - 1.5} 9 h4 l-.6 8 h-2.8 z`} strokeWidth="1.6" fill={i % 2 ? 'none' : undefined} strokeLinejoin="round" />
+          ))}
+          <path d="M2 20 H22" fill="none" strokeWidth="1.6" />
+        </>
+      );
+    case 'stairs':
+      // درج بثلاث نجمات: الانتظار حتى النجاح رقم r
+      return (
+        <>
+          <path d="M3 21 H7 V16 H11 V11 H15 V6 H19" fill="none" strokeWidth="2" strokeLinejoin="round" />
+          {[[7, 12], [11, 7], [19, 3]].map(([x, y]) => (
+            <circle key={`${x}-${y}`} cx={x} cy={y} r="2" stroke="none" />
+          ))}
+        </>
+      );
     case 'steps':
       return (
         <>
@@ -36,6 +56,8 @@ function paths(shape: Shape) {
       );
     case 'decay':
       return <path d="M3 4 C 6 15, 11 19, 21 20" fill="none" strokeWidth="2.4" strokeLinecap="round" />;
+    case 'hump':
+      return <path d="M2 20 C 5 20, 6 6, 9 6 C 12 6, 15 17, 22 19" fill="none" strokeWidth="2.4" strokeLinecap="round" />;
     case 'bell':
       return <path d="M2 20 C 7 20, 8 4, 12 4 C 16 4, 17 20, 22 20" fill="none" strokeWidth="2.4" strokeLinecap="round" />;
   }

@@ -2,6 +2,8 @@ import { useEffect, useMemo, useState, type CSSProperties } from 'react';
 import type { Chapter } from '../content/chapterTypes';
 import { chapterNumber, nextInJourney } from '../content/chapters';
 import { distById } from '../content/distributions';
+import { sheetById } from '../content/sheet';
+import { SheetCard } from '../components/SheetCard';
 import { identity, journey, tint } from '../content/identity';
 import { sourceById } from '../content/sources';
 import { Glyph } from '../components/Glyph';
@@ -19,6 +21,7 @@ import { href, scrollToId } from '../lib/router';
 
 export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
   const d = distById[ch.id];
+  const s = sheetById[ch.id];
   const color = identity[ch.id].color;
   const number = chapterNumber(ch.id);
   const style = { '--c': color, '--c-tint': tint(color, 0.08), '--c-tint2': tint(color, 0.16) } as CSSProperties;
@@ -54,9 +57,9 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
       <header className="ch-head">
         <p className="ch-num" aria-hidden="true">{number}</p>
         <div>
-          <p className="ch-kicker">الفصل {number} من {journey.length} · {d.type === 'discrete' ? 'متقطع' : 'مستمر'}</p>
+          <p className="ch-kicker">الفصل {number} من {journey.length} · {s.group === 'discrete' ? 'متقطع' : 'مستمر'}</p>
           <h1 tabIndex={-1}>
-            <Glyph id={ch.id} size={40} /> {d.nameAr} <span className="en" lang="en" dir="ltr">{d.nameEn}</span>
+            <Glyph id={ch.id} size={40} /> {s.nameAr} <span className="en" lang="en" dir="ltr">{s.nameEn}</span>
           </h1>
           <p className="ch-q">{ch.question}</p>
         </div>
@@ -116,22 +119,33 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
       <section className="reference" aria-labelledby="ref-h">
         <h2 id="ref-h">المرجع</h2>
         <p className="hint">للتعمق والمراجعة: المختبر الكامل، والاشتقاق، والبطاقة، وأسئلة إضافية.</p>
-        <details>
-          <summary>{ch.reference.labTitle}</summary>
-          <Lab />
-        </details>
-        <details>
-          <summary>القانون والاشتقاق الكامل</summary>
-          <FormulaSection d={d} />
-        </details>
-        <details>
-          <summary>بطاقة التوزيع</summary>
-          <DistCardView d={d} />
-        </details>
-        <details>
-          <summary>أسئلة إضافية</summary>
-          <Quiz d={d} />
-        </details>
+        {Lab && ch.tryIt.kind !== 'lab' && (
+          <details>
+            <summary>{ch.reference.labTitle}</summary>
+            <Lab />
+          </details>
+        )}
+        {d ? (
+          <>
+            <details>
+              <summary>القانون والاشتقاق الكامل</summary>
+              <FormulaSection d={d} />
+            </details>
+            <details>
+              <summary>بطاقة التوزيع</summary>
+              <DistCardView d={d} />
+            </details>
+            <details>
+              <summary>أسئلة إضافية</summary>
+              <Quiz d={d} />
+            </details>
+          </>
+        ) : (
+          <details>
+            <summary>بطاقة التوزيع (من ورقة القوانين)</summary>
+            <SheetCard id={ch.id} />
+          </details>
+        )}
       </section>
 
       <section className="ch-sources" aria-labelledby="src-h">
@@ -166,7 +180,7 @@ function TryScene({ ch }: { ch: Chapter }) {
       return (
         <Scene n={2} title={t.headline}>
           <Rich as="p" text={t.prompt} />
-          <Lab />
+          {Lab && <Lab />}
         </Scene>
       );
   }

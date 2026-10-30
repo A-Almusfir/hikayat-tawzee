@@ -207,7 +207,7 @@ export const distributions: DistContent[] = [
         prompt:
           'في صندوق 10 بطاقات، منها 4 حمراء. نسحب 5 بطاقات **دون إرجاع**، و$X$ عدد الحمراء. هل $X \\sim \\mathrm{Bin}(5, 0.4)$؟',
         options: [
-          { text: 'لا؛ السحب دون إرجاع من مجموعة صغيرة يغيّر احتمال الحمراء من سحبة لأخرى، فالمحاولات غير مستقلة.', correct: true, why: 'بعد سحب حمراء يصبح احتمال الحمراء التالية $3/9$ لا $4/10$؛ شرطا الثبات والاستقلال مكسوران.' },
+          { text: 'لا؛ السحب دون إرجاع من مجموعة صغيرة يغيّر احتمال الحمراء من سحبة لأخرى، فالمحاولات غير مستقلة.', correct: true, why: 'بعد سحب حمراء يصبح احتمال الحمراء التالية $3/9$ لا $4/10$؛ شرطا الثبات والاستقلال مكسوران. هذا موقف فوق الهندسي.' },
           { text: 'نعم؛ لأن عدد السحبات ثابت $n = 5$.', why: 'ثبات $n$ شرط واحد فقط؛ يجب أيضًا ثبات $p$ واستقلال المحاولات.' },
           { text: 'نعم؛ لأن نسبة الحمراء $4/10 = 0.4$.', why: 'النسبة الابتدائية لا تبقى ثابتة عند السحب دون إرجاع.' },
           { text: 'لا؛ لأن $X$ متغير مستمر.', why: '$X$ عدد صحيح فهو متقطع؛ المشكلة في الاستقلال لا في النوع.' },
@@ -686,5 +686,5 @@ export const distributions: DistContent[] = [
   },
 ];
 
-export const distById = Object.fromEntries(distributions.map((d) => [d.id, d])) as Record<DistId, DistContent>;
+export const distById = Object.fromEntries(distributions.map((d) => [d.id, d])) as Partial<Record<DistId, DistContent>>;
 export const distOrder: DistId[] = distributions.map((d) => d.id);

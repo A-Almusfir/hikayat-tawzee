@@ -2,13 +2,17 @@ import { describe, expect, it } from 'vitest';
 import { fmt } from '../lib/dist';
 import { leaves } from './decision';
 import { drill } from './drill';
-import { journey } from './identity';
+import { identity, journey } from './identity';
+import type { DistId } from './types';
 import { twins } from './twins';
 
 describe('مخطط القرار', () => {
-  it('يصل إلى التوزيعات الستة، كل منها مرة واحدة، وإلى «ليس من الستة» حين لا يتطابق الموقف', () => {
+  it('يصل إلى كل توزيع مرة واحدة على الأكثر، وإلى كل توزيع في الرحلة، وإلى «ليس مما سبق» حين لا يتطابق الموقف', () => {
     const ls = leaves();
-    expect(ls.filter((l) => l !== 'insufficient').sort()).toEqual([...journey].sort());
+    const ds = ls.filter((l) => l !== 'insufficient');
+    expect(new Set(ds).size).toBe(ds.length);
+    for (const d of journey) expect(ds).toContain(d);
+    for (const d of ds) expect(identity[d as DistId], d).toBeDefined();
     expect(ls.filter((l) => l === 'insufficient').length).toBeGreaterThanOrEqual(2);
   });
 });

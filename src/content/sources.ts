@@ -182,6 +182,24 @@ export const sources: Source[] = [
     url: 'https://www.statlect.com/asymptotic-theory/central-limit-theorem',
     verified: 'multiple-search-snippets',
   },
+  {
+    id: 'tea-wiki',
+    cite: 'Lady tasting tea — Wikipedia (تجربة فيشر في The Design of Experiments, 1935، واختبار فيشر الدقيق)',
+    url: 'https://en.wikipedia.org/wiki/Lady_tasting_tea',
+    verified: 'multiple-search-snippets',
+  },
+  {
+    id: 'tea-uprm',
+    cite: 'W. Rolke, University of Puerto Rico — The Lady tasting tea (ثمانية أكواب، و70 اختيارًا متساوي الاحتمال)',
+    url: 'https://academic.uprm.edu/wrolke/esma3015/lady-tea.html',
+    verified: 'search-snippet',
+  },
+  {
+    id: 'muriel-bristol-wiki',
+    cite: 'Muriel Bristol — Wikipedia (السيدة في التجربة، واقتراح وليم روتش، وعدم نشر النتيجة)',
+    url: 'https://en.wikipedia.org/wiki/Muriel_Bristol',
+    verified: 'multiple-search-snippets',
+  },
 ];
 
 export const sourceById = Object.fromEntries(sources.map((s) => [s.id, s])) as Record<string, Source>;

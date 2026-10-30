@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { gradeCompose } from '../../lib/compose';
 import { useProgress } from '../../lib/storage';
 import type { Chapter } from '../../content/chapterTypes';
-import { distById } from '../../content/distributions';
+import { sheetById } from '../../content/sheet';
 import { identity } from '../../content/identity';
 import type { DistId } from '../../content/types';
 import { href } from '../../lib/router';
@@ -42,7 +42,7 @@ export function AnchorScene({ ch, next, color }: { ch: Chapter; next?: DistId; c
         <a className="bridge" href={href.dist(next)} style={{ '--to': identity[next].color } as CSSProperties}>
           <Glyph id={next} size={36} />
           <span>
-            <span className="bridge-k">الفصل التالي: {distById[next].nameAr}</span>
+            <span className="bridge-k">الفصل التالي: {sheetById[next].nameAr}</span>
             <Rich as="span" className="bridge-t" text={a.bridge} />
           </span>
           <span aria-hidden="true" className="bridge-arr">←</span>

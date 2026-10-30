@@ -1,9 +1,10 @@
-import { useEffect, useMemo, useState } from 'react';
-import { bernoulli, binomial, discreteUpper, exponential, fmt, geometric, normal, poisson, sample } from '../lib/dist';
+import { useEffect, useMemo, useState, type ComponentType } from 'react';
+import { bernoulli, binomial, discreteUpper, exponential, fmt, geometric, hypergeometric, normal, poisson, sample } from '../lib/dist';
 import { RANGES, SIM_BATCH, SIM_MAX } from '../lib/ranges';
 import { BarChart, CurveChart, Legend, type Bin } from './charts';
 import { Rich, Tex } from './Tex';
 import { ProbLine, SimNote, Slider, Stats } from './ui';
+import type { DistId } from '../content/types';
 
 // ———————— أدوات مشتركة للمحاكاة ————————
 
@@ -411,11 +412,77 @@ export function NormalLab() {
   );
 }
 
-export const labs = {
+
+// ———————— فوق الهندسي: تخمين الأكواب ————————
+/** صف الأكواب: «ح» حليب أولًا (نجاح) و«ش» شاي أولًا، والمختارة محاطة بإطار. */
+function CupStrip({ N, k, picked }: { N: number; k: number; picked: number[] }) {
+  const hits = picked.filter((i) => i < k).length;
+  return (
+    <div className="strip-wrap">
+      <ol className="strip cups-strip" aria-label={`${N} كوبًا، اخترت ${picked.length} منها، أصبت ${hits}`}>
+        {Array.from({ length: N }, (_, i) => (
+          <li key={i} className={`${i < k ? 'ok' : 'no'} ${picked.includes(i) ? 'picked' : ''}`} aria-hidden="true">
+            {i < k ? 'ح' : 'ش'}
+          </li>
+        ))}
+      </ol>
+      <p className="strip-key">
+        <span className="mini ok" aria-hidden="true">ح</span> حليب أولًا · <span className="mini no" aria-hidden="true">ش</span> شاي أولًا · المحاط بإطار: ما اخترته
+      </p>
+    </div>
+  );
+}
+
+export function HypergeometricLab() {
+  const [N, setN] = useState(8);
+  const [k, setK] = useState(4);
+  // كما في تجربة الشاي: تعرف عدد أكواب «الحليب أولًا» فتختار العدد نفسه (n = k)
+  const kk = Math.min(k, N - 1), nn = kk;
+  const sim = useDiscreteSim(`${N}|${kk}|${nn}`);
+  const [one, setOne] = useState<number[] | null>(null);
+  useEffect(() => setOne(null), [N, kk, nn]);
+  const [lo, hi] = hypergeometric.support(N, kk, nn);
+  const xs = range(0, hi);
+  const bars = xs.map((x) => ({ x, p: hypergeometric.pmf(x, N, kk, nn) }));
+  const runOne = () => {
+    const pick = sample.drawWithout(N, nn);
+    setOne(pick);
+    sim.add([pick.filter((i) => i < kk).length]);
+  };
+  const batch = () => sim.add(Array.from({ length: SIM_BATCH }, () => sample.hypergeometric(N, kk, nn)));
+  return (
+    <div className="lab">
+      <div className="slider-grid">
+        <Slider label="عدد الأكواب" symbol="N" value={N} onChange={setN} min={4} max={20} step={1} digits={0} />
+        <Slider label="أكواب «حليب أولًا»، وتختار العدد نفسه" symbol="k = n" value={kk} onChange={setK} min={1} max={N - 1} step={1} digits={0} />
+      </div>
+      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === hi} ariaLabel={`فوق الهندسي N=${N}, k=${kk}, n=${nn}. احتمال إصابة ${hi} كلها بالتخمين ${fmt(hypergeometric.pmf(hi, N, kk, nn))}`} xLabel="عدد الإصابات بالتخمين x" />
+      <Legend items={enough(sim.stats) ? ['theory', 'highlight', 'sim'] : ['theory', 'highlight']} />
+      {lo > 0 && <Rich as="p" className="hint" text={`لاحظ: $x$ لا يقل عن $${lo}$، لأنك تختار $${nn}$ ولا يوجد إلا $${N - kk}$ من النوع الآخر.`} />}
+      <ProbLine tex={`P(X=${hi}) = \\frac{\\binom{${kk}}{${hi}}\\binom{${N - kk}}{${nn - hi}}}{\\binom{${N}}{${nn}}}`} value={hypergeometric.pmf(hi, N, kk, nn)} />
+      <ProbLine tex={`P_{\\mathrm{Bin}}(X=${hi})`} value={binomial.pmf(hi, nn, kk / N)} label="لو أُعيد كل كوب بعد اختياره (ذو الحدين):" />
+      <SimButtons onOne={runOne} oneLabel="خمّن مرة واحدة" onBatch={batch} batchLabel={`خمّن ${SIM_BATCH} مرة`} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
+      {one && (
+        <>
+          <CupStrip N={N} k={kk} picked={one} />
+          <p className="result-line">
+            أصبت في هذه المرة: <Tex tex={`X = ${one.filter((i) => i < kk).length}`} />
+          </p>
+        </>
+      )}
+      <SimNote count={sim.values.length} max={SIM_MAX} />
+      <Stats mean={hypergeometric.mean(N, kk, nn)} variance={hypergeometric.variance(N, kk, nn)} meanTex="n\tfrac{k}{N}" varTex="n\tfrac{k}{N}\big(1-\tfrac{k}{N}\big)\tfrac{N-n}{N-1}" sim={enough(sim.stats)} />
+    </div>
+  );
+}
+
+/** المختبر المرجعي لكل فصل قديم. الفصول الجديدة تضع تجربتها في المشهد الثاني مباشرة (kind: 'lab'). */
+export const labs: Partial<Record<DistId, ComponentType>> = {
   bernoulli: BernoulliLab,
   binomial: BinomialLab,
   geometric: GeometricLab,
   poisson: PoissonLab,
   exponential: ExponentialLab,
   normal: NormalLab,
+  hypergeometric: HypergeometricLab,
 };

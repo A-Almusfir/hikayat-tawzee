@@ -5,7 +5,7 @@ import { choiceLabels } from '../content/chooser';
 import { distById } from '../content/distributions';
 import { chapters } from '../content/chapters';
 import { identity, journey } from '../content/identity';
-import { sheet, sheetFixes, symbols, type SheetRow } from '../content/sheet';
+import { sheet, sheetById, sheetFixes, symbols, type SheetRow } from '../content/sheet';
 import { twins } from '../content/twins';
 import { Glyph } from '../components/Glyph';
 import { Rich, Tex } from '../components/Tex';
@@ -64,10 +64,11 @@ export function ExamNightPage() {
         </dl>
       </section>
 
-      <Fold title="الستة: ماذا يسأل كل توزيع، والفخ الشائع">
+      <Fold title="ماذا يسأل كل توزيع، والفخ الشائع">
         <ul className="traps">
           {journey.map((id) => {
             const d = distById[id];
+            if (!d) return null;
             return (
               <li key={id} style={{ '--c': identity[id].color } as CSSProperties}>
                 <a href={href.dist(id)}><Glyph id={id} size={20} /> {d.nameAr}</a>
@@ -94,10 +95,10 @@ export function ExamNightPage() {
               <div className="twin-pair">
                 {[t.a, t.b].map((id, i) => (
                   <div key={id} className="twin-side" style={{ '--c': identity[id].color } as CSSProperties}>
-                    <p className="twin-name"><Glyph id={id} size={20} /> {distById[id].nameAr}</p>
+                    <p className="twin-name"><Glyph id={id} size={20} /> {sheetById[id].nameAr}</p>
                     <Rich as="p" text={t.what[i]} />
-                    <Tex tex={distById[id].card.fnTex} />
-                    <p className="twin-mean"><Tex tex={distById[id].card.mean} /></p>
+                    <Tex tex={sheetById[id].f} />
+                    <p className="twin-mean"><Tex tex={sheetById[id].mean} /></p>
                   </div>
                 ))}
               </div>
@@ -192,10 +193,16 @@ function SheetTable({ group, title }: { group: SheetRow['group']; title: string 
 
 function LeafView({ l }: { l: Leaf }) {
   if (l === 'insufficient') return <span className="leaf">{choiceLabels.insufficient}</span>;
-  return (
-    <a className="leaf" href={href.dist(l)} style={{ '--c': identity[l].color } as CSSProperties}>
-      <Glyph id={l} size={18} /> {distById[l].nameAr} <span className="leaf-h"><Rich text={hint[l]} /></span>
-    </a>
+  const body = (
+    <>
+      <Glyph id={l} size={18} /> {sheetById[l].nameAr} <span className="leaf-h"><Rich text={hint[l]} /></span>
+    </>
+  );
+  // ورقة بلا فصل منشور بعد: نص بلا رابط
+  return chapters[l] ? (
+    <a className="leaf" href={href.dist(l)} style={{ '--c': identity[l].color } as CSSProperties}>{body}</a>
+  ) : (
+    <span className="leaf" style={{ '--c': identity[l].color } as CSSProperties}>{body}</span>
   );
 }
 

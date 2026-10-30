@@ -236,6 +236,17 @@ export function seededRng(seed: number): Rng {
 }
 
 export const sample = {
+  /** n عناصر مختلفة من 0..N−1 دون إرجاع (خلط فيشر–ييتس جزئي). */
+  drawWithout: (N: number, n: number, rng: Rng = Math.random) => {
+    const a = Array.from({ length: N }, (_, i) => i);
+    for (let i = 0; i < n; i++) {
+      const j = i + Math.floor(rng() * (N - i));
+      [a[i], a[j]] = [a[j], a[i]];
+    }
+    return a.slice(0, n);
+  },
+  /** فوق الهندسي: العناصر 0..k−1 هي «النجاحات». */
+  hypergeometric: (N: number, k: number, n: number, rng: Rng = Math.random) => sample.drawWithout(N, n, rng).filter((i) => i < k).length,
   bernoulli: (p: number, rng: Rng = Math.random): number => (rng() < p ? 1 : 0),
   binomialTrials: (n: number, p: number, rng: Rng = Math.random) =>
     Array.from({ length: n }, () => sample.bernoulli(p, rng)),

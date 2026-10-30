@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { Choice } from '../content/chapterTypes';
 import { chapters } from '../content/chapters';
-import { choiceLabels } from '../content/chooser';
+import { choiceLabels, choiceOrder } from '../content/chooser';
 import { hint, type Leaf } from '../content/decision';
 import { drill, type DrillItem } from '../content/drill';
 import { ChoiceCheck } from '../components/scenes/ChoiceCheck';
@@ -11,7 +11,7 @@ import { href } from '../lib/router';
 import { parseNumber } from '../lib/shuffle';
 import { progress, useProgress } from '../lib/storage';
 
-const ORDER: Leaf[] = ['bernoulli', 'binomial', 'geometric', 'poisson', 'exponential', 'normal', 'insufficient'];
+const ORDER: Leaf[] = choiceOrder();
 
 /** الخطوة الأولى: أي توزيع؟ تفسير الخيارات الخاطئة يأتي من مخطط القرار (مصدر واحد). */
 function step1(item: DrillItem): Choice {
@@ -75,7 +75,7 @@ export function DrillPage() {
     <article className="drill">
       <header className="page-head">
         <h1 tabIndex={-1}>تدريب مختلط</h1>
-        <p className="lead">مسائل من التوزيعات الستة معًا، كما في الاختبار. لكل مسألة ثلاث خطوات: أي توزيع؟ ثم المعلمات، ثم الحساب.</p>
+        <p className="lead">مسائل من كل الفصول معًا، كما في الاختبار. لكل مسألة ثلاث خطوات: أي توزيع؟ ثم المعلمات، ثم الحساب.</p>
       </header>
       <div className="seg-tabs" role="group" aria-label="نوع التدريب">
         <button type="button" className={`seg-tab ${mode === 'all' ? 'on' : ''}`} aria-pressed={mode === 'all'} onClick={() => (setMode('all'), setIdx(0))}>
@@ -130,7 +130,7 @@ function DrillCard({ it, prefix, n }: { it: DrillItem; prefix: string; n: number
       <ChoiceCheck id={k(1)} q={step1(it)} kicker="الخطوة 1 · أي توزيع؟" />
       {s1 && it.param && <ChoiceCheck id={k(2)} q={it.param} kicker="الخطوة 2 · المعلمات" />}
       {s1 && s2 && it.calc && <NumericStep id={k(3)} calc={it.calc} />}
-      {s1 && !it.param && <p className="hint">هذه المسألة تنتهي عند الخطوة الأولى: الشروط لا تسمح باختيار أي من الستة.</p>}
+      {s1 && !it.param && <p className="hint">هذه المسألة تنتهي عند الخطوة الأولى: الشروط لا تسمح باختيار أي من التوزيعات.</p>}
     </div>
   );
 }

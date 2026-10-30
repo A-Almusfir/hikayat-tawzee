@@ -9,6 +9,7 @@ export function ArtView({ art }: { art: Art }) {
     <figure className="hk-art">
       {art.kind === 'unit-grid' && <UnitGrid a={art} />}
       {art.kind === 'urn' && <Urn a={art} />}
+      {art.kind === 'cups' && <Cups a={art} />}
       {art.kind === 'pascal' && <Pascal a={art} />}
       {art.kind === 'timeline' && <Timeline a={art} />}
       {art.kind === 'streak' && <Streak a={art} />}
@@ -62,6 +63,28 @@ function Urn({ a }: { a: Of<'urn'> }) {
         const x = 12 + (i % a.cols) * S + S / 2, y = 14 + Math.floor(i / a.cols) * S + S / 2;
         return <circle key={i} cx={x} cy={y} r={S / 2 - 3} className={i < a.black ? 'peb black' : 'peb white'} />;
       })}
+    </svg>
+  );
+}
+
+/** أكواب الشاي: «ح» حليب أولًا (ممتلئ)، «ش» شاي أولًا (مفرغ) — الحرف والشكل لا اللون فقط. */
+function Cups({ a }: { a: Of<'cups'> }) {
+  const n = a.milk + a.tea, S = 34, W = n * S + 8, H = 52;
+  // ترتيب ثابت مختلط يوحي بالعشوائية
+  const order = Array.from({ length: n }, (_, i) => ((i * 5 + 3) % n) < a.milk);
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={a.ariaLabel} direction="ltr">
+      {order.map((milk, i) => {
+        const x = 4 + i * S;
+        return (
+          <g key={i}>
+            <path d={`M${x + 5} 8 h${S - 12} l-3 28 h${-(S - 18)} z`} className={milk ? 'cup milk' : 'cup'} />
+            <path d={`M${x + S - 7} 14 q7 2 0 12`} className="cup-handle" />
+            <text x={x + S / 2 - 1} y={28} textAnchor="middle" className={milk ? 'cup-l on' : 'cup-l'}>{milk ? 'ح' : 'ش'}</text>
+          </g>
+        );
+      })}
+      <path d={`M2 44 H${W - 2}`} className="cup-handle" />
     </svg>
   );
 }

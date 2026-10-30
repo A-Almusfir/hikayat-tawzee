@@ -1,6 +1,15 @@
 // أنواع المحتوى. النصوص تدعم رياضيات داخلية بين $...$ وسطرية بين $$...$$.
 
-export type DistId = 'bernoulli' | 'binomial' | 'geometric' | 'poisson' | 'exponential' | 'normal';
+export type DistId =
+  | 'bernoulli'
+  | 'binomial'
+  | 'hypergeometric'
+  | 'geometric'
+  | 'negbin'
+  | 'poisson'
+  | 'exponential'
+  | 'gamma'
+  | 'normal';
 
 /** تحقق رقمي يُستخدم في الاختبارات الآلية لضمان اتساق الإجابة مع الحساب. */
 export interface NumericCheck {

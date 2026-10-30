@@ -1,3 +1,4 @@
+import { journey } from './identity';
 import type { DistId } from './types';
 
 export type ChoiceId = DistId | 'insufficient';
@@ -5,12 +6,21 @@ export type ChoiceId = DistId | 'insufficient';
 export const choiceLabels: Record<ChoiceId, string> = {
   bernoulli: 'برنولي',
   binomial: 'ذو الحدين',
+  hypergeometric: 'فوق الهندسي',
   geometric: 'الهندسي',
+  negbin: 'ذو الحدين السالب',
   poisson: 'بواسون',
   exponential: 'الأسي',
+  gamma: 'غاما',
   normal: 'الطبيعي',
   insufficient: 'المعطيات أو الشروط غير كافية',
 };
+
+/** ترتيب الخيارات في أسئلة «أي توزيع؟»: التوزيعات المنشورة فقط (من الرحلة)، ثم «غير كافية». */
+export const choiceOrder = (): ChoiceId[] => [
+  ...(['bernoulli', 'binomial', 'hypergeometric', 'geometric', 'negbin', 'poisson', 'exponential', 'gamma', 'normal'] as DistId[]).filter((d) => journey.includes(d)),
+  'insufficient',
+];
 
 export interface Scenario {
   id: string;
@@ -118,8 +128,8 @@ export const scenarios: Scenario[] = [
   {
     id: 's11',
     text: 'في كيس 10 كرات، منها 3 حمراء. تُسحب 4 كرات **دون إرجاع**. ما توزيع عدد الكرات الحمراء المسحوبة؟',
-    answer: 'insufficient',
-    why: 'السحب دون إرجاع من مجموعة صغيرة يجعل احتمال الحمراء يتغير من سحبة لأخرى، فلا تتحقق شروط ذي الحدين. هذا الموقف يحتاج توزيعًا آخر ليس ضمن الستة هنا (فوق الهندسي Hypergeometric).',
+    answer: 'hypergeometric',
+    why: 'سحب دون إرجاع من مجتمع صغير معروف التركيب ($N = 10$، $k = 3$، $n = 4$)، ونعدّ «النجاحات» المسحوبة: فوق الهندسي.',
     closest: 'binomial',
     whyNotClosest: 'ذو الحدين يحتاج استقلال المحاولات وثبات $p$؛ وكلاهما مكسور عند السحب دون إرجاع من 10 كرات فقط.',
     assumption: 'لو كان السحب مع الإرجاع لصار ذا حدين $\\mathrm{Bin}(4, 0.3)$.',

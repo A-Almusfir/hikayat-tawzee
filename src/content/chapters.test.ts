@@ -5,6 +5,7 @@ import type { Chapter } from './chapterTypes';
 import { edges } from './family';
 import { horseKicks, horseKickTotals } from './horsekicks';
 import { contrast, identity, journey, PAPER, tint } from './identity';
+import { sheetById } from './sheet';
 import { sourceById } from './sources';
 
 const all = Object.values(chapters) as Chapter[];
@@ -97,9 +98,14 @@ describe('الشجرة والهوية والرحلة', () => {
     expect(edges.map((e) => e.id).sort()).toEqual(['bern-bin', 'bern-geo', 'bin-norm', 'bin-poi', 'geo-exp', 'poi-exp']);
     for (const e of edges) expect(e.condition.length).toBeGreaterThan(20);
   });
-  it('الفصول المسجلة من التوزيعات الستة، وكل فصل غير الأخير له جسر', () => {
+  it('كل فصل مسجل في الرحلة والعكس، ولكل فصل جسر وهوية وصف في ورقة القوانين', () => {
     for (const ch of all) expect(journey).toContain(ch.id);
-    expect(journey).toHaveLength(6);
+    for (const id of journey) {
+      expect(chapters[id], id).toBeDefined();
+      expect(chapters[id]!.anchor.bridge.length, id).toBeGreaterThan(20);
+      expect(identity[id], id).toBeDefined();
+      expect(sheetById[id], id).toBeDefined();
+    }
   });
   it('تباين ألوان الهوية ≥ 4.5:1 على الورق وعلى خلفية المشهد', () => {
     for (const { color } of Object.values(identity)) {
@@ -114,7 +120,7 @@ describe('الشجرة والهوية والرحلة', () => {
 });
 
 describe('أرقام مذكورة في نصوص الفصول الجديدة', () => {
-  it('الفصول الستة مسجلة بالترتيب', () => {
+  it('الفصول المسجلة هي فصول الرحلة', () => {
     expect(Object.keys(chapters).sort()).toEqual([...journey].sort());
   });
   it('مسألة النقاط: 11 من 16 طريقًا، و2^4 = 16', () => {

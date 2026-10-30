@@ -18,7 +18,7 @@ export function ExamNightPage() {
     <article className="exam-night">
       <header className="page-head">
         <h1 tabIndex={-1}>ليلة الاختبار</h1>
-        <p className="lead">ورقة القوانين كاملة بترتيبها وأعمدتها: {sheet.filter((s) => !s.extra).length} توزيعًا، ومعها تنبيهات على ما ينقص الورقة أو يحتاج تصحيحًا. ثم قاموس الرموز، ومخطط يحدد التوزيع من نص المسألة.</p>
+        <p className="lead">ورقة القوانين كاملة بترتيبها وأعمدتها: {sheet.filter((s) => !s.extra).length} توزيعًا، ومعها ملاحظات تكمل ما ينقصها وتصحح خطأها. ثم قاموس الرموز، ومخطط يحدد التوزيع من نص المسألة.</p>
         <div className="btn-row no-print">
           <button
             type="button"
@@ -36,22 +36,23 @@ export function ExamNightPage() {
       </header>
 
       <nav className="jump no-print" aria-label="أقسام الصفحة">
-        {[['sheet-discrete', 'المتقطعة'], ['sheet-continuous', 'المستمرة'], ['fix-h', 'التنبيهات'], ['sym-h', 'الرموز'], ['decision-h', 'المخطط'], ['twins-h', 'التوائم']].map(([id, t]) => (
+        {[['sheet-discrete', 'المتقطعة'], ['sheet-continuous', 'المستمرة'], ['fix-h', 'الملاحظات'], ['sym-h', 'الرموز'], ['decision-h', 'المخطط'], ['twins-h', 'التوائم']].map(([id, t]) => (
           <button key={id} type="button" className="seg-tab" onClick={() => jump(id)}>{t}</button>
         ))}
       </nav>
+      <p className="hint">الأرقام الصغيرة بجانب أسماء التوزيعات = ملاحظات على الورقة، تجدها أسفل الجدولين.</p>
       <SheetTable group="discrete" title="المتقطعة" />
       <SheetTable group="continuous" title="المستمرة" />
 
       <section aria-labelledby="fix-h" className="sheet-fixes">
-        <h2 id="fix-h">تنبيهات على ورقة القوانين</h2>
-        <p className="hint">ما ينقص الورقة أو يحتاج تصحيحًا. الأرقام نفسها تظهر بجانب اسم التوزيع في الجدولين.</p>
+        <h2 id="fix-h">ورقة القوانين: ما ينقصها وما يحتاج تصحيحًا</h2>
+        <p>الجدولان أعلاه منقولان كما هما من ورقة قوانين المقرر، وفيها خانات فارغة وشروط غير مذكورة وخطأ واحد. هنا نكمل الناقص ونصحح الخطأ حتى لا تنقله إلى إجابتك. الرقم بجانب اسم التوزيع في الجدول يوصلك إلى ملاحظته، و«↑ ارجع للجدول» يرجعك.</p>
         <ol>
           {sheetFixes.map((f) => (
             <li key={f.id} id={`fix-${f.id}`} tabIndex={-1}>
               <span className={`fix-kind ${f.kind}`}>{FIX_KIND[f.kind]}</span> <Rich text={f.text} />{' '}
               <button type="button" className="link-btn no-print" onClick={() => scrollToId(`row-${f.rows[0]}`)}>
-                ↑ إلى الجدول
+                ↑ ارجع للجدول
               </button>
             </li>
           ))}
@@ -70,7 +71,7 @@ export function ExamNightPage() {
         </dl>
       </section>
 
-      <Fold title="ماذا يسأل كل توزيع، والفخ الشائع">
+      <Fold title="وش يسأل كل توزيع؟ والفخ الشائع">
         <ul className="traps">
           {journey.map((id) => {
             // الفصول الجديدة بلا بطاقة قديمة: السؤال والفخ من الفصل نفسه
@@ -86,7 +87,7 @@ export function ExamNightPage() {
         </ul>
       </Fold>
 
-      <Fold id="decision-h" title="أي توزيع؟ مخطط القرار">
+      <Fold id="decision-h" title="وش التوزيع؟ مخطط القرار">
         <p className="hint">اسأل عن بنية الموقف لا عن كلمة مفتاحية.</p>
         <div className="decision">
           <Node n={decisionTree} />
@@ -94,7 +95,7 @@ export function ExamNightPage() {
         <Rich as="p" className="callout" text={decisionNote} />
       </Fold>
 
-      <Fold id="twins-h" title="التوائم: لا تخلط بينها">
+      <Fold id="twins-h" title="التوائم: لا تلخبط بينها">
         <div className="twins">
           {twins.map((t) => (
             <div key={t.a + t.b} className="twin">
@@ -124,7 +125,7 @@ function jump(id: string) {
   scrollToId(id);
 }
 
-const FIX_KIND = { fix: 'تصحيح', missing: 'ناقص', notation: 'ترميز' } as const;
+const FIX_KIND = { error: 'خطأ في الورقة', add: 'إضافة', clarify: 'توضيح', notation: 'اختلاف رموز' } as const;
 const fixNumbers = (id: SheetRow['id']) => sheetFixes.flatMap((f, i) => (f.rows.includes(id) ? [{ n: i + 1, id: f.id, kind: f.kind }] : []));
 const isDist = (id: string): id is DistId => id in identity;
 /** وجهة صف الورقة: فصله إن نُشر، وإلا بطاقته في «توزيعات أخرى»، والمعياري إلى فصل الطبيعي. */
@@ -166,7 +167,7 @@ function SheetTable({ group, title }: { group: SheetRow['group']; title: string 
                   <span className="sheet-marks">
                     {s.extra && <span className="tag">ليس في الورقة</span>}
                     {fixNumbers(s.id).map((f) => (
-                      <button key={f.id} type="button" className="fix-mark" aria-label={`تنبيه ${f.n} (${FIX_KIND[f.kind]}): انتقل إليه`} onClick={() => scrollToId(`fix-${f.id}`)}>
+                      <button key={f.id} type="button" className={`fix-mark ${f.kind}`} aria-label={`ملاحظة ${f.n} (${FIX_KIND[f.kind]}): انتقل إليه`} onClick={() => scrollToId(`fix-${f.id}`)}>
                         {f.n}
                       </button>
                     ))}

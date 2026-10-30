@@ -378,70 +378,47 @@ export const sheetById = Object.fromEntries(sheet.map((s) => [s.id, s])) as Reco
 export interface SheetFix {
   id: string;
   rows: SheetId[];
-  kind: 'fix' | 'missing' | 'notation';
+  /** error: خطأ في الورقة؛ add: إضافة ما تتركه فارغًا أو لا تذكره؛ clarify: توضيح لما يُفهم خطأ؛ notation: اختلاف الرموز بين الكتب. */
+  kind: 'error' | 'add' | 'clarify' | 'notation';
   text: string;
 }
 
 export const sheetFixes: SheetFix[] = [
   {
-    id: 'weibull-moments',
-    rows: ['weibull'],
-    kind: 'missing',
-    text: 'خانتا المتوسط والتباين لويبل فارغتان في الورقة. بصيغة الورقة: $E(X) = \\alpha^{-1/\\beta}\\Gamma(1+\\frac{1}{\\beta})$ و$\\mathrm{Var}(X) = \\alpha^{-2/\\beta}[\\Gamma(1+\\frac{2}{\\beta}) - \\Gamma^{2}(1+\\frac{1}{\\beta})]$.',
+    id: 'beta-moment',
+    rows: ['beta'],
+    kind: 'error',
+    text: 'المكتوب في عمود $M_X(t)$ لبيتا، $\\frac{B(a+r,\\,b)}{B(a,b)}$، ليس دالة مولدة بل العزم $E(X^{r})$. الدالة المولدة لبيتا موجودة لكل $t$ لكن بلا صيغة أولية.',
   },
   {
     id: 't-moments',
     rows: ['t'],
-    kind: 'missing',
+    kind: 'add',
     text: 'خانتا t فارغتان في الورقة: $E(X) = 0$ بشرط $v > 1$، و$\\mathrm{Var}(X) = \\frac{v}{v-2}$ بشرط $v > 2$. وعند $v = 1$ يصبح t توزيع كوشي، ولا متوسط له.',
   },
   {
     id: 'f-conditions',
     rows: ['f'],
-    kind: 'missing',
+    kind: 'add',
     text: 'متوسط F يحتاج الشرط $v > 2$، وتباينه يحتاج $v > 4$. الورقة لا تذكر الشرطين.',
   },
   {
-    id: 'beta-moment',
-    rows: ['beta'],
-    kind: 'fix',
-    text: 'المكتوب في عمود $M_X(t)$ لبيتا، $\\frac{B(a+r,\\,b)}{B(a,b)}$، ليس دالة مولدة بل العزم $E(X^{r})$. الدالة المولدة لبيتا موجودة لكل $t$ لكن بلا صيغة أولية.',
-  },
-  {
-    id: 'hyper-support',
-    rows: ['hypergeometric'],
-    kind: 'fix',
-    text: 'مجال فوق الهندسي الدقيق يبدأ من $\\max(0,\\, n-(N-k))$ لا من $0$: إذا سحبت أكثر من عدد «الإخفاقات» في المجتمع فلا بد من بعض النجاحات.',
-  },
-  {
-    id: 'mgf-domain',
-    rows: ['negbin', 'geometric', 'exponential', 'gamma', 'chisquare', 'uniform'],
-    kind: 'missing',
-    text: 'الدالة المولدة صالحة على مجال من $t$ لا تذكره الورقة: الهندسي وذو الحدين السالب $t < -\\ln q$، والأسي $t < \\theta$، وغاما $t < \\beta$، ومربع كاي $t < \\frac{1}{2}$، والمنتظم صيغته لـ $t \\ne 0$ و$M_X(0) = 1$.',
-  },
-  {
-    id: 'dash-meaning',
-    rows: ['hypergeometric', 'weibull', 'beta', 't', 'f'],
-    kind: 'fix',
-    text: 'الشرطة «-» في عمود $M_X(t)$ تخلط معنيين: **غير موجودة** (t وF) و**موجودة بلا صيغة بسيطة** (فوق الهندسي وبيتا، وويبل حين $\\beta \\ge 1$). لا تكتب في الاختبار أن دالة بيتا المولدة غير موجودة.',
+    id: 'weibull-moments',
+    rows: ['weibull'],
+    kind: 'add',
+    text: 'خانتا المتوسط والتباين لويبل فارغتان في الورقة. بصيغة الورقة: $E(X) = \\alpha^{-1/\\beta}\\Gamma(1+\\frac{1}{\\beta})$ و$\\mathrm{Var}(X) = \\alpha^{-2/\\beta}[\\Gamma(1+\\frac{2}{\\beta}) - \\Gamma^{2}(1+\\frac{1}{\\beta})]$.',
   },
   {
     id: 'normal-cdf',
     rows: ['normal', 'stdnormal'],
-    kind: 'fix',
-    text: 'عمود $F(x)$ للطبيعي ليس «-»: $F(x) = \\Phi\\left(\\frac{x-\\mu}{\\sigma}\\right)$، وتُقرأ $\\Phi$ من جدول الطبيعي المعياري.',
+    kind: 'add',
+    text: 'الورقة تترك $F(x)$ للطبيعي فارغًا لأنه بلا صيغة أولية، لكنه يُحسب دائمًا: $F(x) = \\Phi\\left(\\frac{x-\\mu}{\\sigma}\\right)$، وتُقرأ $\\Phi$ من جدول الطبيعي المعياري.',
   },
   {
-    id: 'gamma-cdf',
-    rows: ['gamma'],
-    kind: 'missing',
-    text: 'حين يكون $\\alpha$ عددًا صحيحًا فلغاما تراكمي مغلق: $F(x) = 1 - \\sum_{k=0}^{\\alpha-1} e^{-\\beta x}\\frac{(\\beta x)^{k}}{k!}$. وهو نفسه احتمال أن يقع $\\alpha$ حدثًا على الأقل في $[0, x]$ في عملية بواسون بمعدل $\\beta$، أي $N(x) \\sim \\mathrm{Poisson}(\\beta x)$.',
-  },
-  {
-    id: 'uniform-cdf',
-    rows: ['uniform'],
-    kind: 'missing',
-    text: 'تراكمي المنتظم $\\frac{x-a}{b-a}$ صالح لـ $a \\le x \\le b$ فقط؛ وهو $0$ قبل $a$ و$1$ بعد $b$.',
+    id: 'gamma-rate',
+    rows: ['gamma', 'exponential'],
+    kind: 'notation',
+    text: '$\\beta$ في غاما (و$\\theta$ في الأسي) **معدل**: المتوسط $\\frac{\\alpha}{\\beta}$. كتب كثيرة تستعمل $\\beta$ **مقياسًا** فيصبح المتوسط $\\alpha\\beta$. والأسي حالة خاصة: $\\text{Exp}(\\theta) = \\text{Gamma}(1, \\theta)$.',
   },
   {
     id: 'negbin-trials',
@@ -450,10 +427,34 @@ export const sheetFixes: SheetFix[] = [
     text: 'ذو الحدين السالب في الورقة يعدّ **المحاولات** حتى النجاح رقم $r$ ($x \\ge r$). بعض الكتب وبرامج R وSciPy تعدّ **الإخفاقات** $Y = X - r$، فيصبح متوسطها $\\frac{rq}{p}$. تأكد أي التعريفين في المسألة.',
   },
   {
-    id: 'gamma-rate',
-    rows: ['gamma', 'exponential'],
-    kind: 'notation',
-    text: '$\\beta$ في غاما (و$\\theta$ في الأسي) **معدل**: المتوسط $\\frac{\\alpha}{\\beta}$. كتب كثيرة تستعمل $\\beta$ **مقياسًا** فيصبح المتوسط $\\alpha\\beta$. والأسي حالة خاصة: $\\text{Exp}(\\theta) = \\text{Gamma}(1, \\theta)$.',
+    id: 'mgf-domain',
+    rows: ['negbin', 'geometric', 'exponential', 'gamma', 'chisquare', 'uniform'],
+    kind: 'add',
+    text: 'الدالة المولدة صالحة على مجال من $t$ لا تذكره الورقة: الهندسي وذو الحدين السالب $t < -\\ln q$، والأسي $t < \\theta$، وغاما $t < \\beta$، ومربع كاي $t < \\frac{1}{2}$، والمنتظم صيغته لـ $t \\ne 0$ و$M_X(0) = 1$.',
+  },
+  {
+    id: 'dash-meaning',
+    rows: ['hypergeometric', 'weibull', 'beta', 't', 'f'],
+    kind: 'clarify',
+    text: 'الشرطة «-» في عمود $M_X(t)$ تخلط معنيين: **غير موجودة** (t وF) و**موجودة بلا صيغة بسيطة** (فوق الهندسي وبيتا، وويبل حين $\\beta \\ge 1$). لا تكتب في الاختبار أن دالة بيتا المولدة غير موجودة.',
+  },
+  {
+    id: 'hyper-support',
+    rows: ['hypergeometric'],
+    kind: 'clarify',
+    text: 'الورقة تكتب مجال فوق الهندسي من $0$، وهذا مقبول لأن الاحتمال يساوي صفرًا خارج القيم الممكنة. لكن القيم الممكنة فعلًا تبدأ من $\\max(0,\\, n-(N-k))$: إذا سحبت أكثر من عدد «الإخفاقات» في المجتمع فلا بد من بعض النجاحات.',
+  },
+  {
+    id: 'gamma-cdf',
+    rows: ['gamma'],
+    kind: 'add',
+    text: 'حين يكون $\\alpha$ عددًا صحيحًا فلغاما تراكمي مغلق: $F(x) = 1 - \\sum_{k=0}^{\\alpha-1} e^{-\\beta x}\\frac{(\\beta x)^{k}}{k!}$. وهو نفسه احتمال أن يقع $\\alpha$ حدثًا على الأقل في $[0, x]$ في عملية بواسون بمعدل $\\beta$، أي $N(x) \\sim \\mathrm{Poisson}(\\beta x)$.',
+  },
+  {
+    id: 'uniform-cdf',
+    rows: ['uniform'],
+    kind: 'add',
+    text: 'تراكمي المنتظم $\\frac{x-a}{b-a}$ صالح لـ $a \\le x \\le b$ فقط؛ وهو $0$ قبل $a$ و$1$ بعد $b$.',
   },
   {
     id: 'typos',

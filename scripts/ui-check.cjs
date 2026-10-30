@@ -41,6 +41,11 @@ async function texOverflow(page, tag, route) {
       const sw = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       if (sw > 0) fail(`[${tag}] ${route}: تمرير أفقي ${sw}px`);
       await texOverflow(page, tag, route);
+      // الأزرار الملوّنة بلون الصفحة: خلفية فعلية (لا شفافة) خلف النص الأبيض
+      const invisible = await page.evaluate(() => [...document.querySelectorAll('main .seg-tab.on, main .btn-c, main .pk')]
+        .filter((e) => e.getBoundingClientRect().width && /rgba\(0, 0, 0, 0\)|transparent/.test(getComputedStyle(e).backgroundColor))
+        .map((e) => e.textContent.trim().slice(0, 20)));
+      invisible.forEach((t) => fail(`[${tag}] ${route}: زر بلا خلفية (نص أبيض على الورق): «${t}»`));
     }
 
     // الشجرة: لا تتقاطع التسميات مع الأسماء أو الدوائر
@@ -68,6 +73,8 @@ async function texOverflow(page, tag, route) {
       return [...document.querySelectorAll('.t-label, .t-name')].filter((e) => { const r = e.getBoundingClientRect(); return r.left < svg.left - 1 || r.right > svg.right + 1 || r.top < svg.top - 1 || r.bottom > svg.bottom + 1; }).map((e) => e.textContent);
     });
     outside.forEach((o) => fail(`[${tag}] الشجرة (لوحة ${ti + 1}): «${o}» خارج الرسم`));
+    const tabBg = await page.evaluate(() => { const e = document.querySelector('.tree-tabs .seg-tab.on'); return e ? getComputedStyle(e).backgroundColor : 'none'; });
+    if (/rgba\(0, 0, 0, 0\)|transparent/.test(tabBg)) fail(`[${tag}] الشجرة (لوحة ${ti + 1}): زر اللوحة المختار بلا خلفية`);
     }
 
     if (tag === 'mobile') {
@@ -99,7 +106,7 @@ async function texOverflow(page, tag, route) {
           await fs.locator('label.option').first().click();
           await fs.locator('.check-btn').click();
         }
-        await page.locator('#scene-4').getByRole('button', { name: 'اكشف الحل كاملًا' }).click();
+        await page.locator('#scene-4').getByRole('button', { name: 'ورّني الحل كامل' }).click();
         const tiles = page.locator('#scene-5 .tile');
         const slots = await page.locator('#scene-5 .slot').count();
         for (let i = 0; i < slots; i++) await tiles.nth(slots + i).click();

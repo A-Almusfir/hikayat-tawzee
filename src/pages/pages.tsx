@@ -148,7 +148,7 @@ function FlashCard({ id }: { id: DistId }) {
               </button>
             </dt>
             <dd className={open[f.key] ? 'shown' : 'hidden-field'}>
-              {open[f.key] ? body[f.key] : <span className="placeholder">تذكّرها أولًا ثم اكشفها</span>}
+              {open[f.key] ? body[f.key] : <span className="placeholder">تذكّرها أول، بعدين اكشفها</span>}
               <div className="print-only">{body[f.key]}</div>
             </dd>
           </div>

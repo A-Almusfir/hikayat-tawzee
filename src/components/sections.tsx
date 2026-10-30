@@ -131,7 +131,7 @@ function QuizItem({ q, index }: { q: QuizQuestion; index: number }) {
             )}
           </ul>
           <button type="button" className="btn btn-quiet" onClick={() => progress.setQuiz(q.id, undefined)}>
-            أعد المحاولة
+            جرّب مرة ثانية
           </button>
         </div>
       )}
@@ -150,7 +150,7 @@ export function Quiz({ d }: { d: DistContent }) {
       ))}
       {done.length === d.quiz.length && (
         <p className="score" role="status">
-          النتيجة: {right} من {d.quiz.length}. {right === d.quiz.length ? 'أحسنت.' : 'راجع التفسيرات أعلاه ثم أعد المحاولة.'}
+          النتيجة: {right} من {d.quiz.length}. {right === d.quiz.length ? 'كفو.' : 'شف التفسيرات فوق وجرّب مرة ثانية.'}
         </p>
       )}
     </div>

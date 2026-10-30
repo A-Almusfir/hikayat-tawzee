@@ -13,7 +13,7 @@ export function ExamScene({ headline, problems, tricks }: { headline: string; pr
       artAfter
       art={
         <aside className="tricks">
-          <h3>حيل الحساب</h3>
+          <h3>حيل تختصر عليك</h3>
           <ul>
             {tricks.map((t, i) => (
               <Rich key={i} as="li" text={t} />
@@ -70,15 +70,15 @@ function ExamBlock({ p }: { p: ExamProblem }) {
         {shown < p.steps.length ? (
           <>
             <button type="button" className="btn btn-c" onClick={() => reveal(shown + 1)}>
-              {shown === 0 ? 'حاولت؟ اكشف الخطوة الأولى' : `الخطوة التالية: ${p.steps[shown].title}`}
+              {shown === 0 ? 'جرّبت؟ ورّني أول خطوة' : `الخطوة التالية: ${p.steps[shown].title}`}
             </button>
             <button type="button" className="btn btn-quiet" onClick={() => reveal(p.steps.length)}>
-              اكشف الحل كاملًا
+              ورّني الحل كامل
             </button>
           </>
         ) : (
           <button type="button" className="btn btn-quiet" onClick={() => reveal(0)}>
-            أخفِ الحل
+            سكّر الحل
           </button>
         )}
       </div>

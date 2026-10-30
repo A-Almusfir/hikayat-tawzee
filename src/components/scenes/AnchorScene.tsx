@@ -35,7 +35,7 @@ export function AnchorScene({ ch, next, color }: { ch: Chapter; next?: DistId; c
         <Recall ch={ch} />
       ) : (
         <button type="button" className="link-btn" onClick={() => setStage2(true)}>
-          تخطَّ إلى أسئلة الاسترجاع ({a.recall.length})
+          روح لأسئلة الاسترجاع ({a.recall.length})
         </button>
       )}
       {next && (
@@ -111,7 +111,7 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
     return (
       <div className="compose done feedback ok" role="status" tabIndex={-1} ref={doneRef}>
         <p>
-          <strong>✓ كتبت القانون كاملًا من ذاكرتك:</strong>
+          <strong>✓ كفو! كتبت القانون كامل من راسك:</strong>
         </p>
         <Tex tex={tex} display />
         <ul>
@@ -157,7 +157,7 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
       {checked && (
         <div className="feedback no" role="status">
           <p>
-            <strong>راجع الخانات المعلّمة ✗، ثم اختر لها بطاقة أخرى.</strong>
+            <strong>شف الخانات اللي عليها ✗ وجرّب لها بطاقة ثانية.</strong>
           </p>
           {/* الإجابة لا تُكشف من أول محاولة: بعد محاولتين خاطئتين، أو بطلب الطالب */}
           {showAnswer || wrongTries >= 2 ? (
@@ -170,7 +170,7 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
             </ul>
           ) : (
             <button type="button" className="link-btn" onClick={() => setShowAnswer(true)}>
-              أرني الإجابة
+              ورّني الإجابة
             </button>
           )}
         </div>

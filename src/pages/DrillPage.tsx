@@ -88,7 +88,7 @@ export function DrillPage() {
 
       {mode === 'review' && finished.length === 0 ? (
         <p className="empty">
-          لم تُنهِ أي فصل بعد. أجب عن أسئلة «ثبّت» في نهاية أي فصل، ثم عد إلى هنا. <a href={href.dist('bernoulli')}>ابدأ من الفصل الأول</a>.
+          للحين ما خلّصت ولا فصل. جاوب أسئلة «ثبّت» في آخر أي فصل، وارجع هنا. <a href={href.dist('bernoulli')}>ابدأ من الفصل الأول</a>.
         </p>
       ) : it ? (
         <>
@@ -103,13 +103,13 @@ export function DrillPage() {
           <div className="pager">
             <button type="button" className="btn" aria-disabled={i === 0} onClick={() => i > 0 && setIdx(i - 1)}>→ السابقة</button>
             {mode === 'review' && i === list.length - 1 ? (
-              <button type="button" className="btn" onClick={() => (setSeed(seed + 1), setIdx(0))}>3 مسائل أخرى ←</button>
+              <button type="button" className="btn" onClick={() => (setSeed(seed + 1), setIdx(0))}>عطني 3 مسائل ثانية ←</button>
             ) : (
               <button type="button" className="btn" aria-disabled={i === list.length - 1} onClick={() => i < list.length - 1 && setIdx(i + 1)}>التالية ←</button>
             )}
           </div>
           <p className="hint">
-            تحتاج تذكيرًا؟ <a href={href.exam}>ليلة الاختبار</a> فيها مخطط القرار والجدول.
+            تبي تذكير؟ <a href={href.exam}>ليلة الاختبار</a> فيها مخطط القرار والجدول.
           </p>
         </>
       ) : null}
@@ -188,10 +188,10 @@ function NumericStep({ id, calc }: { id: string; calc: NonNullable<DrillItem['ca
       ) : (
         <div className={`feedback ${ok ? 'ok' : 'no'}`} role="status" tabIndex={-1} ref={fb}>
           <p><strong>{ok ? '✓ صحيح: ' : `✗ كتبت ${saved}. الصحيح: `}</strong><Rich text={correct.text} /> — <Rich text={correct.why} /></p>
-          {trap && <p><strong>من أين جاء رقمك؟ </strong><Rich text={trap.why} /></p>}
+          {trap && <p><strong>من وين جاك هالرقم؟ </strong><Rich text={trap.why} /></p>}
           {!ok && (
             <button type="button" className="link-btn" onClick={() => (progress.setQuiz(id, undefined), setTxt(''), window.setTimeout(() => inputRef.current?.focus(), 0))}>
-              أعد المحاولة
+              جرّب مرة ثانية
             </button>
           )}
         </div>

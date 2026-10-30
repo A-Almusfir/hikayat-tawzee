@@ -77,14 +77,14 @@ export function HomePage() {
             </li>
           ))}
         </ol>
-        {q.trim() && !shown.length && !more.length && <p className="empty">لا توزيع بهذا الاسم. جرّب كلمة أخرى، أو افتح <a href={href.exam}>ليلة الاختبار</a>.</p>}
+        {q.trim() && !shown.length && !more.length && <p className="empty">ما فيه توزيع بهالاسم. جرّب كلمة ثانية، أو افتح <a href={href.exam}>ليلة الاختبار</a>.</p>}
       </section>
 
       <section className="h2-tools" aria-labelledby="t-h">
         <h2 id="t-h">أدوات المراجعة</h2>
         <ul>
           <li>
-            <a href={href.exam}>ليلة الاختبار</a> <span>ورقة القوانين كاملة ({sheet.filter((s) => !s.extra).length} توزيعًا) مع تنبيهات على ما ينقصها، ومخطط لتحديد التوزيع، و«التوائم» التي يُخلط بينها.</span>
+            <a href={href.exam}>ليلة الاختبار</a> <span>ورقة القوانين كاملة ({sheet.filter((s) => !s.extra).length} توزيعًا) مع ملاحظات تكمل ما ينقصها، ومخطط لتحديد التوزيع، و«التوائم» التي يُخلط بينها.</span>
           </li>
           <li>
             <a href={href.drill}>تدريب مختلط</a> <span>مسائل من كل الفصول معًا: اختر التوزيع، ثم المعلمات، ثم احسب.</span>

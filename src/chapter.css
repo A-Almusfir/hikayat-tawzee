@@ -134,7 +134,7 @@ main:has(.chapter), main:has(.home2) { max-width: 72rem; }
 .h2-sub { font-size: 1.1rem; color: var(--ink-2); }
 .home2 h2 { font-family: var(--font); font-weight: 700; font-size: clamp(1.5rem, 5.5vw, 2rem); }
 .home2 section + section { margin-top: 1.6rem; padding-top: 1.4rem; border-top: 1px solid var(--rule); }
-.tree { display: grid; gap: 12px; }
+.tree { display: grid; gap: 12px; --c: var(--ink); --c-tint: #f1ede4; --c-tint2: #e6e1d6; }
 @media (min-width: 900px) { .tree { grid-template-columns: 1.15fr 1fr; align-items: start; } .tree-key { grid-column: 1; } .tree-panel { grid-row: 1 / span 2; grid-column: 2; } }
 .tree-svg { width: 100%; max-width: 520px; height: auto; display: block; margin: 0 auto; color: var(--ink); }
 .t-edge { cursor: pointer; }
@@ -192,8 +192,8 @@ html:has(.chapter) { scroll-padding-top: 64px; }
 .feedback:focus:not(:focus-visible), .reveal-box:focus:not(:focus-visible), .steps li:focus:not(:focus-visible) { outline: none; }
 .check-btn { margin-top: .5rem; }
 .seg-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: .7rem; }
-.seg-tab { font: inherit; font-size: .92rem; border: 1.5px solid var(--c); background: #fffdf8; color: var(--c); border-radius: 999px; padding: .35rem .9rem; min-height: 44px; cursor: pointer; }
-.seg-tab.on { background: var(--c); color: #fff; font-weight: 700; }
+.seg-tab { font: inherit; font-size: .92rem; border: 1.5px solid var(--c, var(--ink)); background: #fffdf8; color: var(--c, var(--ink)); border-radius: 999px; padding: .35rem .9rem; min-height: 44px; cursor: pointer; }
+.seg-tab.on { background: var(--c, var(--ink)); color: #fff; font-weight: 700; }
 .compose { background: #fffdf8; border: 1.5px solid var(--rule); border-radius: 16px; padding: .8rem 1rem; margin-bottom: 1rem; }
 .compose .pk { margin: 0; }
 .compose .pq { margin: .2rem 0 0; }
@@ -320,7 +320,7 @@ main:has(.exam-night) { max-width: 72rem; }
 }
 /* صفحات الأدوات خارج الفصول: لون محايد للعناصر التي تستعمل لون الفصل */
 .drill, .exam-night, .chooser, .mgf { --c: var(--ink); --c-tint: #f1ede4; --c-tint2: #e6e1d6; }
-.twin-side > .tex { display: block; overflow-x: auto; overflow-y: hidden; font-size: .9em; padding-bottom: 2px; }
+.twin-side > .tex { display: block; text-align: right; overflow-x: auto; overflow-y: hidden; font-size: .9em; padding-bottom: 2px; }
 @media (max-width: 520px) { .twin-pair { grid-template-columns: 1fr; gap: 10px; } }
 /* المعادلة بجانب تسميتها في بطاقات الجوال، والتسمية لا تُقرأ مرتين */
 @media (max-width: 899px) {
@@ -384,7 +384,8 @@ main:has(.exam-night) { max-width: 72rem; }
 .sheet-name a { text-decoration: underline; text-decoration-thickness: 1px; text-underline-offset: 3px; }
 .sheet-name .en { font-size: .8rem; color: var(--ink-2); font-weight: 400; }
 .sheet-marks { display: flex; flex-wrap: wrap; gap: 4px; margin-top: .3rem; align-items: center; }
-.fix-mark { font: inherit; font-size: .78rem; font-weight: 700; min-width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid var(--no); color: var(--no); background: #fffdf8; cursor: pointer; padding: 0 4px; }
+.fix-mark { font: inherit; font-size: .78rem; font-weight: 700; min-width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid currentColor; color: var(--ink-2); background: #fffdf8; cursor: pointer; padding: 0 4px; }
+@media (pointer: coarse) { .fix-mark { min-width: 36px; height: 36px; font-size: .85rem; } .sheet-marks { gap: 8px; } }
 .fix-mark:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .sheet-note { display: block; font-size: .86rem; color: var(--ink-2); }
 .sheet-note strong { color: var(--ink); }
@@ -392,9 +393,11 @@ main:has(.exam-night) { max-width: 72rem; }
 .sheet-fixes li { margin: .45rem 0; line-height: 1.75; }
 .sheet-fixes li:focus { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
 .fix-kind { display: inline-block; font-size: .75rem; font-weight: 700; border-radius: 6px; padding: 0 .4rem; border: 1px solid currentColor; }
-.fix-kind.fix { color: var(--no); }
-.fix-kind.missing { color: var(--ink); }
-.fix-kind.notation { color: var(--ink-2); }
+.fix-kind.error, .fix-mark.error { color: var(--no); }
+.fix-kind.add, .fix-mark.add { color: var(--ok); }
+.fix-kind.clarify, .fix-mark.clarify { color: var(--ink); }
+.fix-kind.notation, .fix-mark.notation { color: var(--ink-2); }
+.fix-mark.error { background: #fbeae6; }
 .symbols > div { display: grid; grid-template-columns: 6rem 1fr; gap: .6rem; padding: .35rem 0; border-top: 1px dotted var(--rule); }
 .symbols dt { direction: ltr; text-align: end; }
 .symbols dd { margin: 0; }

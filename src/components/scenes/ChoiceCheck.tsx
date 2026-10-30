@@ -84,7 +84,7 @@ export function ChoiceCheck({ id, q, kicker }: { id: string; q: Choice; kicker: 
             <Rich text={q.options[ci].text} /> — <Rich text={q.options[ci].why} />
           </p>
           <button type="button" className="link-btn" onClick={() => ((retried.current = true), progress.setQuiz(id, undefined), setPick(null))}>
-            أعد المحاولة
+            جرّب مرة ثانية
           </button>
         </div>
       )}

@@ -105,7 +105,7 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
           ))}
         </ol>
         <details className="more">
-          <summary>للمزيد من الحكاية</summary>
+          <summary>تبي تعرف أكثر عن الحكاية؟</summary>
           {ch.story.more.map((c, i) => (
             <div key={i} className="more-item">
               <Rich as="p" text={c.text} /> <Cites ids={c.src} order={srcOrder} />

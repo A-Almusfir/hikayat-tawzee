@@ -258,14 +258,14 @@ export function PoissonLab() {
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="المعدل" symbol="r" value={r} onChange={setR} {...RANGES.poissonRate} unit="طلب/ساعة" digits={1} />
+        <Slider label="المعدل" symbol="r" value={r} onChange={setR} {...RANGES.poissonRate} unit="حدث/ساعة" digits={1} />
         <Slider label="طول الفترة" symbol="t" value={t} onChange={setT} {...RANGES.poissonT} unit="ساعة" digits={1} />
         <Slider label="عدد الأحداث" symbol="k" value={kk} onChange={setK} min={0} max={K} step={1} digits={0} />
       </div>
       <p className="lambda-line">
-        <Tex tex={`\\lambda = r\\,t = ${fmt(r)} \\times ${fmt(t)} = ${fmt(lambda)}`} /> <span>طلبًا في المتوسط خلال الفترة</span>
+        <Tex tex={`\\lambda = r\\,t = ${fmt(r)} \\times ${fmt(t)} = ${fmt(lambda)}`} /> <span>حدثًا في المتوسط خلال الفترة</span>
       </p>
-      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === kk} ariaLabel={`توزيع بواسون λ=${fmt(lambda)}. P(X=${kk}) = ${fmt(poisson.pmf(kk, lambda))}`} xLabel="عدد الطلبات في الفترة k" />
+      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === kk} ariaLabel={`توزيع بواسون λ=${fmt(lambda)}. P(X=${kk}) = ${fmt(poisson.pmf(kk, lambda))}`} xLabel="عدد الأحداث في الفترة k" />
       <Legend items={enough(sim.stats) ? ['theory', 'highlight', 'sim'] : ['theory', 'highlight']} />
       <p className="trunc-note">
         <Rich text={`الرسم يعرض $k$ من 0 إلى ${K}؛ التوزيع يمتد بلا نهاية، والاحتمال غير المعروض $P(X > ${K}) \\approx ${fmt(tail, 4)}$.`} />
@@ -276,7 +276,7 @@ export function PoissonLab() {
         <>
           <Timeline times={one} t={t} unit="ساعة" label={`فترة طولها ${t} ساعة وصل فيها ${one.length} طلبًا`} />
           <p className="result-line">
-            عدد الطلبات في هذه الفترة: <Tex tex={`X = ${one.length}`} />
+            عدد الأحداث في هذه الفترة: <Tex tex={`X = ${one.length}`} />
           </p>
         </>
       )}
@@ -319,7 +319,7 @@ export function ExponentialLab() {
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="المعدل" symbol="\theta" value={theta} onChange={setTheta} {...RANGES.expTheta} unit="طلب/ساعة" digits={1} />
+        <Slider label="المعدل" symbol="\theta" value={theta} onChange={setTheta} {...RANGES.expTheta} unit="حدث/ساعة" digits={1} />
         <Slider label="الزمن" symbol="t" value={t} onChange={setT} min={0.05} max={3} step={0.05} unit="ساعة" />
       </div>
       <fieldset className="seg">

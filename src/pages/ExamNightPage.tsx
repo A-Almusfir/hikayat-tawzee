@@ -35,6 +35,11 @@ export function ExamNightPage() {
         </div>
       </header>
 
+      <nav className="jump no-print" aria-label="أقسام الصفحة">
+        {[['sheet-discrete', 'المتقطعة'], ['sheet-continuous', 'المستمرة'], ['fix-h', 'التنبيهات'], ['sym-h', 'الرموز'], ['decision-h', 'المخطط'], ['twins-h', 'التوائم']].map(([id, t]) => (
+          <button key={id} type="button" className="seg-tab" onClick={() => jump(id)}>{t}</button>
+        ))}
+      </nav>
       <SheetTable group="discrete" title="المتقطعة" />
       <SheetTable group="continuous" title="المستمرة" />
 
@@ -68,20 +73,20 @@ export function ExamNightPage() {
       <Fold title="ماذا يسأل كل توزيع، والفخ الشائع">
         <ul className="traps">
           {journey.map((id) => {
-            // الفصول الجديدة بلا بطاقة قديمة: السؤال وأول حيلة من الفصل نفسه
+            // الفصول الجديدة بلا بطاقة قديمة: السؤال والفخ من الفصل نفسه
             const d = distById[id], ch = chapters[id]!;
             return (
               <li key={id} style={{ '--c': identity[id].color } as CSSProperties}>
                 <a href={href.dist(id)}><Glyph id={id} size={20} /> {sheetById[id].nameAr}</a>
                 <span className="trap-q">{ch.question}</span>
-                <Rich as="p" text={d ? d.card.mistake : ch.exam.tricks[0]} />
+                <Rich as="p" text={d ? d.card.mistake : ch.trap ?? ch.exam.tricks[0]} />
               </li>
             );
           })}
         </ul>
       </Fold>
 
-      <Fold title="أي توزيع؟ مخطط القرار">
+      <Fold id="decision-h" title="أي توزيع؟ مخطط القرار">
         <p className="hint">اسأل عن بنية الموقف لا عن كلمة مفتاحية.</p>
         <div className="decision">
           <Node n={decisionTree} />
@@ -89,7 +94,7 @@ export function ExamNightPage() {
         <Rich as="p" className="callout" text={decisionNote} />
       </Fold>
 
-      <Fold title="التوائم: لا تخلط بينها">
+      <Fold id="twins-h" title="التوائم: لا تخلط بينها">
         <div className="twins">
           {twins.map((t) => (
             <div key={t.a + t.b} className="twin">
@@ -98,8 +103,8 @@ export function ExamNightPage() {
                   <div key={id} className="twin-side" style={{ '--c': identity[id].color } as CSSProperties}>
                     <p className="twin-name"><Glyph id={id} size={20} /> {sheetById[id].nameAr}</p>
                     <Rich as="p" text={t.what[i]} />
-                    <Tex tex={sheetById[id].f} />
-                    <p className="twin-mean"><Tex tex={sheetById[id].mean} /></p>
+                    <Tex tex={sheetById[t.show?.[i] ?? id].f} />
+                    <p className="twin-mean"><Tex tex={sheetById[t.show?.[i] ?? id].mean} /></p>
                   </div>
                 ))}
               </div>
@@ -110,6 +115,13 @@ export function ExamNightPage() {
       </Fold>
     </article>
   );
+}
+
+/** قفز إلى قسم: يفتح القسم المطوي أولًا إن كان العنوان داخله. */
+function jump(id: string) {
+  const d = document.getElementById(id)?.closest('details');
+  if (d) d.open = true;
+  scrollToId(id);
 }
 
 const FIX_KIND = { fix: 'تصحيح', missing: 'ناقص', notation: 'ترميز' } as const;
@@ -227,7 +239,7 @@ function Node({ n }: { n: DecisionNode }) {
 }
 
 /** قسم قابل للطي: مفتوح على الحاسوب، مطوي على الجوال لتبقى الصفحة قصيرة، ويُفتح عند الطباعة. */
-function Fold({ title, children }: { title: string; children: ReactNode }) {
+function Fold({ id, title, children }: { id?: string; title: string; children: ReactNode }) {
   const [open, setOpen] = useState(() => typeof window === 'undefined' || window.matchMedia('(min-width: 900px)').matches);
   useEffect(() => {
     const on = () => setOpen(true);
@@ -236,7 +248,7 @@ function Fold({ title, children }: { title: string; children: ReactNode }) {
   }, []);
   return (
     <details className="fold" open={open} onToggle={(e) => setOpen((e.target as HTMLDetailsElement).open)}>
-      <summary><h2>{title}</h2></summary>
+      <summary><h2 id={id} tabIndex={-1}>{title}</h2></summary>
       {children}
     </details>
   );

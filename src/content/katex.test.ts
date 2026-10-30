@@ -29,8 +29,8 @@ describe('KaTeX', () => {
   it('عدد معقول من المعادلات جُمع', () => expect(all.length).toBeGreaterThan(400));
   it('كل معادلة تُعرض دون خطأ (مباشرة وداخل {})', () => {
     for (const t of all) {
-      expect(() => katex.renderToString(t, { throwOnError: true }), t).not.toThrow();
-      if (t.length <= 40) expect(() => katex.renderToString(`{${t}}`, { throwOnError: true }), t).not.toThrow();
+      expect(() => katex.renderToString(t, { throwOnError: true, strict: 'ignore' }), t).not.toThrow();
+      if (t.length <= 40) expect(() => katex.renderToString(`{${t}}`, { throwOnError: true, strict: 'ignore' }), t).not.toThrow();
     }
   });
 });

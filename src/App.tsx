@@ -17,6 +17,7 @@ const NAV = [
   { to: href.exam, label: 'ليلة الاختبار', match: 'exam' },
   { to: href.drill, label: 'تدريب مختلط', match: 'drill' },
   { to: href.mgf, label: 'الدالة المولدة', match: 'mgf' },
+  { to: href.more(), label: 'توزيعات أخرى', match: 'more' },
   { to: href.choose, label: 'أي توزيع أختار؟', match: 'choose' },
   { to: href.cards, label: 'بطاقات المراجعة', match: 'cards' },
   { to: href.refs, label: 'المراجع والمنهج', match: 'refs' },

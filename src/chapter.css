@@ -488,3 +488,7 @@ main:has(.exam-night) { max-width: 72rem; }
 .more-example .answer { font-weight: 700; }
 
 .tree-tabs { grid-column: 1 / -1; justify-content: center; flex-wrap: wrap; }
+
+.jump { display: flex; flex-wrap: wrap; gap: 6px; margin: .4rem 0 .8rem; }
+.jump .seg-tab { font-size: .85rem; }
+@media print { .exam-night h2 { break-after: avoid; } .exam-night section > h2 + table { break-before: avoid; } }

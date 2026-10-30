@@ -265,25 +265,6 @@ h1:focus, h2:focus { outline: none; }
 .fl-sub { display: block; font-size: .85rem; color: var(--ink-2); }
 .print-only { display: none; }
 .empty { color: var(--ink-2); padding: 2rem 0; }
-.map-wrap { display: grid; gap: 16px; }
-@media (min-width: 900px) { main:has(.map-wrap) { max-width: 66rem; } .map-wrap { grid-template-columns: 1.1fr 1fr; align-items: start; } }
-.map { width: 100%; height: auto; max-width: 560px; margin: 0 auto; display: block; color: var(--ink); }
-.map .node rect { fill: #fffdf8; stroke: var(--ink); stroke-width: 2; }
-.map .node rect.node-iso { stroke-dasharray: 6 4; }
-.map .node:hover rect, .map .node:focus rect { fill: var(--paper-2); }
-.map .node-ar { font-family: var(--font-head); font-size: 22px; font-weight: 700; fill: var(--ink); }
-.map .node-en { font-family: var(--font); font-size: 14px; fill: var(--ink-2); }
-.map .edge { cursor: pointer; }
-.map .edge-hit { stroke: transparent; stroke-width: 26; }
-.map .edge-line { stroke: var(--ink-2); stroke-width: 2.5; }
-.map .edge.active .edge-line { stroke: var(--accent); stroke-width: 4.5; }
-.map .edge-label { font-family: var(--font); font-size: 16px; fill: var(--ink-2); font-weight: 500; paint-order: stroke; stroke: var(--paper); stroke-width: 5px; }
-.map .edge.active .edge-label { fill: var(--accent); font-weight: 700; }
-.map .edge:focus-visible { outline: none; }
-.map .edge:focus-visible .edge-line { stroke: var(--focus); stroke-width: 5; stroke-dasharray: 6 3; }
-.map-panel { border-inline-start: 4px solid var(--accent); padding-inline-start: 1rem; min-width: 0; }
-.map-panel h2 { font-size: 1.3rem; }
-.cond { font-size: .95rem; color: var(--ink-2); }
 .ref-list li { margin-bottom: .8rem; }
 .ref-list a { font-weight: 500; word-break: break-word; }
 .ref-list p { margin: .1rem 0; color: var(--ink-2); font-size: .95rem; }

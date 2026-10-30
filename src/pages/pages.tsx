@@ -96,7 +96,7 @@ const FIELDS = [
 ] as const;
 type FieldKey = (typeof FIELDS)[number]['key'];
 
-/** بيانات البطاقة: من البطاقة القديمة للفصول الستة الأولى، ومن ورقة القوانين ومخطط القرار للجديدة. */
+/** بيانات البطاقة: القوانين من ورقة المقرر، والشروط من البطاقة القديمة إن وُجدت، وإلا من مخطط القرار. */
 function flashData(id: DistId) {
   const d = distById[id], s = sheetById[id];
   return {
@@ -104,11 +104,12 @@ function flashData(id: DistId) {
     nameEn: s.nameEn,
     notation: d?.notation,
     discrete: s.group === 'discrete',
-    fnLabel: d?.card.fnLabel ?? (s.group === 'discrete' ? 'دالة الكتلة الاحتمالية' : 'دالة الكثافة الاحتمالية'),
-    fnTex: d?.card.fnTex ?? `${s.group === 'discrete' ? 'P(X=x)' : 'f(x)'} = ${s.f}`,
-    support: d?.card.support ?? s.support,
-    mean: d?.card.mean ?? s.mean,
-    variance: d?.card.variance ?? s.variance,
+    // القانون والمجال والعزوم برموز ورقة المقرر دائمًا (x وq وE(X))
+    fnLabel: s.group === 'discrete' ? 'دالة الكتلة الاحتمالية' : 'دالة الكثافة الاحتمالية',
+    fnTex: `${s.group === 'discrete' ? 'P(X=x)' : 'f(x)'} = ${s.f}`,
+    support: s.support,
+    mean: s.mean,
+    variance: s.variance,
     conditions: d?.card.conditions ?? [hint[id]],
     mgf: s.mgf,
   };
@@ -221,7 +222,12 @@ export function RefsPage() {
           <li><Rich text="ذو الحدين: $X$ عدد النجاحات في $n$ محاولة مستقلة باحتمال ثابت $p$." /></li>
           <li><Rich text="الهندسي: $X$ عدد **المحاولات** حتى أول نجاح بما فيها محاولة النجاح، $X \in \{1,2,\dots\}$. (اصطلاح آخر شائع يعدّ الإخفاقات قبله.)" /></li>
           <li><Rich text="بواسون: $\lambda$ متوسط عدد الأحداث في الفترة؛ ومع معدل $r$ وزمن $t$: $\lambda = rt$." /></li>
-          <li><Rich text="الأسي: $\lambda$ **معدل** لا مقياس؛ المتوسط $1/\lambda$." /></li>
+          <li><Rich text="الأسي: $\theta$ **معدل** لا مقياس (كما في ورقة المقرر)؛ المتوسط $1/\theta$، ومتوسط عدد الأحداث في زمن $t$ هو $\lambda = \theta t$." /></li>
+          <li><Rich text="فوق الهندسي: مجتمع $N$ فيه $k$ نجاحًا، ونسحب $n$ دون إرجاع." /></li>
+          <li><Rich text="ذو الحدين السالب: $X$ عدد **المحاولات** حتى النجاح رقم $r$، و$x \ge r$ (برامج مثل R تعدّ الإخفاقات)." /></li>
+          <li><Rich text="غاما: $\alpha$ شكل و$\beta$ **معدل**؛ المتوسط $\alpha/\beta$." /></li>
+          <li><Rich text="ويبل (بصيغة الورقة): $f(x) = \alpha\beta x^{\beta-1}e^{-\alpha x^{\beta}}$، و$\beta$ هو الشكل." /></li>
+          <li><Rich text="مربع كاي وt وF: $v$ (و$r$ للبسط في F) درجات الحرية." /></li>
           <li><Rich text="الطبيعي: $N(\mu, \sigma^2)$ حيث $\sigma$ الانحراف المعياري و$\sigma^2$ التباين." /></li>
         </ul>
       </section>

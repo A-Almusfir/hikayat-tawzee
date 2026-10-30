@@ -101,6 +101,8 @@ export interface Chapter {
     bridge: string;
   };
   reference: { labTitle: string };
+  /** الفخ الشائع (لليلة الاختبار) للفصول التي لا بطاقة قديمة لها. */
+  trap?: string;
   /** أداة إضافية بعد مسألة الاختبار (مثل جدول Φ في الطبيعي). */
   extra?: 'ztable';
 }

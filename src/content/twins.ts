@@ -1,3 +1,4 @@
+import type { SheetId } from './sheet';
 import type { DistId } from './types';
 
 // «التوائم»: أزواج تُخلط عادة. القانون والمجال والمتوسط تُقرأ من بطاقة كل توزيع (مصدر واحد)،
@@ -7,6 +8,8 @@ export interface Twin {
   b: DistId;
   what: [string, string];
   tell: string;
+  /** صفا الورقة اللذان يُعرض قانونهما ومتوسطهما، إن اختلفا عن a وb (مثل الطبيعي المعياري مقابل t). */
+  show?: [SheetId, SheetId];
 }
 
 export const twins: Twin[] = [
@@ -55,6 +58,7 @@ export const twins: Twin[] = [
   {
     a: 'normal',
     b: 't',
+    show: ['stdnormal', 't'],
     what: ['$\\frac{\\bar{X} - \\mu}{\\sigma/\\sqrt{n}}$ حين $\\sigma$ **معلوم**.', '$\\frac{\\bar{X} - \\mu}{S/\\sqrt{n}}$ حين $\\sigma$ **مجهول**.'],
     tell: 'هل $\\sigma$ معطى في المسألة أم نحسب $s$ من العينة؟ معطى ← $Z$. من العينة ← t بـ $n - 1$ درجة حرية (والمجتمع طبيعي).',
   },

@@ -14,7 +14,7 @@ export function HomePage() {
       <section className="h2-hero">
         <h1 tabIndex={-1}>حكاية توزيع</h1>
         <p className="h2-slogan">افهم الحكاية… يثبت القانون.</p>
-        <p className="h2-sub">{journey.length} توزيعات احتمالية، وعائلة واحدة. لكل توزيع حكاية حقيقية: من أين جاء، ولماذا احتاجه الناس، وكيف يُبنى قانونه منها.</p>
+        <p className="h2-sub">{journey.length} توزيعًا احتماليًا، وعائلة واحدة. لكل توزيع حكاية حقيقية: من أين جاء، ولماذا احتاجه الناس، وكيف يُبنى قانونه منها.</p>
         <a className="btn btn-primary" href={href.dist('bernoulli')}>
           ابدأ الرحلة: جرة برنولي ←
         </a>
@@ -27,7 +27,7 @@ export function HomePage() {
       </section>
 
       <section className="h2-journey" aria-labelledby="j-h">
-        <h2 id="j-h">الرحلة: {journey.length} فصول</h2>
+        <h2 id="j-h">الرحلة: {journey.length} فصلًا</h2>
         <ol>
           {journey.map((id, i) => {
             const d = sheetById[id];

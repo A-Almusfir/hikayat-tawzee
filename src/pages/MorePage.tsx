@@ -77,7 +77,7 @@ function MoreSection({ c }: { c: MoreCard }) {
             <Rich as="p" className="answer" text={c.example.answer} />
           </>
         ) : (
-          <button type="button" className="btn" onClick={() => setOpen(true)}>اكشف الحل</button>
+          <button type="button" className="btn" onClick={() => setOpen(true)}>ورّني الحل</button>
         )}
       </div>
     </section>

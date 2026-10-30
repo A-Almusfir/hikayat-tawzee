@@ -88,7 +88,7 @@ export function DrillPage() {
 
       {mode === 'review' && finished.length === 0 ? (
         <p className="empty">
-          للحين ما خلّصت ولا فصل. جاوب أسئلة «ثبّت» في آخر أي فصل، وارجع هنا. <a href={href.dist('bernoulli')}>ابدأ من الفصل الأول</a>.
+          للحين ما خلّصت ولا فصل. جاوب أسئلة «ثبّت» في آخر أي فصل، وارجع لهنا. <a href={href.dist('bernoulli')}>ابدأ من الفصل الأول</a>.
         </p>
       ) : it ? (
         <>

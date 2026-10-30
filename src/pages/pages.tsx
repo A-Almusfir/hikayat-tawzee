@@ -156,7 +156,7 @@ function FlashCard({ id }: { id: DistId }) {
       </dl>
       <div className="btn-row no-print">
         <button type="button" className="btn btn-quiet" onClick={() => setOpen(Object.fromEntries(FIELDS.map((f) => [f.key, !all])) as Record<FieldKey, boolean>)}>
-          {all ? 'أخفِ الكل' : 'اكشف الكل'}
+          {all ? 'سكّر الكل' : 'اكشف الكل'}
         </button>
         <button type="button" className={`btn ${status === 'known' ? 'btn-on' : ''}`} aria-pressed={status === 'known'} onClick={() => set('known')}>✓ عرفتها</button>
         <button type="button" className={`btn ${status === 'review' ? 'btn-on' : ''}`} aria-pressed={status === 'review'} onClick={() => set('review')}>↻ أراجعها</button>

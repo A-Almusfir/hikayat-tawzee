@@ -374,11 +374,11 @@ export const sheet: SheetRow[] = [
 
 export const sheetById = Object.fromEntries(sheet.map((s) => [s.id, s])) as Record<SheetId, SheetRow>;
 
-/** تنبيهات على ورقة القوانين: ما ينقصها أو يحتاج تصحيحًا. rows = الصفوف التي يخصها التنبيه (تُعلَّم في الجدول). */
+/** ملاحظات على ورقة القوانين: ما ينقصها أو يحتاج تصحيحًا. rows = الصفوف التي تخصها الملاحظة (تُعلَّم في الجدول). */
 export interface SheetFix {
   id: string;
   rows: SheetId[];
-  /** error: خطأ في الورقة؛ add: إضافة ما تتركه فارغًا أو لا تذكره؛ clarify: توضيح لما يُفهم خطأ؛ notation: اختلاف الرموز بين الكتب. */
+  /** error: خطأ في الورقة؛ add: إضافة ما تتركه فارغًا أو لا تذكره؛ clarify: توضيح لما يُفهم خطأ؛ notation: اختلاف الرموز بين الكتب أو أخطاء كتابتها. */
   kind: 'error' | 'add' | 'clarify' | 'notation';
   text: string;
 }

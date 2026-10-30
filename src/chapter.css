@@ -389,7 +389,7 @@ main:has(.exam-night) { max-width: 72rem; }
 .fix-mark:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
 .sheet-note { display: block; font-size: .86rem; color: var(--ink-2); }
 .sheet-note strong { color: var(--ink); }
-.sheet-fixes ol { padding-inline-start: 1.4rem; }
+.sheet-fixes ol { padding-inline-start: 2rem; }
 .sheet-fixes li { margin: .45rem 0; line-height: 1.75; }
 .sheet-fixes li:focus { outline: 3px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
 .fix-kind { display: inline-block; font-size: .75rem; font-weight: 700; border-radius: 6px; padding: 0 .4rem; border: 1px solid currentColor; }
@@ -398,6 +398,7 @@ main:has(.exam-night) { max-width: 72rem; }
 .fix-kind.clarify, .fix-mark.clarify { color: var(--ink); }
 .fix-kind.notation, .fix-mark.notation { color: var(--ink-2); }
 .fix-mark.error { background: #fbeae6; }
+.fix-mark.notation, .fix-kind.notation { border-style: dashed; }
 .symbols > div { display: grid; grid-template-columns: 6rem 1fr; gap: .6rem; padding: .35rem 0; border-top: 1px dotted var(--rule); }
 .symbols dt { direction: ltr; text-align: end; }
 .symbols dd { margin: 0; }

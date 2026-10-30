@@ -40,13 +40,13 @@ export function ExamNightPage() {
           <button key={id} type="button" className="seg-tab" onClick={() => jump(id)}>{t}</button>
         ))}
       </nav>
-      <p className="hint">الأرقام الصغيرة بجانب أسماء التوزيعات = ملاحظات على الورقة، تجدها أسفل الجدولين.</p>
+      <p className="hint">الأرقام بجانب أسماء التوزيعات = ملاحظات على الورقة تحت الجدولين: الأحمر خطأ في الورقة، والأخضر إضافة، والكحلي توضيح، والمتقطع اختلاف رموز.</p>
       <SheetTable group="discrete" title="المتقطعة" />
       <SheetTable group="continuous" title="المستمرة" />
 
       <section aria-labelledby="fix-h" className="sheet-fixes">
         <h2 id="fix-h">ورقة القوانين: ما ينقصها وما يحتاج تصحيحًا</h2>
-        <p>الجدولان أعلاه منقولان كما هما من ورقة قوانين المقرر، وفيها خانات فارغة وشروط غير مذكورة وخطأ واحد. هنا نكمل الناقص ونصحح الخطأ حتى لا تنقله إلى إجابتك. الرقم بجانب اسم التوزيع في الجدول يوصلك إلى ملاحظته، و«↑ ارجع للجدول» يرجعك.</p>
+        <p>الجدولان أعلاه بترتيب ورقة قوانين المقرر وأعمدتها، لكننا عبّأنا فيهما ما تتركه الورقة فارغًا وصحّحنا خطأها، فقد يختلفان عن ورقتك المطبوعة. هذه القائمة تبيّن كل فرق وسببه: خانات فارغة، وشروط غير مذكورة، وخطأ واحد في المضمون، وأخطاء كتابة بسيطة، حتى لا تنقل الخطأ إلى إجابتك. الرقم بجانب اسم التوزيع يوصلك إلى ملاحظته، و«↑ ارجع للجدول» يرجعك.</p>
         <ol>
           {sheetFixes.map((f) => (
             <li key={f.id} id={`fix-${f.id}`} tabIndex={-1}>
@@ -167,7 +167,7 @@ function SheetTable({ group, title }: { group: SheetRow['group']; title: string 
                   <span className="sheet-marks">
                     {s.extra && <span className="tag">ليس في الورقة</span>}
                     {fixNumbers(s.id).map((f) => (
-                      <button key={f.id} type="button" className={`fix-mark ${f.kind}`} aria-label={`ملاحظة ${f.n} (${FIX_KIND[f.kind]}): انتقل إليه`} onClick={() => scrollToId(`fix-${f.id}`)}>
+                      <button key={f.id} type="button" className={`fix-mark ${f.kind}`} aria-label={`ملاحظة ${f.n} (${FIX_KIND[f.kind]}): انتقل إليها`} onClick={() => scrollToId(`fix-${f.id}`)}>
                         {f.n}
                       </button>
                     ))}

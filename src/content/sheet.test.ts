@@ -124,7 +124,7 @@ describe('ورقة القوانين', () => {
     expect(sheetById.f.V({ r: 3, v: 4 })).toBeNaN();
   });
 
-  it('غاما بـ α صحيح: التراكمي = 1 − مجموع بواسون (كما في التنبيه)', () => {
+  it('غاما بـ α صحيح: التراكمي = 1 − مجموع بواسون (كما في الملاحظة)', () => {
     const al = 3, be = 2, x = 1.7;
     const g = sheetById.gamma;
     let poi = 0;
@@ -132,7 +132,7 @@ describe('ورقة القوانين', () => {
     close(1 - poi, simpson((y) => g.pdf(y, { al, be }), 0, x), 1e-8);
   });
 
-  it('التنبيهات تخص صفوفًا موجودة، والقاموس والتنبيهات تُعرض في KaTeX', () => {
+  it('الملاحظات تخص صفوفًا موجودة، والقاموس والملاحظات تُعرض في KaTeX', () => {
     for (const f of sheetFixes) for (const id of f.rows) expect(sheetById[id], f.id).toBeDefined();
     const texs = [...sheetFixes.map((f) => f.text), ...symbols.map((s) => s.meaning)].flatMap((t) => [...t.matchAll(/\$([^$]+?)\$/g)].map((m) => m[1]));
     texs.push(...symbols.map((s) => s.sym));

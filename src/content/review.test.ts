@@ -46,7 +46,11 @@ describe('التدريب المختلط', () => {
 });
 
 describe('التوائم', () => {
-  it('الأزواج الأربعة المتفق عليها', () => {
-    expect(twins.map((t) => `${t.a}|${t.b}`)).toEqual(['bernoulli|binomial', 'binomial|geometric', 'poisson|exponential', 'geometric|exponential']);
+  it('الأزواج المتفق عليها، وكل طرف فيها فصل منشور', () => {
+    expect(twins.map((t) => `${t.a}|${t.b}`)).toEqual([
+      'bernoulli|binomial', 'binomial|geometric', 'poisson|exponential', 'geometric|exponential',
+      'binomial|hypergeometric', 'geometric|negbin', 'exponential|gamma', 'normal|t',
+    ]);
+    for (const t of twins) for (const id of [t.a, t.b]) expect(journey, id).toContain(id);
   });
 });

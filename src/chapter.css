@@ -320,7 +320,7 @@ main:has(.exam-night) { max-width: 72rem; }
 }
 /* صفحات الأدوات خارج الفصول: لون محايد للعناصر التي تستعمل لون الفصل */
 .drill, .exam-night, .chooser, .mgf { --c: var(--ink); --c-tint: #f1ede4; --c-tint2: #e6e1d6; }
-.twin-side .tex { display: block; overflow-x: auto; overflow-y: hidden; font-size: .9em; padding-bottom: 2px; }
+.twin-side > .tex { display: block; overflow-x: auto; overflow-y: hidden; font-size: .9em; padding-bottom: 2px; }
 @media (max-width: 520px) { .twin-pair { grid-template-columns: 1fr; gap: 10px; } }
 /* المعادلة بجانب تسميتها في بطاقات الجوال، والتسمية لا تُقرأ مرتين */
 @media (max-width: 899px) {

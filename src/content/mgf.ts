@@ -327,6 +327,82 @@ export const derive: DeriveItem[] = [
       },
     ],
   },
+  {
+    id: 'negbin',
+    dist: 'negbin',
+    given: r`M_X(t) = \left(\dfrac{pe^{t}}{1 - qe^{t}}\right)^{r},\quad t < -\ln q`,
+    setup: 'قوة، فخذ اللوغاريتم: $R(t) = r\\,t + r\\ln p - r\\ln(1 - qe^{t})$.',
+    steps: [
+      {
+        target: 'R1',
+        prompt: 'ما $R\'(t)$؟',
+        options: [
+          { text: r`$\dfrac{r}{1 - qe^{t}}$`, correct: true, why: '$r + \\frac{rqe^{t}}{1 - qe^{t}} = \\frac{r(1 - qe^{t}) + rqe^{t}}{1 - qe^{t}}$.', fn: (t, { r: k, p }) => k / (1 - q(p) * Math.exp(t)) },
+          { text: r`$\dfrac{rqe^{t}}{1 - qe^{t}}$`, why: 'نسيت مشتقة الحد $r\\,t$، وهي $r$.', fn: (t, { r: k, p }) => (k * q(p) * Math.exp(t)) / (1 - q(p) * Math.exp(t)) },
+          { text: r`$r - \dfrac{rqe^{t}}{1 - qe^{t}}$`, why: 'مشتقة $-r\\ln(1 - qe^{t})$ موجبة: $\\frac{rqe^{t}}{1 - qe^{t}}$.', fn: (t, { r: k, p }) => k - (k * q(p) * Math.exp(t)) / (1 - q(p) * Math.exp(t)) },
+          { text: r`$\dfrac{1}{1 - qe^{t}}$`, why: 'نسيت المعامل $r$: هذه للهندسي.', fn: (t, { p }) => 1 / (1 - q(p) * Math.exp(t)) },
+        ],
+      },
+      {
+        target: 'E',
+        prompt: 'ما $E(X) = R\'(0)$؟',
+        options: [
+          { text: r`$\dfrac{r}{p}$`, correct: true, why: '$\\frac{r}{1 - q} = \\frac{r}{p}$: ثلاثة أضعاف متوسط الهندسي حين $r = 3$.', value: ({ r: k, p }) => k / p },
+          { text: r`$\dfrac{rq}{p}$`, why: 'هذا متوسط عدد **الإخفاقات** $X - r$، لا المحاولات.', value: ({ r: k, p }) => (k * q(p)) / p },
+          { text: r`$\dfrac{1}{p}$`, why: 'هذا متوسط الهندسي ($r = 1$).', value: ({ p }) => 1 / p },
+          { text: '$r$', why: 'هذا أقل قيمة ممكنة لـ $X$، لا المتوسط.', value: ({ r: k }) => k },
+        ],
+      },
+      {
+        target: 'V',
+        prompt: 'ما $\\mathrm{Var}(X) = R\'\'(0)$؟',
+        options: [
+          { text: r`$\dfrac{rq}{p^{2}}$`, correct: true, why: '$R\'\'(t) = \\frac{rqe^{t}}{(1 - qe^{t})^{2}}$، وعند الصفر $\\frac{rq}{p^{2}}$.', value: ({ r: k, p }) => (k * q(p)) / (p * p) },
+          { text: r`$\dfrac{q}{p^{2}}$`, why: 'هذا تباين الهندسي؛ ذو الحدين السالب مجموع $r$ منها مستقلة، فالتباين $r$ أضعافه.', value: ({ p }) => q(p) / (p * p) },
+          { text: r`$\dfrac{r^{2}q}{p^{2}}$`, why: 'التباينات تُجمع للمستقلة: $r$ أضعاف، لا $r^{2}$.', value: ({ r: k, p }) => (k * k * q(p)) / (p * p) },
+          { text: r`$\dfrac{rq}{p}$`, why: 'المقام $p^{2}$.', value: ({ r: k, p }) => (k * q(p)) / p },
+        ],
+      },
+    ],
+  },
+  {
+    id: 'chisquare',
+    dist: 'chisquare',
+    given: r`M_X(t) = (1 - 2t)^{-v/2},\quad t < \tfrac{1}{2}`,
+    setup: 'قوة، فخذ اللوغاريتم: $R(t) = -\\frac{v}{2}\\ln(1 - 2t)$.',
+    steps: [
+      {
+        target: 'R1',
+        prompt: 'ما $R\'(t)$؟',
+        options: [
+          { text: r`$\dfrac{v}{1 - 2t}$`, correct: true, why: '$-\\frac{v}{2} \\times \\frac{-2}{1 - 2t}$.', fn: (t, { v }) => v / (1 - 2 * t) },
+          { text: r`$\dfrac{v}{2(1 - 2t)}$`, why: 'نسيت مشتقة ما داخل اللوغاريتم: $-2$.', fn: (t, { v }) => v / (2 * (1 - 2 * t)) },
+          { text: r`$-\dfrac{v}{1 - 2t}$`, why: 'سالبان يتضاعفان: $-\\frac{v}{2}$ في $-2$.', fn: (t, { v }) => -v / (1 - 2 * t) },
+          { text: r`$\dfrac{2v}{(1 - 2t)^{2}}$`, why: 'هذه $R\'\'(t)$.', fn: (t, { v }) => (2 * v) / (1 - 2 * t) ** 2 },
+        ],
+      },
+      {
+        target: 'E',
+        prompt: 'ما $E(X) = R\'(0)$؟',
+        options: [
+          { text: '$v$', correct: true, why: 'متوسط مربع كاي عدد درجات حريته.', value: ({ v }) => v },
+          { text: r`$\dfrac{v}{2}$`, why: 'هذا $\\alpha$ في صيغة غاما؛ والمتوسط $\\frac{\\alpha}{\\beta} = \\frac{v/2}{1/2} = v$.', value: ({ v }) => v / 2 },
+          { text: '$2v$', why: 'هذا التباين.', value: ({ v }) => 2 * v },
+          { text: '$1$', why: 'هذا $M(0)$.', value: () => 1 },
+        ],
+      },
+      {
+        target: 'V',
+        prompt: 'ما $\\mathrm{Var}(X) = R\'\'(0)$؟',
+        options: [
+          { text: '$2v$', correct: true, why: '$R\'\'(t) = \\frac{2v}{(1 - 2t)^{2}}$، وعند الصفر $2v$.', value: ({ v }) => 2 * v },
+          { text: '$v$', why: 'هذا المتوسط.', value: ({ v }) => v },
+          { text: '$v^{2}$', why: 'هذا مربع المتوسط.', value: ({ v }) => v * v },
+          { text: '$4v$', why: 'المشتقة الثانية عند الصفر $2v$.', value: ({ v }) => 4 * v },
+        ],
+      },
+    ],
+  },
 ];
 
 // ————————————————————— تعرّف على التوزيع من M(t) —————————————————————

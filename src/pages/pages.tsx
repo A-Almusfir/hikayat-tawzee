@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { choiceLabels, choiceOrder, scenarios, type ChoiceId } from '../content/chooser';
-import { distById, distOrder } from '../content/distributions';
+import { distById } from '../content/distributions';
+import { hint } from '../content/decision';
+import { journey } from '../content/identity';
+import { sheetById } from '../content/sheet';
 import { references } from '../content/references';
 import { sources } from '../content/sources';
 import type { DistId } from '../content/types';
@@ -88,22 +91,42 @@ const FIELDS = [
   { key: 'support', label: 'مجال X' },
   { key: 'mean', label: 'المتوسط' },
   { key: 'variance', label: 'التباين' },
-  { key: 'conditions', label: 'شروط الاستخدام' },
+  { key: 'mgf', label: 'الدالة المولدة' },
+  { key: 'conditions', label: 'متى نستعمله؟' },
 ] as const;
 type FieldKey = (typeof FIELDS)[number]['key'];
 
+/** بيانات البطاقة: من البطاقة القديمة للفصول الستة الأولى، ومن ورقة القوانين ومخطط القرار للجديدة. */
+function flashData(id: DistId) {
+  const d = distById[id], s = sheetById[id];
+  return {
+    nameAr: s.nameAr,
+    nameEn: s.nameEn,
+    notation: d?.notation,
+    discrete: s.group === 'discrete',
+    fnLabel: d?.card.fnLabel ?? (s.group === 'discrete' ? 'دالة الكتلة الاحتمالية' : 'دالة الكثافة الاحتمالية'),
+    fnTex: d?.card.fnTex ?? `${s.group === 'discrete' ? 'P(X=x)' : 'f(x)'} = ${s.f}`,
+    support: d?.card.support ?? s.support,
+    mean: d?.card.mean ?? s.mean,
+    variance: d?.card.variance ?? s.variance,
+    conditions: d?.card.conditions ?? [hint[id]],
+    mgf: s.mgf,
+  };
+}
+
 function FlashCard({ id }: { id: DistId }) {
-  const d = distById[id]!;
+  const d = flashData(id);
   const status = useProgress().cards[id];
-  const [open, setOpen] = useState<Record<FieldKey, boolean>>({ law: false, support: false, mean: false, variance: false, conditions: false });
+  const [open, setOpen] = useState<Record<FieldKey, boolean>>({ law: false, support: false, mean: false, variance: false, mgf: false, conditions: false });
   const all = FIELDS.every((f) => open[f.key]);
   const set = (s: CardStatus) => progress.setCard(id, status === s ? undefined : s);
   const body: Record<FieldKey, React.ReactNode> = {
-    law: <><span className="fl-sub">{d.card.fnLabel}</span><Tex tex={d.card.fnTex} display /></>,
-    support: <Tex tex={d.card.support} />,
-    mean: <Tex tex={d.card.mean} />,
-    variance: <Tex tex={d.card.variance} />,
-    conditions: <ul>{d.card.conditions.map((c, i) => <Rich key={i} as="li" text={c} />)}</ul>,
+    law: <><span className="fl-sub">{d.fnLabel}</span><Tex tex={d.fnTex} display /></>,
+    support: <Tex tex={d.support} />,
+    mean: <Tex tex={d.mean} />,
+    variance: <Tex tex={d.variance} />,
+    mgf: d.mgf.kind === 'closed' ? <><Tex tex={`M_X(t) = ${d.mgf.tex}`} /> <Rich text={`(${d.mgf.domain})`} /></> : <Rich text={d.mgf.note} />,
+    conditions: <ul>{d.conditions.map((c, i) => <Rich key={i} as="li" text={c} />)}</ul>,
   };
   return (
     <article className={`flash ${status ? `st-${status}` : ''}`} aria-labelledby={`fc-${id}`}>
@@ -111,8 +134,8 @@ function FlashCard({ id }: { id: DistId }) {
         <h2 id={`fc-${id}`}>
           {d.nameAr} <span className="en" lang="en" dir="ltr">{d.nameEn}</span>
         </h2>
-        <Tex tex={d.notation} />
-        <span className="tag">{d.type === 'discrete' ? 'متقطع' : 'مستمر'}</span>
+        {d.notation && <Tex tex={d.notation} />}
+        <span className="tag">{d.discrete ? 'متقطع' : 'مستمر'}</span>
         {status && <span className={`status-pill ${status}`}>{status === 'known' ? '✓ عرفتها' : '↻ للمراجعة'}</span>}
       </header>
       <dl>
@@ -145,9 +168,9 @@ function FlashCard({ id }: { id: DistId }) {
 export function CardsPage() {
   const cards = useProgress().cards;
   const [onlyReview, setOnlyReview] = useState(false);
-  const list = distOrder.filter((id) => !onlyReview || cards[id] === 'review');
-  const known = distOrder.filter((id) => cards[id] === 'known').length;
-  const review = distOrder.filter((id) => cards[id] === 'review').length;
+  const list = journey.filter((id) => !onlyReview || cards[id] === 'review');
+  const known = journey.filter((id) => cards[id] === 'known').length;
+  const review = journey.filter((id) => cards[id] === 'review').length;
   return (
     <article>
       <header className="page-head">
@@ -158,7 +181,7 @@ export function CardsPage() {
         <label className="toggle">
           <input type="checkbox" checked={onlyReview} onChange={(e) => setOnlyReview(e.target.checked)} /> اعرض بطاقات «أراجعها» فقط ({review})
         </label>
-        <span>عرفتها: {known} من 6</span>
+        <span>عرفتها: {known} من {journey.length}</span>
         <button type="button" className="btn" onClick={() => window.print()}>اطبع / احفظ PDF</button>
       </div>
       <p className="hint no-print">عند الطباعة تظهر كل الحقول مكشوفة. اختر «حفظ بتنسيق PDF» من نافذة الطباعة في المتصفح.</p>

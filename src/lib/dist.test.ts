@@ -5,6 +5,7 @@ import {
 import { distributions } from '../content/distributions';
 import { scenarios, choiceLabels } from '../content/chooser';
 import { RANGES } from './ranges';
+import { journey } from '../content/identity';
 
 const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0);
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -203,7 +204,7 @@ describe('اتساق المحتوى مع الحسابات', () => {
   });
   it('مواقف «أي توزيع أختار؟»', () => {
     expect(scenarios.length).toBeGreaterThanOrEqual(8);
-    expect(scenarios.length).toBeLessThanOrEqual(12);
+    expect(scenarios.length).toBeLessThanOrEqual(18);
     expect(scenarios.some((s) => s.answer === 'insufficient')).toBe(true);
     for (const s of scenarios) {
       expect(choiceLabels[s.answer]).toBeDefined();
@@ -213,5 +214,8 @@ describe('اتساق المحتوى مع الحسابات', () => {
     expect(pairs.has('bernoulli|binomial')).toBe(true);
     expect(pairs.has('binomial|geometric')).toBe(true);
     expect(pairs.has('exponential|poisson')).toBe(true);
+    for (const p of ['geometric|negbin', 'exponential|gamma', 'normal|t']) expect(pairs.has(p), p).toBe(true);
+    // كل توزيع في الرحلة له موقف واحد على الأقل
+    for (const d of journey) expect(scenarios.some((s) => s.answer === d), d).toBe(true);
   });
 });

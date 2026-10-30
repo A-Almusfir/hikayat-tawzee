@@ -5,6 +5,7 @@ import { choiceLabels } from '../content/chooser';
 import { distById } from '../content/distributions';
 import { chapters } from '../content/chapters';
 import { identity, journey } from '../content/identity';
+import { moreCards } from '../content/more';
 import { sheet, sheetById, sheetFixes, symbols, type SheetRow } from '../content/sheet';
 import { twins } from '../content/twins';
 import { Glyph } from '../components/Glyph';
@@ -114,6 +115,9 @@ export function ExamNightPage() {
 const FIX_KIND = { fix: 'تصحيح', missing: 'ناقص', notation: 'ترميز' } as const;
 const fixNumbers = (id: SheetRow['id']) => sheetFixes.flatMap((f, i) => (f.rows.includes(id) ? [{ n: i + 1, id: f.id, kind: f.kind }] : []));
 const isDist = (id: string): id is DistId => id in identity;
+/** وجهة صف الورقة: فصله إن نُشر، وإلا بطاقته في «توزيعات أخرى»، والمعياري إلى فصل الطبيعي. */
+const rowLink = (id: SheetRow['id']) =>
+  isDist(id) && chapters[id] ? href.dist(id) : id === 'stdnormal' ? href.dist('normal') : moreCards.some((c) => c.id === id) ? href.more(id) : undefined;
 
 /** جدول بأعمدة ورقة المقرر نفسها. الرابط إلى الفصل يظهر فقط إن كان الفصل منشورًا. */
 function SheetTable({ group, title }: { group: SheetRow['group']; title: string }) {
@@ -144,7 +148,7 @@ function SheetTable({ group, title }: { group: SheetRow['group']; title: string 
               <tr key={s.id} id={`row-${s.id}`} tabIndex={-1} role="row" style={{ '--c': dist ? identity[dist].color : 'var(--ink-2)' } as CSSProperties}>
                 <th scope="row" role="rowheader">
                   <span className="sheet-name">
-                    {dist && chapters[dist] ? <a href={href.dist(dist)}>{name}</a> : <span className="nolink">{name}</span>}
+                    {rowLink(s.id) ? <a href={rowLink(s.id)}>{name}</a> : <span className="nolink">{name}</span>}
                     <span className="en" lang="en" dir="ltr">{s.nameEn}</span>
                   </span>
                   <span className="sheet-marks">

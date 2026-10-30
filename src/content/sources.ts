@@ -278,6 +278,24 @@ export const sources: Source[] = [
     url: 'https://mathworld.wolfram.com/Buffon-LaplaceNeedleProblem.html',
     verified: 'search-snippet',
   },
+  {
+    id: 'weibull-wiki',
+    cite: 'Waloddi Weibull — Wikipedia (ورقته في متانة المواد 1951، وسبق Rosin وRammler عام 1933)',
+    url: 'https://en.wikipedia.org/wiki/Waloddi_Weibull',
+    verified: 'search-snippet',
+  },
+  {
+    id: 'bayes-essay-wiki',
+    cite: 'An Essay Towards Solving a Problem in the Doctrine of Chances — Wikipedia (مقالة بايز، نُشرت 1763 بعد وفاته)',
+    url: 'https://en.wikipedia.org/wiki/An_Essay_Towards_Solving_a_Problem_in_the_Doctrine_of_Chances',
+    verified: 'search-snippet',
+  },
+  {
+    id: 'f-proofwiki',
+    cite: 'ProofWiki — F-Distribution: Historical Note (إحصاءة z عند فيشر 1924، وتسمية سنيدكور F عام 1934)',
+    url: 'https://proofwiki.org/wiki/Definition:F-Distribution/Historical_Note',
+    verified: 'search-snippet',
+  },
 ];
 
 export const sourceById = Object.fromEntries(sources.map((s) => [s.id, s])) as Record<string, Source>;

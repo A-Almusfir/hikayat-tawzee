@@ -34,7 +34,7 @@ async function texOverflow(page, tag, route) {
     page.on('pageerror', (e) => fail(`[${tag}] pageerror: ${e.message}`));
     await page.goto(BASE + '#/');
     await page.evaluate(() => localStorage.clear());
-    for (const route of ['#/', ...CHAPTERS.map((c) => '#/d/' + c), '#/exam', '#/drill', '#/mgf', '#/refs']) {
+    for (const route of ['#/', ...CHAPTERS.map((c) => '#/d/' + c), '#/exam', '#/drill', '#/mgf', '#/more', '#/refs']) {
       await page.goto(BASE + route);
       await page.waitForTimeout(400);
       const sw = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);

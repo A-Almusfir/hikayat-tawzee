@@ -10,6 +10,7 @@ export type Route =
   | { name: 'exam' }
   | { name: 'drill' }
   | { name: 'mgf' }
+  | { name: 'more'; id?: string }
   | { name: 'notfound' };
 
 export function parse(hash: string): Route {
@@ -23,6 +24,8 @@ export function parse(hash: string): Route {
   if (path === '/exam') return { name: 'exam' };
   if (path === '/drill') return { name: 'drill' };
   if (path === '/mgf') return { name: 'mgf' };
+  const mm = path.match(/^\/more(?:\/([a-z]+))?$/);
+  if (mm) return { name: 'more', id: mm[1] };
   return { name: 'notfound' };
 }
 
@@ -35,6 +38,7 @@ export const href = {
   exam: '#/exam',
   drill: '#/drill',
   mgf: '#/mgf',
+  more: (id?: string) => `#/more${id ? `/${id}` : ''}`,
 };
 
 export function useRoute(): Route {

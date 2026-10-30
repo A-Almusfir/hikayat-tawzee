@@ -63,6 +63,9 @@ export function HomePage() {
             <a href={href.mgf}>الدالة المولدة</a> <span>اشتق المتوسط والتباين من <Tex tex="M_X(t)" /> خطوة خطوة، وتعرّف على التوزيع من شكل دالته.</span>
           </li>
           <li>
+            <a href={href.more()}>توزيعات أخرى</a> <span>ويبل وبيتا وF: بطاقة ومثال ومنحنى لكل منها.</span>
+          </li>
+          <li>
             <a href={href.choose}>أي توزيع أختار؟</a> <span>{scenarios.length} موقفًا للتمييز بين التوزيعات.</span>
           </li>
           <li>

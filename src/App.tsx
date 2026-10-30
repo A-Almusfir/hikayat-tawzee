@@ -8,6 +8,7 @@ import { DrillPage } from './pages/DrillPage';
 import { ExamNightPage } from './pages/ExamNightPage';
 import { HomePage } from './pages/HomePage';
 import { MgfPage } from './pages/MgfPage';
+import { MorePage } from './pages/MorePage';
 import { CardsPage, ChooserPage, NotFound, RefsPage } from './pages/pages';
 
 
@@ -27,11 +28,11 @@ export default function App() {
 
   const pageKey = route.name === 'dist' ? `dist:${route.id}` : route.name;
   useEffect(() => {
-    const titles: Record<string, string> = { choose: 'أي توزيع أختار؟', cards: 'بطاقات المراجعة', refs: 'المراجع والمنهج', exam: 'ليلة الاختبار', drill: 'تدريب مختلط', mgf: 'الدالة المولدة للعزوم' };
+    const titles: Record<string, string> = { choose: 'أي توزيع أختار؟', cards: 'بطاقات المراجعة', refs: 'المراجع والمنهج', exam: 'ليلة الاختبار', drill: 'تدريب مختلط', mgf: 'الدالة المولدة للعزوم', more: 'توزيعات أخرى' };
     const h1 = document.querySelector('main h1')?.textContent;
     document.title = route.name === 'home' ? 'حكاية توزيع — افهم الحكاية… يثبت القانون' : `${titles[route.name] ?? h1 ?? ''} · حكاية توزيع`;
-    // رابط مشهد مباشر: الفصل يتولى التمرير إلى المشهد، فلا نعيد الصفحة إلى أعلاها
-    if (route.name === 'dist' && route.scene) return;
+    // رابط مشهد مباشر أو بطاقة في «توزيعات أخرى»: الصفحة تتولى التمرير
+    if ((route.name === 'dist' && route.scene) || (route.name === 'more' && route.id)) return;
     window.scrollTo(0, 0);
     document.querySelector<HTMLElement>('main h1')?.focus({ preventScroll: true });
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -50,6 +51,7 @@ export default function App() {
       case 'exam': return <ExamNightPage />;
       case 'drill': return <DrillPage />;
       case 'mgf': return <MgfPage />;
+      case 'more': return <MorePage focus={route.id} />;
       default: return <NotFound />;
     }
   })();

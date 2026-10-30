@@ -474,3 +474,15 @@ main:has(.exam-night) { max-width: 72rem; }
 .ndl.hit { stroke: var(--c); opacity: 1; stroke-width: 2.6; }
 .needle-box { border: 1.5px solid var(--rule); border-radius: 10px; background: #fffdf8; padding: 4px; margin: .5rem 0; }
 .needle-box svg { width: 100%; height: auto; display: block; }
+
+/* ——— توزيعات أخرى ——— */
+.more-page { --c: var(--ink); --c-tint: #f1ede4; --c-tint2: #e6e1d6; }
+.more-card { border-top: 2px solid var(--ink); margin-top: 2rem; padding-top: .6rem; }
+.more-card h2 { font-family: var(--font); font-weight: 700; }
+.more-q { font-size: 1.08rem; color: var(--ink-2); margin-top: 0; }
+.more-facts dt { font-weight: 700; margin-top: .6rem; }
+.more-facts dd { margin: .15rem 0 0; line-height: 1.8; }
+.more-example { border: 1.5px solid var(--rule); border-radius: 12px; padding: .4rem .9rem .7rem; background: #fffdf8; margin-top: .8rem; }
+.more-example h3 { margin: .4rem 0; font-size: 1rem; }
+.more-example .ex-step { margin: .4rem 0; }
+.more-example .answer { font-weight: 700; }

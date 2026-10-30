@@ -433,3 +433,11 @@ main:has(.exam-night) { max-width: 72rem; }
 .cup-l { font: 700 13px var(--font); fill: var(--ink-2); }
 .cup-l.on { fill: var(--c); }
 .cups-strip li.picked { outline: 3px solid var(--ink); outline-offset: 1px; }
+
+/* ——— جولات حتى الفوز رقم r (ذو الحدين السالب) ——— */
+.run.win { fill: var(--c); }
+.run.win.last { stroke: var(--ink); stroke-width: 3; }
+.run.loss { fill: #fffdf8; stroke: var(--ink-2); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.run-t { font: 700 13px var(--font); fill: var(--ink-2); }
+.run-t.win { fill: #fff; }
+.run-n { font: 500 11px var(--font); fill: var(--ink-2); }

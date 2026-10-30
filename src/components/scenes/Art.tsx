@@ -10,6 +10,7 @@ export function ArtView({ art }: { art: Art }) {
       {art.kind === 'unit-grid' && <UnitGrid a={art} />}
       {art.kind === 'urn' && <Urn a={art} />}
       {art.kind === 'cups' && <Cups a={art} />}
+      {art.kind === 'runs' && <Runs a={art} />}
       {art.kind === 'pascal' && <Pascal a={art} />}
       {art.kind === 'timeline' && <Timeline a={art} />}
       {art.kind === 'streak' && <Streak a={art} />}
@@ -85,6 +86,27 @@ function Cups({ a }: { a: Of<'cups'> }) {
         );
       })}
       <path d={`M2 44 H${W - 2}`} className="cup-handle" />
+    </svg>
+  );
+}
+
+/** جولات حتى الفوز رقم r: الفوز مربع ممتلئ برقمه، والخسارة مربع متقطع «خ»، والأخير مُبرز. */
+function Runs({ a }: { a: Of<'runs'> }) {
+  const S = 34, W = a.trials.length * S + 4, H = S + 26;
+  let wins = 0;
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={a.ariaLabel} direction="ltr">
+      {a.trials.map((t, i) => {
+        if (t) wins++;
+        const x = 2 + i * S, last = i === a.trials.length - 1;
+        return (
+          <g key={i}>
+            <rect x={x + 2} y={2} width={S - 4} height={S - 4} rx="5" className={t ? (last ? 'run win last' : 'run win') : 'run loss'} />
+            <text x={x + S / 2} y={S / 2 + 6} textAnchor="middle" className={t ? 'run-t win' : 'run-t'}>{t ? wins : 'خ'}</text>
+            <text x={x + S / 2} y={S + 18} textAnchor="middle" className="run-n">{i + 1}</text>
+          </g>
+        );
+      })}
     </svg>
   );
 }

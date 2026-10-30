@@ -6,6 +6,7 @@ import { binomialChapter } from './binomial';
 import { exponentialChapter } from './exponential';
 import { geometricChapter } from './geometric';
 import { hypergeometricChapter } from './hypergeometric';
+import { negbinChapter } from './negbin';
 import { normalChapter } from './normal';
 import { poissonChapter } from './poisson';
 
@@ -17,6 +18,7 @@ export const chapters: Partial<Record<DistId, Chapter>> = {
   poisson: poissonChapter,
   exponential: exponentialChapter,
   geometric: geometricChapter,
+  negbin: negbinChapter,
   normal: normalChapter,
 };
 

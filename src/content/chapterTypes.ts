@@ -20,6 +20,7 @@ export type Art = ArtBase &
     | { kind: 'unit-grid'; counts: number[]; cols: number } // counts[k] = عدد الوحدات التي وقع فيها k حدث
     | { kind: 'urn'; white: number; black: number; cols: number }
     | { kind: 'cups'; milk: number; tea: number }
+    | { kind: 'runs'; trials: number[]; r: number } // 1 = فوز، 0 = خسارة؛ آخر عنصر هو الفوز رقم r
     | { kind: 'pascal'; rows: number; highlightFrom: number } // يُبرز في الصف الأخير المعاملات من الموضع highlightFrom
     | { kind: 'timeline'; times: number[]; span: number; unit: string }
     | { kind: 'streak'; length: number }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState, type ComponentType } from 'react';
-import { bernoulli, binomial, discreteUpper, exponential, fmt, geometric, hypergeometric, normal, poisson, sample } from '../lib/dist';
+import { bernoulli, binomial, discreteUpper, exponential, fmt, geometric, hypergeometric, negbin, normal, poisson, sample } from '../lib/dist';
 import { RANGES, SIM_BATCH, SIM_MAX } from '../lib/ranges';
 import { BarChart, CurveChart, Legend, type Bin } from './charts';
 import { Rich, Tex } from './Tex';
@@ -476,6 +476,60 @@ export function HypergeometricLab() {
   );
 }
 
+// ———————— ذو الحدين السالب: حتى الفوز رقم r ————————
+export function NegbinLab() {
+  const [r, setR] = useState(3);
+  const [p, setP] = useState(0.5);
+  const cdf = (x: number) => { let s = 0; for (let i = r; i <= x; i++) s += negbin.pmf(i, r, p); return s; };
+  const K = Math.max(r + 8, Math.min(r + 60, discreteUpper(cdf, 0.99, r, r + 60)));
+  const sim = useDiscreteSim(`${r}|${p}`);
+  const [one, setOne] = useState<number[] | null>(null);
+  useEffect(() => setOne(null), [r, p]);
+  const xs = range(r, K);
+  const bars = xs.map((x) => ({ x, p: negbin.pmf(x, r, p) }));
+  const mode = xs.reduce((m, x) => (negbin.pmf(x, r, p) > negbin.pmf(m, r, p) ? x : m), r);
+  const play = () => {
+    const t: number[] = [];
+    let w = 0;
+    while (w < r && t.length < 500) {
+      const s1 = sample.bernoulli(p);
+      t.push(s1);
+      w += s1;
+    }
+    return t;
+  };
+  const runOne = () => {
+    const t = play();
+    setOne(t);
+    sim.add([t.length]);
+  };
+  const batch = () => sim.add(Array.from({ length: SIM_BATCH }, () => play().length));
+  const simBeyond = sim.stats ? sim.values.filter((v) => v > K).length : 0;
+  return (
+    <div className="lab">
+      <div className="slider-grid">
+        <Slider label="الفوز المطلوب" symbol="r" value={r} onChange={setR} min={1} max={6} step={1} digits={0} />
+        <Slider label="احتمال الفوز في كل جولة" symbol="p" value={p} onChange={setP} min={0.1} max={0.9} step={0.05} />
+      </div>
+      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === mode} ariaLabel={`ذو الحدين السالب r=${r}, p=${fmt(p)}. أرجح جولة للفوز رقم ${r} هي ${mode}`} xLabel={`رقم الجولة التي يأتي فيها الفوز رقم ${r}`} />
+      <Legend items={enough(sim.stats) ? ['theory', 'highlight', 'sim'] : ['theory', 'highlight']} />
+      <ProbLine tex={`P(X=${mode}) = \\binom{${mode - 1}}{${r - 1}}(${fmt(p)})^{${r}}(${fmt(1 - p)})^{${mode - r}}`} value={negbin.pmf(mode, r, p)} label={Math.abs(negbin.pmf(mode + 1, r, p) - negbin.pmf(mode, r, p)) < 1e-12 ? `أرجح جولة (وتساويها الجولة ${mode + 1}):` : 'أرجح جولة:'} />
+      <SimButtons onOne={runOne} oneLabel={`العب حتى الفوز رقم ${r}`} onBatch={batch} batchLabel={`كرّر ${SIM_BATCH} مرة`} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
+      {one && (
+        <>
+          <TrialStrip trials={one} successWord="فوز" failWord="خسارة" />
+          <p className="result-line">
+            الفوز رقم {r} جاء في الجولة <Tex tex={`X = ${one.length}`} />
+          </p>
+        </>
+      )}
+      {simBeyond > 0 && <p className="trunc-note">تكرارات في المحاكاة تجاوزت الجولة {K} ولا تظهر في الرسم: {simBeyond}.</p>}
+      <SimNote count={sim.values.length} max={SIM_MAX} />
+      <Stats mean={negbin.mean(r, p)} variance={negbin.variance(r, p)} meanTex="\tfrac{r}{p}" varTex="\tfrac{r(1-p)}{p^2}" sim={enough(sim.stats)} />
+    </div>
+  );
+}
+
 /** المختبر المرجعي لكل فصل قديم. الفصول الجديدة تضع تجربتها في المشهد الثاني مباشرة (kind: 'lab'). */
 export const labs: Partial<Record<DistId, ComponentType>> = {
   bernoulli: BernoulliLab,
@@ -485,4 +539,5 @@ export const labs: Partial<Record<DistId, ComponentType>> = {
   exponential: ExponentialLab,
   normal: NormalLab,
   hypergeometric: HypergeometricLab,
+  negbin: NegbinLab,
 };

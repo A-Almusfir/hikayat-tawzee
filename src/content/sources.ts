@@ -200,6 +200,24 @@ export const sources: Source[] = [
     url: 'https://en.wikipedia.org/wiki/Muriel_Bristol',
     verified: 'multiple-search-snippets',
   },
+  {
+    id: 'sheynin-history',
+    cite: 'O. Sheynin — Theory of Probability: A Historical Essay (arXiv:1802.09966)؛ عن مونمور وذي الحدين السالب في مسألة النقاط، بالإحالة إلى Hald (1990)',
+    url: 'https://arxiv.org/pdf/1802.09966',
+    verified: 'search-snippet',
+  },
+  {
+    id: 'montmort-1713',
+    cite: 'On an identity by Chaundy and Bullard II: More history (arXiv:1205.6362)؛ الطبعة الثانية من Essay d’analyse sur les jeux de hazard لمونمور (1713) وحلها الجديد لمسألة النقاط',
+    url: 'https://arxiv.org/pdf/1205.6362',
+    verified: 'search-snippet',
+  },
+  {
+    id: 'greenwood-utah',
+    cite: 'A. Treibergs, University of Utah — Munitions accidents example (Greenwood & Yule 1920: متوسط 0.47 وتباين 0.69)',
+    url: 'https://www2.math.utah.edu/~treiberg/M3074MunitionsEg.pdf',
+    verified: 'search-snippet',
+  },
 ];
 
 export const sourceById = Object.fromEntries(sources.map((s) => [s.id, s])) as Record<string, Source>;

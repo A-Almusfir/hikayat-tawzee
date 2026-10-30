@@ -26,6 +26,14 @@ jobs:
       - run: npm ci
       - run: npm test
       - run: npm run build
+      # فحص الواجهة في متصفح حقيقي على عرضي 390 و1440: تمرير أفقي، ومعادلات أعرض من حاويتها،
+      # وتداخل تسميات الشجرة، وطول المشاهد على الجوال، ولوحة المفاتيح. يفشل النشر إن وجد مشكلة.
+      - run: npx playwright install --with-deps chromium
+      - name: فحص الواجهة
+        run: |
+          npx vite preview --port 4173 --strictPort &
+          for i in $(seq 1 30); do curl -sf http://localhost:4173/ >/dev/null && break; sleep 1; done
+          npm run check:ui
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:

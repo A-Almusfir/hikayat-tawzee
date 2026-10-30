@@ -72,5 +72,4 @@ scripts/ui-check.cjs          فحص الواجهة
 
 ## الإعداد
 
-عبدالله المسفر (Abdullah Almusfir) — طالب إحصاء.
-© 2026 · 95% من الحقوق تعود إلى Claude، و5% قيد المراجعة.
+عبدالله المسفر (Abdullah Almusfir) — طالب إحصاء. للملاحظات والتواصل: [LinkedIn](https://www.linkedin.com/in/abdullah-a-365a082b3)

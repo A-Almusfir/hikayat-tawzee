@@ -111,8 +111,10 @@ export default function App() {
           <span role="status" aria-live="polite">{cleared ? 'تم مسح التقدم.' : ''}</span>
         </div>
         <div className="signature">
-          <p className="sig-name">عبدالله المسفر</p>
-          <p className="sig-role">طالب إحصاء</p>
+          <p className="sig-name">
+            <a href="https://www.linkedin.com/in/abdullah-a-365a082b3" target="_blank" rel="noopener noreferrer">عبدالله المسفر</a>
+          </p>
+          <p className="sig-role">طالب إحصاء · <a href="https://www.linkedin.com/in/abdullah-a-365a082b3" target="_blank" rel="noopener noreferrer" lang="en" dir="ltr">LinkedIn</a></p>
           <p className="sig-copy">
             <bdi dir="ltr">© {new Date().getFullYear()}</bdi> · <bdi dir="ltr">95%</bdi> من الحقوق تعود إلى Claude، و<bdi dir="ltr">5%</bdi> قيد المراجعة
           </p>

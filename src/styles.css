@@ -299,6 +299,9 @@ h1:focus, h2:focus { outline: none; }
 .sig-by { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-2); }
 .sig-name { font-family: var(--font-head); font-size: 1.6rem; font-weight: 700; color: var(--ink); margin: 0 0 .1rem !important; }
 .sig-role { font-size: .95rem; color: var(--accent); font-weight: 500; }
+.sig-name a { color: inherit; text-decoration: none; }
+.sig-name a:hover { text-decoration: underline; }
+.sig-role a { color: inherit; }
 .sig-copy { font-size: .68rem; color: var(--ink-2); margin-top: .6rem !important; }
 @media print { .signature { margin-top: 4mm; padding-top: 2mm; } .sig-name { font-size: 12pt; } }
 .loading { color: var(--ink-2); padding: 2rem 0; }

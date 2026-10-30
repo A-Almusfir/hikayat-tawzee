@@ -262,6 +262,13 @@ export function RefsPage() {
         <h2>الخصوصية</h2>
         <p>لا تسجيل دخول، ولا تحليلات تتبع، ولا خوادم. التقدم (البطاقات والإجابات) يُحفظ في متصفحك على هذا الجهاز فقط، ويمكنك مسحه من أسفل الصفحة.</p>
       </section>
+      <section className="section">
+        <h2>من أعدّ الموقع؟</h2>
+        <p>
+          عبدالله المسفر، طالب إحصاء. لقيت خطأ أو عندك اقتراح؟ راسلني على{' '}
+          <a href="https://www.linkedin.com/in/abdullah-a-365a082b3" target="_blank" rel="noopener noreferrer" lang="en" dir="ltr">LinkedIn</a>.
+        </p>
+      </section>
     </article>
   );
 }

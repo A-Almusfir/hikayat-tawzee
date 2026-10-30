@@ -1,15 +1,20 @@
-import { useEffect, useState } from 'react';
+import { lazy, Suspense, useEffect, useState } from 'react';
 import { href, useRoute } from './lib/router';
 import { progress } from './lib/storage';
 import { chapters } from './content/chapters';
 import type { DistId } from './content/types';
-import { ChapterPage } from './pages/ChapterPage';
-import { DrillPage } from './pages/DrillPage';
-import { ExamNightPage } from './pages/ExamNightPage';
 import { HomePage } from './pages/HomePage';
-import { MgfPage } from './pages/MgfPage';
-import { MorePage } from './pages/MorePage';
-import { CardsPage, ChooserPage, NotFound, RefsPage } from './pages/pages';
+
+// الصفحات غير الرئيسية تُحمَّل عند الحاجة فقط، فتصغر الحزمة الأولى على الجوال
+const ChapterPage = lazy(() => import('./pages/ChapterPage').then((m) => ({ default: m.ChapterPage })));
+const DrillPage = lazy(() => import('./pages/DrillPage').then((m) => ({ default: m.DrillPage })));
+const ExamNightPage = lazy(() => import('./pages/ExamNightPage').then((m) => ({ default: m.ExamNightPage })));
+const MgfPage = lazy(() => import('./pages/MgfPage').then((m) => ({ default: m.MgfPage })));
+const MorePage = lazy(() => import('./pages/MorePage').then((m) => ({ default: m.MorePage })));
+const CardsPage = lazy(() => import('./pages/pages').then((m) => ({ default: m.CardsPage })));
+const ChooserPage = lazy(() => import('./pages/pages').then((m) => ({ default: m.ChooserPage })));
+const RefsPage = lazy(() => import('./pages/pages').then((m) => ({ default: m.RefsPage })));
+const NotFound = lazy(() => import('./pages/pages').then((m) => ({ default: m.NotFound })));
 
 
 const NAV = [
@@ -30,12 +35,23 @@ export default function App() {
   const pageKey = route.name === 'dist' ? `dist:${route.id}` : route.name;
   useEffect(() => {
     const titles: Record<string, string> = { choose: 'أي توزيع أختار؟', cards: 'بطاقات المراجعة', refs: 'المراجع والمنهج', exam: 'ليلة الاختبار', drill: 'تدريب مختلط', mgf: 'الدالة المولدة للعزوم', more: 'توزيعات أخرى' };
-    const h1 = document.querySelector('main h1')?.textContent;
-    document.title = route.name === 'home' ? 'حكاية توزيع — افهم الحكاية… يثبت القانون' : `${titles[route.name] ?? h1 ?? ''} · حكاية توزيع`;
-    // رابط مشهد مباشر أو بطاقة في «توزيعات أخرى»: الصفحة تتولى التمرير
-    if ((route.name === 'dist' && route.scene) || (route.name === 'more' && route.id)) return;
-    window.scrollTo(0, 0);
-    document.querySelector<HTMLElement>('main h1')?.focus({ preventScroll: true });
+    // الصفحة قد تُحمَّل لاحقًا (lazy): ننتظر ظهور عنوانها قبل ضبط العنوان والتركيز
+    const ready = () => {
+      const h1 = document.querySelector<HTMLElement>('main h1');
+      if (!h1) return false;
+      document.title = route.name === 'home' ? 'حكاية توزيع — افهم الحكاية… يثبت القانون' : `${titles[route.name] ?? h1.textContent ?? ''} · حكاية توزيع`;
+      // رابط مشهد مباشر أو بطاقة في «توزيعات أخرى»: الصفحة تتولى التمرير
+      if ((route.name === 'dist' && route.scene) || (route.name === 'more' && route.id)) return true;
+      window.scrollTo(0, 0);
+      h1.focus({ preventScroll: true });
+      return true;
+    };
+    if (ready()) return;
+    const main = document.getElementById('main');
+    if (!main) return;
+    const mo = new MutationObserver(() => ready() && mo.disconnect());
+    mo.observe(main, { childList: true, subtree: true });
+    return () => mo.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [pageKey]);
 
@@ -84,7 +100,10 @@ export default function App() {
           </ul>
         </nav>
       </header>
-      <main id="main">{page}</main>
+      <main id="main">
+        {/* مفتاح لكل صفحة: لا تبقى الصفحة السابقة مخفية في الشجرة أثناء تحميل الجديدة */}
+        <Suspense key={pageKey} fallback={<p className="loading" role="status">جارٍ التحميل…</p>}>{page}</Suspense>
+      </main>
       <footer className="site-foot">
         <div className="no-print local-note">
           <p>تقدمك محفوظ على هذا الجهاز فقط.</p>

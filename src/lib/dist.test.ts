@@ -185,13 +185,6 @@ describe('اتساق المحتوى مع الحسابات', () => {
       expect(correct.text + correct.why).toContain(fmt(c.shown, c.digits));
     }
   });
-  it('الأمثلة المحلولة: النتيجة المعروضة = الحساب', () => {
-    for (const d of distributions) {
-      const c = d.example.check;
-      expect(Math.abs(c.compute() - c.shown)).toBeLessThanOrEqual(0.5 * 10 ** -c.digits + 1e-12);
-      expect(d.example.result).toContain(fmt(c.shown, c.digits));
-    }
-  });
   it('قيم مذكورة في الشروح', () => {
     expect(binomial.mean(10, 0.25)).toBe(2.5);
     expect(binomial.variance(10, 0.25)).toBeCloseTo(1.875, 12);

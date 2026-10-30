@@ -36,6 +36,7 @@ async function texOverflow(page, tag, route) {
     await page.evaluate(() => localStorage.clear());
     for (const route of ['#/', ...CHAPTERS.map((c) => '#/d/' + c), '#/exam', '#/drill', '#/mgf', '#/more', '#/refs']) {
       await page.goto(BASE + route);
+      await page.waitForSelector('main h1');
       await page.waitForTimeout(400);
       const sw = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
       if (sw > 0) fail(`[${tag}] ${route}: تمرير أفقي ${sw}px`);
@@ -44,6 +45,7 @@ async function texOverflow(page, tag, route) {
 
     // الشجرة: لا تتقاطع التسميات مع الأسماء أو الدوائر
     await page.goto(BASE + '#/');
+    await page.waitForSelector('.tree-svg');
     await page.waitForTimeout(300);
     // كل لوحة من لوحات الشجرة على حدة
     const tabs = page.locator('.tree-tabs .seg-tab');
@@ -73,7 +75,8 @@ async function texOverflow(page, tag, route) {
         await page.goto(BASE + '#/');
         await page.evaluate(() => localStorage.clear());
         await page.goto(BASE + '#/d/' + ch);
-        await page.waitForTimeout(400);
+        await page.waitForSelector('main h1');
+      await page.waitForTimeout(400);
         const heights = async () => page.evaluate(() => [1, 2, 3, 4, 5].map((n) => +(document.getElementById(`scene-${n}`).getBoundingClientRect().height / innerHeight).toFixed(2)));
         const before = await heights();
         before.forEach((v, i) => v > 1.5 && fail(`[mobile] ${ch} المشهد ${i + 1}: ${v} شاشة قبل الكشف (الحد 1.5)`));

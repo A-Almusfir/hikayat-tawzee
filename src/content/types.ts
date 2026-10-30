@@ -53,16 +53,6 @@ export interface DistContent {
   type: 'discrete' | 'continuous';
   /** سؤال يمثل فكرة التوزيع (للصفحة الرئيسية). */
   question: string;
-  story: {
-    title: string;
-    scene: string;
-    experiment: string;
-    variable: string;
-    values: string;
-    assumptions: string[];
-    note?: string;
-  };
-  labIntro: string;
   formula: {
     fnName: string;
     tex: string;
@@ -71,17 +61,6 @@ export interface DistContent {
     intuition: string[];
     derivation: string[];
     derivationKind: 'proof' | 'intuition-only';
-  };
-  example: {
-    title: string;
-    given: string[];
-    ask: string;
-    defineX: string;
-    why: string;
-    substitute: string[];
-    result: string;
-    interpretation: string;
-    check: NumericCheck;
   };
   card: {
     params: { tex: string; meaning: string }[];

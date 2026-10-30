@@ -492,3 +492,8 @@ main:has(.exam-night) { max-width: 72rem; }
 .jump { display: flex; flex-wrap: wrap; gap: 6px; margin: .4rem 0 .8rem; }
 .jump .seg-tab { font-size: .85rem; }
 @media print { .exam-night h2 { break-after: avoid; } .exam-night section > h2 + table { break-before: avoid; } }
+
+.j-search { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; margin: 0 0 .8rem; }
+.j-search label { font-weight: 700; }
+.j-search input { font: inherit; flex: 1 1 14rem; min-height: 44px; padding: .4rem .8rem; border: 2px solid var(--ink); border-radius: 10px; background: #fffdf8; color: var(--ink); }
+.j-search input:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }

@@ -7,5 +7,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   base: './',
   plugins: [react()],
+  // المكتبات الثابتة في ملفات مستقلة: تبقى في ذاكرة المتصفح بين التحديثات
+  build: { rollupOptions: { output: { manualChunks: { react: ['react', 'react-dom'], katex: ['katex'] } } } },
   test: { environment: 'node' },
 });

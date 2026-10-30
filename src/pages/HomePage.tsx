@@ -1,4 +1,4 @@
-import type { CSSProperties } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { chapters } from '../content/chapters';
 import { identity, journey } from '../content/identity';
 import { scenarios } from '../content/chooser';
@@ -7,8 +7,19 @@ import { FamilyTree } from '../components/FamilyTree';
 import { Glyph } from '../components/Glyph';
 import { href } from '../lib/router';
 import { Tex } from '../components/Tex';
+import { moreCards } from '../content/more';
+import { matches } from '../lib/search';
+
+// ما في ورقة القوانين بلا فصل: يظهر في البحث برابط إلى بطاقته أو الفصل الأقرب
+const extras = [
+  ...moreCards.map((c) => ({ id: c.id, href: href.more(c.id), note: 'بطاقة في «توزيعات أخرى»' })),
+  { id: 'stdnormal' as const, href: href.dist('normal'), note: 'في فصل الطبيعي، مع جدول Φ' },
+];
 
 export function HomePage() {
+  const [q, setQ] = useState('');
+  const shown = journey.filter((id) => matches(q, [sheetById[id].nameAr, sheetById[id].nameEn]));
+  const more = q.trim() ? extras.filter((x) => matches(q, [sheetById[x.id].nameAr, sheetById[x.id].nameEn])) : [];
   return (
     <div className="home2">
       <section className="h2-hero">
@@ -28,8 +39,14 @@ export function HomePage() {
 
       <section className="h2-journey" aria-labelledby="j-h">
         <h2 id="j-h">الرحلة: {journey.length} فصلًا</h2>
+        <div className="j-search">
+          <label htmlFor="j-q">ابحث بالاسم</label>
+          <input id="j-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder="مثل: غاما، Poisson، كاي" autoComplete="off" aria-describedby="j-count" />
+          <span id="j-count" className="hint" role="status">{q.trim() ? `${shown.length + more.length} نتيجة` : ''}</span>
+        </div>
         <ol>
-          {journey.map((id, i) => {
+          {shown.map((id) => {
+            const i = journey.indexOf(id);
             const d = sheetById[id];
             const story = chapters[id]?.story.headline;
             return (
@@ -47,7 +64,20 @@ export function HomePage() {
               </li>
             );
           })}
+          {more.map((x) => (
+            <li key={x.id} style={{ '--c': 'var(--ink-2)' } as CSSProperties}>
+              <a href={x.href}>
+                <span className="j-body">
+                  <span className="j-name">
+                    {sheetById[x.id].nameAr} <span className="en" lang="en" dir="ltr">{sheetById[x.id].nameEn}</span>
+                  </span>
+                  <span className="j-q">{x.note}</span>
+                </span>
+              </a>
+            </li>
+          ))}
         </ol>
+        {q.trim() && !shown.length && !more.length && <p className="empty">لا توزيع بهذا الاسم. جرّب كلمة أخرى، أو افتح <a href={href.exam}>ليلة الاختبار</a>.</p>}
       </section>
 
       <section className="h2-tools" aria-labelledby="t-h">

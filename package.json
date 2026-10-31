@@ -2,6 +2,9 @@
   "name": "hikayat-tawzee",
   "private": true,
   "version": "1.0.0",
+  "description": "موقع عربي تفاعلي ومجاني لفهم التوزيعات الاحتمالية",
+  "author": "Abdullah Almusfir (https://www.linkedin.com/in/abdullah-a-365a082b3)",
+  "homepage": "https://a-almusfir.github.io/hikayat-tawzee/",
   "type": "module",
   "scripts": {
     "dev": "vite",

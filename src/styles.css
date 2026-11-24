@@ -305,3 +305,13 @@ h1:focus, h2:focus { outline: none; }
 .sig-copy { font-size: .68rem; color: var(--ink-2); margin-top: .6rem !important; }
 @media print { .signature { margin-top: 4mm; padding-top: 2mm; } .sig-name { font-size: 12pt; } }
 .loading { color: var(--ink-2); padding: 2rem 0; }
+
+/* زر اللغة (الإنجليزية تجريبية) */
+.lang-btn { order: 2; margin-inline-start: auto; font: inherit; font-size: .85rem; font-weight: 700; color: var(--ink); background: #fffdf8; border: 1.5px solid var(--ink); border-radius: 999px; padding: .2rem .8rem; min-height: 36px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; }
+.lang-btn:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; }
+.lang-btn .beta { font-size: .68rem; font-weight: 500; color: var(--accent); }
+.site-head nav { order: 1; }
+@media (pointer: coarse) { .lang-btn { min-height: 44px; } }
+.lang-note { max-width: 72rem; margin: 1rem auto 0; padding: .6rem .9rem; border: 1.5px dashed var(--accent); border-radius: 10px; background: #fbf1df; font-size: .92rem; }
+[dir='ltr'] .law-card dd > .tex, [dir='ltr'] .twin-side > .tex { text-align: left; }
+[dir='ltr'] .t-name { font-size: 15px; }

@@ -1,5 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { href, useRoute } from './lib/router';
+import { setLang, TRANSLATED, useLang } from './lib/lang';
 import { progress } from './lib/storage';
 import { chapters } from './content/chapters';
 import type { DistId } from './content/types';
@@ -17,19 +18,23 @@ const RefsPage = lazy(() => import('./pages/pages').then((m) => ({ default: m.Re
 const NotFound = lazy(() => import('./pages/pages').then((m) => ({ default: m.NotFound })));
 
 
+const LINKEDIN = 'https://www.linkedin.com/in/abdullah-a-365a082b3';
+
 const NAV = [
-  { to: href.home, label: 'الرئيسية', match: 'home' },
-  { to: href.exam, label: 'ليلة الاختبار', match: 'exam' },
-  { to: href.drill, label: 'تدريب مختلط', match: 'drill' },
-  { to: href.mgf, label: 'الدالة المولدة', match: 'mgf' },
-  { to: href.more(), label: 'توزيعات أخرى', match: 'more' },
-  { to: href.choose, label: 'أي توزيع أختار؟', match: 'choose' },
-  { to: href.cards, label: 'بطاقات المراجعة', match: 'cards' },
-  { to: href.refs, label: 'المراجع والمنهج', match: 'refs' },
+  { to: href.home, label: 'الرئيسية', en: 'Home', match: 'home' },
+  { to: href.exam, label: 'ليلة الاختبار', en: 'Exam night', match: 'exam' },
+  { to: href.drill, label: 'تدريب مختلط', en: 'Mixed practice', match: 'drill' },
+  { to: href.mgf, label: 'الدالة المولدة', en: 'MGF', match: 'mgf' },
+  { to: href.more(), label: 'توزيعات أخرى', en: 'Other distributions', match: 'more' },
+  { to: href.choose, label: 'أي توزيع أختار؟', en: 'Which distribution?', match: 'choose' },
+  { to: href.cards, label: 'بطاقات المراجعة', en: 'Review cards', match: 'cards' },
+  { to: href.refs, label: 'المراجع والمنهج', en: 'Sources', match: 'refs' },
 ];
 
 export default function App() {
   const route = useRoute();
+  const lang = useLang();
+  const en = lang === 'en';
   const [cleared, setCleared] = useState(false);
 
   const pageKey = route.name === 'dist' ? `dist:${route.id}` : route.name;
@@ -39,7 +44,8 @@ export default function App() {
     const ready = () => {
       const h1 = document.querySelector<HTMLElement>('main h1');
       if (!h1) return false;
-      document.title = route.name === 'home' ? 'حكاية توزيع — افهم الحكاية… يثبت القانون' : `${titles[route.name] ?? h1.textContent ?? ''} · حكاية توزيع`;
+      const brand = en ? 'Hikayat Tawzee' : 'حكاية توزيع';
+      document.title = route.name === 'home' ? (en ? 'Hikayat Tawzee — the story behind each distribution' : 'حكاية توزيع — افهم الحكاية… يثبت القانون') : `${(en && h1.textContent) || titles[route.name] || h1.textContent || ''} · ${brand}`;
       // رابط مشهد مباشر أو بطاقة في «توزيعات أخرى»: الصفحة تتولى التمرير
       if ((route.name === 'dist' && route.scene) || (route.name === 'more' && route.id)) return true;
       window.scrollTo(0, 0);
@@ -53,7 +59,7 @@ export default function App() {
     mo.observe(main, { childList: true, subtree: true });
     return () => mo.disconnect();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [pageKey]);
+  }, [pageKey, lang]);
 
   const page = (() => {
     switch (route.name) {
@@ -74,7 +80,7 @@ export default function App() {
   })();
 
   const clear = () => {
-    if (window.confirm('سيُمسح كل تقدمك المحفوظ على هذا الجهاز (البطاقات وإجابات الأسئلة والمواقف). متابعة؟')) {
+    if (window.confirm(en ? 'All progress saved on this device (cards, answers and scenarios) will be cleared. Continue?' : 'سيُمسح كل تقدمك المحفوظ على هذا الجهاز (البطاقات وإجابات الأسئلة والمواقف). متابعة؟')) {
       progress.clearAll();
       setCleared(true);
       window.setTimeout(() => setCleared(false), 4000);
@@ -84,17 +90,21 @@ export default function App() {
   return (
     <>
       <a className="skip" href="#main" onClick={(e) => { e.preventDefault(); document.querySelector<HTMLElement>('main h1')?.focus(); }}>
-        تخطَّ إلى المحتوى
+        {en ? 'Skip to content' : 'تخطَّ إلى المحتوى'}
       </a>
       <header className="site-head no-print">
         <a href={href.home} className="brand">
-          حكاية توزيع
+          {en ? 'Hikayat Tawzee' : 'حكاية توزيع'}
         </a>
-        <nav aria-label="التنقل الرئيسي">
+        <button type="button" className="lang-btn" onClick={() => setLang(en ? 'ar' : 'en')} lang={en ? 'ar' : 'en'} aria-label={en ? 'التبديل إلى العربية' : 'Switch to English (beta)'}>
+          {en ? 'عربي' : 'English'}
+          {!en && <span className="beta">beta</span>}
+        </button>
+        <nav aria-label={en ? 'Main navigation' : 'التنقل الرئيسي'}>
           <ul>
             {NAV.map((n) => (
               <li key={n.to}>
-                <a href={n.to} aria-current={route.name === n.match ? 'page' : undefined}>{n.label}</a>
+                <a href={n.to} aria-current={route.name === n.match ? 'page' : undefined}>{en ? n.en : n.label}</a>
               </li>
             ))}
           </ul>
@@ -102,21 +112,31 @@ export default function App() {
       </header>
       <main id="main">
         {/* مفتاح لكل صفحة: لا تبقى الصفحة السابقة مخفية في الشجرة أثناء تحميل الجديدة */}
-        <Suspense key={pageKey} fallback={<p className="loading" role="status">جارٍ التحميل…</p>}>{page}</Suspense>
+        <Suspense key={pageKey} fallback={<p className="loading" role="status">{en ? 'Loading…' : 'جارٍ التحميل…'}</p>}>
+          {en && !TRANSLATED.has(route.name) ? (
+            <>
+              <p className="lang-note" lang="en" dir="ltr">
+                This page is in Arabic only for now. The English beta covers the home page, the family tree and Exam night.
+              </p>
+              <div lang="ar" dir="rtl">{page}</div>
+            </>
+          ) : (
+            page
+          )}
+        </Suspense>
       </main>
       <footer className="site-foot">
         <div className="no-print local-note">
-          <p>تقدمك محفوظ على هذا الجهاز فقط.</p>
-          <button type="button" className="btn btn-quiet" onClick={clear}>امسح التقدم</button>
-          <span role="status" aria-live="polite">{cleared ? 'تم مسح التقدم.' : ''}</span>
+          <p>{en ? 'Your progress is saved on this device only.' : 'تقدمك محفوظ على هذا الجهاز فقط.'}</p>
+          <button type="button" className="btn btn-quiet" onClick={clear}>{en ? 'Clear progress' : 'امسح التقدم'}</button>
+          <span role="status" aria-live="polite">{cleared ? (en ? 'Progress cleared.' : 'تم مسح التقدم.') : ''}</span>
         </div>
         <div className="signature">
           <p className="sig-name">
-            <a href="https://www.linkedin.com/in/abdullah-a-365a082b3" target="_blank" rel="noopener noreferrer">عبدالله المسفر</a>
+            <a href={LINKEDIN} target="_blank" rel="noopener noreferrer">{en ? 'Abdullah Almusfir' : 'عبدالله المسفر'}</a>
           </p>
-          <p className="sig-role">طالب إحصاء · <a href="https://www.linkedin.com/in/abdullah-a-365a082b3" target="_blank" rel="noopener noreferrer" lang="en" dir="ltr">LinkedIn</a></p>
-          <p className="sig-copy">
-            <bdi dir="ltr">© {new Date().getFullYear()}</bdi> · <bdi dir="ltr">95%</bdi> من الحقوق تعود إلى Claude، و<bdi dir="ltr">5%</bdi> قيد المراجعة
+          <p className="sig-role">
+            {en ? 'Statistics student' : 'طالب إحصاء'} · <a href={LINKEDIN} target="_blank" rel="noopener noreferrer" lang="en" dir="ltr">LinkedIn</a>
           </p>
         </div>
       </footer>

@@ -132,9 +132,17 @@ describe('ورقة القوانين', () => {
     close(1 - poi, simpson((y) => g.pdf(y, { al, be }), 0, x), 1e-8);
   });
 
-  it('«متى؟» والتنبيهات والقاموس تُعرض في KaTeX', () => {
+  it('النسخة الإنجليزية: تنبيه لكل تنبيه عربي، وتراكمي لكل تراكمي غير مغلق', () => {
+    for (const r of sheet) {
+      expect(!!r.en.warn, r.id).toBe(!!r.warn);
+      expect(!!r.en.cdf, r.id).toBe(!!r.cdf && r.cdf.kind !== 'closed');
+    }
+  });
+
+  it('«متى؟» والتنبيهات والقاموس تُعرض في KaTeX (بالعربية والإنجليزية)', () => {
     const rich = sheet.flatMap((s) => [s.when, s.params, s.warn?.text ?? '', s.mgf.kind === 'closed' ? s.mgf.domain : s.mgf.note, s.cdf && s.cdf.kind !== 'closed' ? s.cdf.note : '']);
-    const texs = [...rich, ...symbols.map((s) => s.meaning)].flatMap((t) => [...t.matchAll(/\$([^$]+?)\$/g)].map((m) => m[1]));
+    const richEn = sheet.flatMap((s) => [s.en.when, s.en.params, s.en.mgf, s.en.cdf ?? '', s.en.warn ?? '']);
+    const texs = [...rich, ...richEn, ...symbols.flatMap((s) => [s.meaning, s.meaningEn])].flatMap((t) => [...t.matchAll(/\$([^$]+?)\$/g)].map((m) => m[1]));
     texs.push(...symbols.map((s) => s.sym));
     for (const t of texs) expect(() => katex.renderToString(t, { throwOnError: true, strict: 'ignore' }), t).not.toThrow();
   });

@@ -48,9 +48,27 @@ async function texOverflow(page, tag, route) {
       invisible.forEach((t) => fail(`[${tag}] ${route}: زر بلا خلفية (نص أبيض على الورق): «${t}»`));
     }
 
-    // الشجرة: لا تتقاطع التسميات مع الأسماء أو الدوائر
+    // النسخة الإنجليزية التجريبية: الصفحات المترجمة، وصفحة عربية داخل الواجهة الإنجليزية
+    // اللغة تُقرأ عند تحميل الصفحة، والتنقل بالـ hash لا يعيد التحميل: نعيده صراحة ونتأكد من الاتجاه
+    await page.evaluate(() => localStorage.setItem('hikayat:lang', 'en'));
+    for (const route of ['#/', '#/exam', '#/d/poisson']) {
+      await page.goto(BASE + route);
+      await page.reload();
+      await page.waitForSelector('main h1');
+      if ((await page.evaluate(() => document.documentElement.dir)) !== 'ltr') fail(`[${tag}] EN ${route}: الصفحة لم تتحول إلى الإنجليزية`);
+      await page.waitForTimeout(400);
+      const sw = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+      if (sw > 0) fail(`[${tag}] EN ${route}: تمرير أفقي ${sw}px`);
+      await texOverflow(page, tag, 'EN ' + route);
+    }
+
+    // الشجرة بالعربية والإنجليزية: لا تتقاطع التسميات مع الأسماء أو الدوائر أو الخطوط
+    for (const lang of ['ar', 'en']) {
+    await page.evaluate((l) => localStorage.setItem('hikayat:lang', l), lang);
     await page.goto(BASE + '#/');
+    await page.reload();
     await page.waitForSelector('.tree-svg');
+    if ((await page.evaluate(() => document.documentElement.lang)) !== lang) fail(`[${tag}] الشجرة: لم تتحول إلى ${lang}`);
     await page.waitForTimeout(300);
     // كل لوحة من لوحات الشجرة على حدة
     const tabs = page.locator('.tree-tabs .seg-tab');
@@ -59,23 +77,41 @@ async function texOverflow(page, tag, route) {
     const overlaps = await page.evaluate(() => {
       const box = (el) => el.getBoundingClientRect();
       const hit = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
-      const labels = [...document.querySelectorAll('.t-label')].map((e) => [e.textContent, box(e)]);
+      const labels = [...document.querySelectorAll('.t-label')].map((e) => [e.textContent, box(e), e.closest('.t-edge')]);
       const others = [...document.querySelectorAll('.t-name, .t-node circle')].map((e) => [e.textContent || 'دائرة', box(e)]);
       const out = [];
       for (const [lt, lb] of labels) for (const [ot, ob] of others) if (hit(lb, ob)) out.push(`${lt} × ${ot}`);
+      // التسمية لا يقطعها خط سهم آخر (نأخذ نقاطًا على كل خط ظاهر ونتحقق أنها خارج مستطيل التسمية بعد تضييقه قليلًا)
+      for (const [lt, lb, g] of labels) {
+        for (const ln of document.querySelectorAll('.t-edge line.ln')) {
+          if (ln.closest('.t-edge') === g) continue;
+          const m = ln.getScreenCTM();
+          const [x1, y1, x2, y2] = ['x1', 'y1', 'x2', 'y2'].map((a) => +ln.getAttribute(a));
+          for (let k = 0; k <= 40; k++) {
+            const pt = new DOMPoint(x1 + ((x2 - x1) * k) / 40, y1 + ((y2 - y1) * k) / 40).matrixTransform(m);
+            if (pt.x > lb.left + 2 && pt.x < lb.right - 2 && pt.y > lb.top + 2 && pt.y < lb.bottom - 2) { out.push(`${lt} × خط سهم`); break; }
+          }
+        }
+      }
       for (let i = 0; i < labels.length; i++) for (let j = i + 1; j < labels.length; j++) if (hit(labels[i][1], labels[j][1])) out.push(`${labels[i][0]} × ${labels[j][0]}`);
       return out;
     });
-    overlaps.forEach((o) => fail(`[${tag}] الشجرة (لوحة ${ti + 1}): تداخل ${o}`));
+    overlaps.forEach((o) => fail(`[${tag}] الشجرة ${lang} (لوحة ${ti + 1}): تداخل ${o}`));
     // لا يخرج أي اسم أو تسمية عن حدود الرسم
     const outside = await page.evaluate(() => {
-      const svg = document.querySelector('.tree-svg').getBoundingClientRect();
+      // حدود منطقة الرسم (viewBox) على الشاشة، لا حدود عنصر svg الذي قد يكون أعرض منها
+      const el = document.querySelector('.tree-svg'), vb = el.viewBox.baseVal, m = el.getScreenCTM();
+      const a = new DOMPoint(vb.x, vb.y).matrixTransform(m), b = new DOMPoint(vb.x + vb.width, vb.y + vb.height).matrixTransform(m);
+      const svg = { left: a.x, top: a.y, right: b.x, bottom: b.y };
       return [...document.querySelectorAll('.t-label, .t-name')].filter((e) => { const r = e.getBoundingClientRect(); return r.left < svg.left - 1 || r.right > svg.right + 1 || r.top < svg.top - 1 || r.bottom > svg.bottom + 1; }).map((e) => e.textContent);
     });
-    outside.forEach((o) => fail(`[${tag}] الشجرة (لوحة ${ti + 1}): «${o}» خارج الرسم`));
+    outside.forEach((o) => fail(`[${tag}] الشجرة ${lang} (لوحة ${ti + 1}): «${o}» خارج الرسم`));
     const tabBg = await page.evaluate(() => { const e = document.querySelector('.tree-tabs .seg-tab.on'); return e ? getComputedStyle(e).backgroundColor : 'none'; });
-    if (/rgba\(0, 0, 0, 0\)|transparent/.test(tabBg)) fail(`[${tag}] الشجرة (لوحة ${ti + 1}): زر اللوحة المختار بلا خلفية`);
+    if (/rgba\(0, 0, 0, 0\)|transparent/.test(tabBg)) fail(`[${tag}] الشجرة ${lang} (لوحة ${ti + 1}): زر اللوحة المختار بلا خلفية`);
     }
+    }
+    await page.evaluate(() => localStorage.removeItem('hikayat:lang'));
+    await page.reload();
 
     if (tag === 'mobile') {
       for (const ch of CHAPTERS) {

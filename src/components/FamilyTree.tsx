@@ -49,9 +49,9 @@ const PANELS: Record<Panel, { title: string; titleEn: string; first: string; pos
     },
     label: {
       'uni-exp': { x: 128, y: 160 },
-      'geo-exp': { x: 186, y: 118 },
+      'geo-exp': { x: 180, y: 118 },
       'poi-exp': { x: 344, y: 130 },
-      'exp-gam': { x: 148, y: 284 },
+      'exp-gam': { x: 92, y: 284 },
       'bin-norm': { x: 404, y: 298 },
     },
   },
@@ -66,9 +66,9 @@ const PANELS: Record<Panel, { title: string; titleEn: string; first: string; pos
       t: { x: 110, y: 370, name: 'below' },
     },
     label: {
-      'norm-chi': { x: 200, y: 148 },
+      'norm-chi': { x: 236, y: 150 },
       'gam-chi': { x: 316, y: 182 },
-      'chi-t': { x: 206, y: 318 },
+      'chi-t': { x: 218, y: 318 },
       't-norm': { x: 66, y: 232 },
     },
   },

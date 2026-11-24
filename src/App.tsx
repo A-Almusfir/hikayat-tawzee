@@ -3,6 +3,7 @@ import { href, useRoute } from './lib/router';
 import { setLang, TRANSLATED, useLang } from './lib/lang';
 import { progress } from './lib/storage';
 import { chapters } from './content/chapters';
+import { sheetById } from './content/sheet';
 import type { DistId } from './content/types';
 import { HomePage } from './pages/HomePage';
 
@@ -28,7 +29,7 @@ const NAV = [
   { to: href.more(), label: 'توزيعات أخرى', en: 'Other distributions', match: 'more' },
   { to: href.choose, label: 'أي توزيع أختار؟', en: 'Which distribution?', match: 'choose' },
   { to: href.cards, label: 'بطاقات المراجعة', en: 'Review cards', match: 'cards' },
-  { to: href.refs, label: 'المراجع والمنهج', en: 'Sources', match: 'refs' },
+  { to: href.refs, label: 'المراجع والمنهج', en: 'Sources & syllabus', match: 'refs' },
 ];
 
 export default function App() {
@@ -45,7 +46,9 @@ export default function App() {
       const h1 = document.querySelector<HTMLElement>('main h1');
       if (!h1) return false;
       const brand = en ? 'Hikayat Tawzee' : 'حكاية توزيع';
-      document.title = route.name === 'home' ? (en ? 'Hikayat Tawzee — the story behind each distribution' : 'حكاية توزيع — افهم الحكاية… يثبت القانون') : `${(en && h1.textContent) || titles[route.name] || h1.textContent || ''} · ${brand}`;
+      // عنوان الفصل في الوضع الإنجليزي بالاسم الإنجليزي وحده (العنوان الظاهر ثنائي اللغة)
+      const chapterEn = en && route.name === 'dist' ? sheetById[route.id as DistId]?.nameEn : undefined;
+      document.title = route.name === 'home' ? (en ? 'Hikayat Tawzee — the story behind each distribution' : 'حكاية توزيع — افهم الحكاية… يثبت القانون') : `${chapterEn || (en && h1.textContent) || titles[route.name] || h1.textContent || ''} · ${brand}`;
       // رابط مشهد مباشر أو بطاقة في «توزيعات أخرى»: الصفحة تتولى التمرير
       if ((route.name === 'dist' && route.scene) || (route.name === 'more' && route.id)) return true;
       window.scrollTo(0, 0);
@@ -96,7 +99,7 @@ export default function App() {
         <a href={href.home} className="brand">
           {en ? 'Hikayat Tawzee' : 'حكاية توزيع'}
         </a>
-        <button type="button" className="lang-btn" onClick={() => setLang(en ? 'ar' : 'en')} lang={en ? 'ar' : 'en'} aria-label={en ? 'التبديل إلى العربية' : 'Switch to English (beta)'}>
+        <button type="button" className="lang-btn" dir={en ? 'rtl' : 'ltr'} onClick={() => setLang(en ? 'ar' : 'en')} lang={en ? 'ar' : 'en'} aria-label={en ? 'التبديل إلى العربية' : 'Switch to English (beta)'}>
           {en ? 'عربي' : 'English'}
           {!en && <span className="beta">beta</span>}
         </button>

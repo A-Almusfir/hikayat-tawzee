@@ -10,6 +10,7 @@ type Of<K extends TryIt['kind']> = Extract<TryIt, { kind: K }>;
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 /** «دورة واحدة / دورتين / 3 دورات / 11 دورة» */
 const spins = (n: number) => (n === 0 ? 'أي دورة' : n === 1 ? 'دورة واحدة' : n === 2 ? 'دورتين' : n <= 10 ? `${n} دورات` : `${n} دورة`);
+const spinsEn = (n: number) => (n === 1 ? '1 spin' : `${n} spins`);
 
 function SimNoteLine() {
   const en = useUiLang() === 'en';
@@ -149,6 +150,7 @@ export function PointsTry({ t }: { t: Of<'points'> }) {
 // ———— الأسي: أزمنة الانتظار بين المكالمات ————
 export function WaitsTry({ t }: { t: Of<'waits'> }) {
   const [theta, setTheta] = useState(t.theta.start);
+  const en = useUiLang() === 'en';
   const [waits, setWaits] = useState<number[]>([]);
   useEffect(() => setWaits([]), [theta]);
   const xMax = exponential.quantile(0.99, theta);
@@ -170,15 +172,15 @@ export function WaitsTry({ t }: { t: Of<'waits'> }) {
           xMax={xMax}
           hist={hist}
           markers={[{ x: 1 / theta, label: '1/θ' }]}
-          ariaLabel={`كثافة الانتظار بمعدل ${theta} ${t.rateUnit}`}
-          xLabel={`زمن الانتظار (${t.unit})`}
+          ariaLabel={en ? `Density of the wait at a rate of ${theta} ${t.rateUnit}` : `كثافة الانتظار بمعدل ${theta} ${t.rateUnit}`}
+          xLabel={en ? `Waiting time (${t.unit})` : `زمن الانتظار (${t.unit})`}
         />
       }
     >
       <Rich as="p" text={t.prompt} />
       <div className="one-control">
         <label htmlFor="w-l">
-          المعدل <Tex tex="\theta" /> ({t.rateUnit})
+          {en ? 'Rate' : 'المعدل'} <Tex tex="\theta" /> ({t.rateUnit})
         </label>
         <div className="slider-row">
           <input id="w-l" type="range" min={t.theta.min} max={t.theta.max} step={t.theta.step} value={theta} onChange={(e) => setTheta(Number(e.target.value))} dir="ltr" />
@@ -187,19 +189,23 @@ export function WaitsTry({ t }: { t: Of<'waits'> }) {
       </div>
       <div className="btn-row">
         <button type="button" className="btn btn-c" onClick={() => setWaits(Array.from({ length: 500 }, () => sample.exponential(theta)))}>
-          ولّد 500 زمن انتظار
+          {en ? 'Generate 500 waiting times' : 'ولّد 500 زمن انتظار'}
         </button>
       </div>
       <p className="fit" aria-live="polite">
-        متوسط الانتظار نظريًا <Tex tex={`\\tfrac{1}{\\theta} = ${fmt(1 / theta, 3)}`} /> {t.unit}
+        {en ? 'Theoretical mean wait ' : 'متوسط الانتظار نظريًا '}<Tex tex={`\\tfrac{1}{\\theta} = ${fmt(1 / theta, 3)}`} /> {t.unit}
         {mean !== null && (
           <>
-            ، وفي المحاكاة <strong className="num" dir="ltr">≈ {fmt(mean, 3)}</strong>
+            {en ? ', and in the simulation ' : '، وفي المحاكاة '}<strong className="num" dir="ltr">≈ {fmt(mean, 3)}</strong>
           </>
         )}
         .
       </p>
-      <p className="trunc-note">الرسم يتوقف عند {fmt(xMax, 2)} {t.unit}؛ نحو 1% من الانتظار أطول من ذلك. والمستطيلات الفاتحة مدرّج المحاكاة.</p>
+      <p className="trunc-note">
+        {en
+          ? `The chart stops at ${fmt(xMax, 2)} ${t.unit}; about 1% of waits are longer than that. The light rectangles are the simulation histogram.`
+          : `الرسم يتوقف عند ${fmt(xMax, 2)} ${t.unit}؛ نحو 1% من الانتظار أطول من ذلك. والمستطيلات الفاتحة مدرّج المحاكاة.`}
+      </p>
       <SimNoteLine />
     </Scene>
   );
@@ -208,6 +214,7 @@ export function WaitsTry({ t }: { t: Of<'waits'> }) {
 // ———— الهندسي: انعدام الذاكرة ————
 export function MemoryTry({ t }: { t: Of<'memory'> }) {
   const [s, setS] = useState(0);
+  const en = useUiLang() === 'en';
   const p = t.p;
   const J = 8;
   // توزيع ما بقي بعد s إخفاقات: P(X = s + j | X > s)
@@ -220,27 +227,41 @@ export function MemoryTry({ t }: { t: Of<'memory'> }) {
       title={t.headline}
       art={
         <figure className="hk-chart">
-          <BarChart bars={cond} sim={fresh} ariaLabel={`بعد ${spins(s)} بلا ${t.successLabel}: احتمال الدورة التالية ${fmt(cond[0].p, 4)}، وهو نفسه في بداية اللعب`} xLabel="عدد الدورات الإضافية حتى أول نجاح" />
+          <BarChart bars={cond} sim={fresh} ariaLabel={
+              en
+                ? `After ${spinsEn(s)} without ${t.successLabel}: probability on the next spin ${fmt(cond[0].p, 4)}, the same as at the start`
+                : `بعد ${spins(s)} بلا ${t.successLabel}: احتمال الدورة التالية ${fmt(cond[0].p, 4)}، وهو نفسه في بداية اللعب`
+            }
+            xLabel={en ? 'Extra spins until the first success' : 'عدد الدورات الإضافية حتى أول نجاح'}
+          />
           <figcaption>
-            <span className="lg"><i className="lg-exp" /> ما بقي بعد {spins(s)} بلا {t.successLabel}</span>
-            <span className="lg"><i className="lg-dia" /> التوزيع في بداية اللعب</span>
+            <span className="lg"><i className="lg-exp" /> {en ? `What is left after ${spinsEn(s)} without ${t.successLabel}` : `ما بقي بعد ${spins(s)} بلا ${t.successLabel}`}</span>
+            <span className="lg"><i className="lg-dia" /> {en ? 'The distribution at the start' : 'التوزيع في بداية اللعب'}</span>
           </figcaption>
         </figure>
       }
     >
       <Rich as="p" text={t.prompt} />
       <div className="one-control">
-        <label htmlFor="mem-s">عدد الدورات التي مضت بلا {t.successLabel}</label>
+        <label htmlFor="mem-s">{en ? `Spins already passed without ${t.successLabel}` : `عدد الدورات التي مضت بلا ${t.successLabel}`}</label>
         <div className="slider-row">
           <input id="mem-s" type="range" min={0} max={t.maxStreak} step={1} value={s} onChange={(e) => setS(Number(e.target.value))} dir="ltr" />
           <output htmlFor="mem-s" className="num big-out" dir="ltr">{s}</output>
         </div>
       </div>
       <p className="fit" aria-live="polite">
-        احتمال {t.successLabel} في الدورة التالية: <Tex tex={`${fmt(cond[0].p, 4)}`} />، مهما كان عدد الدورات السابقة. الأعمدة لا تتحرك: العجلة لا تتذكر.
+        {en ? (
+          <>
+            Probability of {t.successLabel} on the next spin: <Tex tex={`${fmt(cond[0].p, 4)}`} />, however many spins came before. The bars do not move: the wheel has no memory.
+          </>
+        ) : (
+          <>
+            احتمال {t.successLabel} في الدورة التالية: <Tex tex={`${fmt(cond[0].p, 4)}`} />، مهما كان عدد الدورات السابقة. الأعمدة لا تتحرك: العجلة لا تتذكر.
+          </>
+        )}
       </p>
       <p className="hint">
-        أما احتمال أن ترى {spins(s)} متتالية بلا {t.successLabel} أصلًا فهو <Tex tex={`{(1-p)^{${s}} \\approx ${seen < 1e-4 ? seen.toExponential(1).replace('e', '\\times 10^{') + '}' : fmt(seen, 4)}}`} />. ندرة الماضي لا تغيّر المستقبل.
+        {en ? `The probability of seeing ${spinsEn(s)} in a row without ${t.successLabel} in the first place is ` : `أما احتمال أن ترى ${spins(s)} متتالية بلا ${t.successLabel} أصلًا فهو `}<Tex tex={`{(1-p)^{${s}} \\approx ${seen < 1e-4 ? seen.toExponential(1).replace('e', '\\times 10^{') + '}' : fmt(seen, 4)}}`} />{en ? '. A rare past does not change the future.' : '. ندرة الماضي لا تغيّر المستقبل.'}
       </p>
     </Scene>
   );

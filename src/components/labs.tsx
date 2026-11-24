@@ -181,6 +181,7 @@ export function BinomialLab({ initialN = 10, initialP = 0.25 }: { initialN?: num
 // ———————— الهندسي ————————
 export function GeometricLab() {
   const [p, setP] = useState(0.2);
+  const { t } = useT();
   const K = Math.max(10, Math.min(40, discreteUpper((k) => geometric.cdf(k, p), 0.99, 1, 40)));
   const [k, setK] = useState(4);
   const kk = Math.min(k, K);
@@ -190,9 +191,9 @@ export function GeometricLab() {
   const xs = range(1, K);
   const bars = xs.map((x) => ({ x, p: geometric.pmf(x, p) }));
   const runOne = () => {
-    const t = sample.geometricTrials(p);
-    setOne(t);
-    sim.add([t.length]);
+    const trials = sample.geometricTrials(p);
+    setOne(trials);
+    sim.add([trials.length]);
   };
   const batch = () => sim.add(Array.from({ length: SIM_BATCH }, () => sample.geometricTrials(p).length));
   const tail = Math.pow(1 - p, K);
@@ -200,26 +201,31 @@ export function GeometricLab() {
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="احتمال النجاح في كل محاولة" symbol="p" value={p} onChange={setP} {...RANGES.geometricP} />
-        <Slider label="رقم المحاولة الناجحة الأولى" symbol="k" value={kk} onChange={setK} min={1} max={K} step={1} digits={0} />
+        <Slider label={t('احتمال النجاح في كل محاولة', 'Probability of success in each trial')} symbol="p" value={p} onChange={setP} {...RANGES.geometricP} />
+        <Slider label={t('رقم المحاولة الناجحة الأولى', 'Trial of the first success')} symbol="k" value={kk} onChange={setK} min={1} max={K} step={1} digits={0} />
       </div>
-      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === kk} ariaLabel={`التوزيع الهندسي p=${fmt(p)}. P(X=${kk}) = ${fmt(geometric.pmf(kk, p))}`} xLabel="عدد المحاولات حتى أول نجاح k" />
+      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === kk} ariaLabel={`${t('التوزيع الهندسي', 'Geometric distribution')} p=${fmt(p)}. P(X=${kk}) = ${fmt(geometric.pmf(kk, p))}`} xLabel={t('عدد المحاولات حتى أول نجاح k', 'Number of trials until the first success k')} />
       <Legend items={enough(sim.stats) ? ['theory', 'highlight', 'sim'] : ['theory', 'highlight']} />
       <p className="trunc-note">
-        <Rich text={`الرسم يعرض $k$ من 1 إلى ${K} فقط؛ التوزيع يمتد بلا نهاية، والاحتمال غير المعروض $P(X > ${K}) = (1-p)^{${K}} \\approx ${fmt(tail, 4)}$.`} />
+        <Rich
+          text={t(
+            `الرسم يعرض $k$ من 1 إلى ${K} فقط؛ التوزيع يمتد بلا نهاية، والاحتمال غير المعروض $P(X > ${K}) = (1-p)^{${K}} \\approx ${fmt(tail, 4)}$.`,
+            `The chart shows $k$ from 1 to ${K} only; the distribution goes on forever, and the probability not shown is $P(X > ${K}) = (1-p)^{${K}} \\approx ${fmt(tail, 4)}$.`,
+          )}
+        />
       </p>
       <ProbLine tex={`P(X=${kk}) = (${fmt(1 - p)})^{${kk - 1}}(${fmt(p)})`} value={geometric.pmf(kk, p)} />
       <ProbLine tex={`P(X\\le ${kk}) = 1-(${fmt(1 - p)})^{${kk}}`} value={geometric.cdf(kk, p)} />
-      <SimButtons onOne={runOne} oneLabel="ابدأ سلسلة حتى أول نجاح" onBatch={batch} batchLabel={`كرّر ${SIM_BATCH} سلسلة`} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
+      <SimButtons onOne={runOne} oneLabel={t('ابدأ سلسلة حتى أول نجاح', 'Run trials until the first success')} onBatch={batch} batchLabel={t(`كرّر ${SIM_BATCH} سلسلة`, `Repeat ${SIM_BATCH} runs`)} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
       {one && (
         <>
           <TrialStrip trials={one} />
           <p className="result-line">
-            أول نجاح جاء في المحاولة رقم <Tex tex={`X = ${one.length}`} />
+            {t('أول نجاح جاء في المحاولة رقم ', 'The first success came on trial ')}<Tex tex={`X = ${one.length}`} />
           </p>
         </>
       )}
-      {simBeyond > 0 && <p className="trunc-note">سلاسل في المحاكاة تجاوزت {K} محاولة ولا تظهر في الرسم: {simBeyond}.</p>}
+      {simBeyond > 0 && <p className="trunc-note">{t(`سلاسل في المحاكاة تجاوزت ${K} محاولة ولا تظهر في الرسم: ${simBeyond}.`, `Simulated runs longer than ${K} trials, not shown in the chart: ${simBeyond}.`)}</p>}
       <SimNote count={sim.values.length} max={SIM_MAX} />
       <Stats mean={geometric.mean(p)} variance={geometric.variance(p)} meanTex="\tfrac{1}{p}" varTex="\tfrac{1-p}{p^2}" sim={enough(sim.stats)} />
     </div>
@@ -311,6 +317,7 @@ export function PoissonLab() {
 export function ExponentialLab() {
   const [theta, setTheta] = useState(3);
   const [t, setT] = useState(0.5);
+  const { en, t: tr } = useT();
   const [mode, setMode] = useState<'le' | 'gt'>('gt');
   const [waits, setWaits] = useState<number[]>([]);
   const [one, setOne] = useState<number | null>(null);
@@ -340,16 +347,16 @@ export function ExponentialLab() {
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="المعدل" symbol="\theta" value={theta} onChange={setTheta} {...RANGES.expTheta} unit="حدث/ساعة" digits={1} />
-        <Slider label="الزمن" symbol="t" value={t} onChange={setT} min={0.05} max={3} step={0.05} unit="ساعة" />
+        <Slider label={tr('المعدل', 'Rate')} symbol="\theta" value={theta} onChange={setTheta} {...RANGES.expTheta} unit={tr('حدث/ساعة', 'events/hour')} digits={1} />
+        <Slider label={tr('الزمن', 'Time')} symbol="t" value={t} onChange={setT} min={0.05} max={3} step={0.05} unit={tr('ساعة', 'hours')} />
       </div>
       <fieldset className="seg">
-        <legend>الاحتمال المطلوب</legend>
+        <legend>{tr('الاحتمال المطلوب', 'The probability you want')}</legend>
         <label>
-          <input type="radio" name="expmode" checked={mode === 'gt'} onChange={() => setMode('gt')} /> انتظار أطول من <Tex tex="t" />: <Tex tex="P(X>t)" />
+          <input type="radio" name="expmode" checked={mode === 'gt'} onChange={() => setMode('gt')} /> {tr('انتظار أطول من ', 'Waiting longer than ')}<Tex tex="t" />: <Tex tex="P(X>t)" />
         </label>
         <label>
-          <input type="radio" name="expmode" checked={mode === 'le'} onChange={() => setMode('le')} /> خلال <Tex tex="t" /> أو أقل: <Tex tex="P(X\le t)" />
+          <input type="radio" name="expmode" checked={mode === 'le'} onChange={() => setMode('le')} /> {tr('خلال ', 'Within ')}<Tex tex="t" />{tr(' أو أقل', ' or less')}: <Tex tex="P(X\le t)" />
         </label>
       </fieldset>
       <CurveChart
@@ -359,8 +366,12 @@ export function ExponentialLab() {
         shade={mode === 'le' ? [0, t] : [t, xMax]}
         hist={waits.length >= MIN_SIM ? hist : null}
         markers={[{ x: 1 / theta, label: 'E[X]' }]}
-        ariaLabel={`كثافة أسية بمعدل ${fmt(theta)} لكل ساعة. ${mode === 'le' ? 'P(X ≤ t)' : 'P(X > t)'} = ${fmt(pr)} عند t = ${fmt(t)} ساعة`}
-        xLabel="زمن الانتظار x (ساعة)"
+        ariaLabel={
+          en
+            ? `Exponential density with rate ${fmt(theta)} per hour. ${mode === 'le' ? 'P(X ≤ t)' : 'P(X > t)'} = ${fmt(pr)} at t = ${fmt(t)} hours`
+            : `كثافة أسية بمعدل ${fmt(theta)} لكل ساعة. ${mode === 'le' ? 'P(X ≤ t)' : 'P(X > t)'} = ${fmt(pr)} عند t = ${fmt(t)} ساعة`
+        }
+        xLabel={tr('زمن الانتظار x (ساعة)', 'Waiting time x (hours)')}
       />
       <Legend items={hist && waits.length >= MIN_SIM ? ['curve', 'shade', 'hist'] : ['curve', 'shade']} />
       <ProbLine
@@ -368,23 +379,28 @@ export function ExponentialLab() {
         value={pr}
       />
       <p className="hint">
-        <Rich text={`$t = ${fmt(t)}$ ساعة = ${fmt(t * 60, 1)} دقيقة. المساحة المظللة هي الاحتمال.`} />
+        <Rich text={tr(`$t = ${fmt(t)}$ ساعة = ${fmt(t * 60, 1)} دقيقة. المساحة المظللة هي الاحتمال.`, `$t = ${fmt(t)}$ hours = ${fmt(t * 60, 1)} minutes. The shaded area is the probability.`)} />
       </p>
       <p className="trunc-note">
-        <Rich text={`الرسم يتوقف عند $x \\approx ${fmt(xMax, 2)}$ ساعة؛ المساحة بعدها $\\approx ${fmt(1 - exponential.cdf(xMax, theta), 4)}$ غير معروضة لكنها محسوبة في الاحتمالات. ارتفاع المنحنى كثافة لا احتمال: عند $\\theta > 1$ تتجاوز $f(0) = \\theta$ القيمة 1 دون أي تناقض.`} />
+        <Rich
+          text={tr(
+            `الرسم يتوقف عند $x \\approx ${fmt(xMax, 2)}$ ساعة؛ المساحة بعدها $\\approx ${fmt(1 - exponential.cdf(xMax, theta), 4)}$ غير معروضة لكنها محسوبة في الاحتمالات. ارتفاع المنحنى كثافة لا احتمال: عند $\\theta > 1$ تتجاوز $f(0) = \\theta$ القيمة 1 دون أي تناقض.`,
+            `The chart stops at $x \\approx ${fmt(xMax, 2)}$ hours; the area beyond it, $\\approx ${fmt(1 - exponential.cdf(xMax, theta), 4)}$, is not shown but is included in the probabilities. The height of the curve is a density, not a probability: when $\\theta > 1$, $f(0) = \\theta$ exceeds 1 without any contradiction.`,
+          )}
+        />
       </p>
-      <SimButtons onOne={() => add(1)} oneLabel="انتظر الطلب التالي" onBatch={() => add(SIM_BATCH)} batchLabel={`ولّد ${SIM_BATCH} زمن انتظار`} onClear={() => (setWaits([]), setOne(null))} full={full} hasData={waits.length > 0} />
+      <SimButtons onOne={() => add(1)} oneLabel={tr('انتظر الطلب التالي', 'Wait for the next request')} onBatch={() => add(SIM_BATCH)} batchLabel={tr(`ولّد ${SIM_BATCH} زمن انتظار`, `Generate ${SIM_BATCH} waiting times`)} onClear={() => (setWaits([]), setOne(null))} full={full} hasData={waits.length > 0} />
       {one !== null && (
         <>
-          <Timeline times={[one]} t={Math.max(xMax, one)} unit="ساعة" label={`وصل الطلب التالي بعد ${fmt(one, 3)} ساعة`} />
+          <Timeline times={[one]} t={Math.max(xMax, one)} unit={tr('ساعة', 'hours')} label={tr(`وصل الطلب التالي بعد ${fmt(one, 3)} ساعة`, `The next request arrived after ${fmt(one, 3)} hours`)} />
           <p className="result-line">
-            وصل الطلب التالي بعد <Tex tex={`X \\approx ${fmt(one, 3)}`} /> ساعة (≈ {fmt(one * 60, 1)} دقيقة)
+            {tr('وصل الطلب التالي بعد ', 'The next request arrived after ')}<Tex tex={`X \\approx ${fmt(one, 3)}`} /> {tr('ساعة', 'hours')} (≈ {fmt(one * 60, 1)} {tr('دقيقة', 'minutes')})
           </p>
         </>
       )}
-      {beyond > 0 && <p className="trunc-note">أزمنة في المحاكاة تجاوزت نطاق الرسم ولا تظهر في المدرج: {beyond}.</p>}
+      {beyond > 0 && <p className="trunc-note">{tr(`أزمنة في المحاكاة تجاوزت نطاق الرسم ولا تظهر في المدرج: ${beyond}.`, `Simulated times beyond the chart, not shown in the histogram: ${beyond}.`)}</p>}
       <SimNote count={waits.length} max={SIM_MAX} />
-      <Stats mean={exponential.mean(theta)} variance={exponential.variance(theta)} meanTex="\tfrac{1}{\theta}" varTex="\tfrac{1}{\theta^2}" sim={enough(stats)} unit="ساعة" />
+      <Stats mean={exponential.mean(theta)} variance={exponential.variance(theta)} meanTex="\tfrac{1}{\theta}" varTex="\tfrac{1}{\theta^2}" sim={enough(stats)} unit={tr('ساعة', 'hours')} />
     </div>
   );
 }
@@ -519,6 +535,7 @@ export function HypergeometricLab() {
 export function NegbinLab() {
   const [r, setR] = useState(3);
   const [p, setP] = useState(0.5);
+  const { t: tr } = useT();
   const cdf = (x: number) => { let s = 0; for (let i = r; i <= x; i++) s += negbin.pmf(i, r, p); return s; };
   const K = Math.max(r + 8, Math.min(r + 60, discreteUpper(cdf, 0.99, r, r + 60)));
   const sim = useDiscreteSim(`${r}|${p}`);
@@ -547,22 +564,24 @@ export function NegbinLab() {
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="الفوز المطلوب" symbol="r" value={r} onChange={setR} min={1} max={6} step={1} digits={0} />
-        <Slider label="احتمال الفوز في كل جولة" symbol="p" value={p} onChange={setP} min={0.1} max={0.9} step={0.05} />
+        <Slider label={tr('الفوز المطلوب', 'Wins needed')} symbol="r" value={r} onChange={setR} min={1} max={6} step={1} digits={0} />
+        <Slider label={tr('احتمال الفوز في كل جولة', 'Probability of winning each round')} symbol="p" value={p} onChange={setP} min={0.1} max={0.9} step={0.05} />
       </div>
-      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === mode} ariaLabel={`ذو الحدين السالب r=${r}, p=${fmt(p)}. أرجح جولة للفوز رقم ${r} هي ${mode}`} xLabel={`رقم الجولة التي يأتي فيها الفوز رقم ${r}`} />
+      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === mode} ariaLabel={tr(`ذو الحدين السالب r=${r}, p=${fmt(p)}. أرجح جولة للفوز رقم ${r} هي ${mode}`, `Negative binomial r=${r}, p=${fmt(p)}. The most likely round for win number ${r} is ${mode}`)}
+        xLabel={tr(`رقم الجولة التي يأتي فيها الفوز رقم ${r}`, `The round in which win number ${r} comes`)}
+      />
       <Legend items={enough(sim.stats) ? ['theory', 'highlight', 'sim'] : ['theory', 'highlight']} />
-      <ProbLine tex={`P(X=${mode}) = \\binom{${mode - 1}}{${r - 1}}(${fmt(p)})^{${r}}(${fmt(1 - p)})^{${mode - r}}`} value={negbin.pmf(mode, r, p)} label={Math.abs(negbin.pmf(mode + 1, r, p) - negbin.pmf(mode, r, p)) < 1e-12 ? `أرجح جولة (وتساويها الجولة ${mode + 1}):` : 'أرجح جولة:'} />
-      <SimButtons onOne={runOne} oneLabel={`العب حتى الفوز رقم ${r}`} onBatch={batch} batchLabel={`كرّر ${SIM_BATCH} مرة`} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
+      <ProbLine tex={`P(X=${mode}) = \\binom{${mode - 1}}{${r - 1}}(${fmt(p)})^{${r}}(${fmt(1 - p)})^{${mode - r}}`} value={negbin.pmf(mode, r, p)} label={Math.abs(negbin.pmf(mode + 1, r, p) - negbin.pmf(mode, r, p)) < 1e-12 ? tr(`أرجح جولة (وتساويها الجولة ${mode + 1}):`, `Most likely round (tied with round ${mode + 1}):`) : tr('أرجح جولة:', 'Most likely round:')} />
+      <SimButtons onOne={runOne} oneLabel={tr(`العب حتى الفوز رقم ${r}`, `Play until win number ${r}`)} onBatch={batch} batchLabel={tr(`كرّر ${SIM_BATCH} مرة`, `Repeat ${SIM_BATCH} times`)} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
       {one && (
         <>
-          <TrialStrip trials={one} successWord="فوز" failWord="خسارة" />
+          <TrialStrip trials={one} successWord={tr('فوز', 'win')} failWord={tr('خسارة', 'loss')} />
           <p className="result-line">
-            الفوز رقم {r} جاء في الجولة <Tex tex={`X = ${one.length}`} />
+            {tr(`الفوز رقم ${r} جاء في الجولة `, `Win number ${r} came in round `)}<Tex tex={`X = ${one.length}`} />
           </p>
         </>
       )}
-      {simBeyond > 0 && <p className="trunc-note">تكرارات في المحاكاة تجاوزت الجولة {K} ولا تظهر في الرسم: {simBeyond}.</p>}
+      {simBeyond > 0 && <p className="trunc-note">{tr(`تكرارات في المحاكاة تجاوزت الجولة ${K} ولا تظهر في الرسم: ${simBeyond}.`, `Simulated runs beyond round ${K}, not shown in the chart: ${simBeyond}.`)}</p>}
       <SimNote count={sim.values.length} max={SIM_MAX} />
       <Stats mean={negbin.mean(r, p)} variance={negbin.variance(r, p)} meanTex="\tfrac{r}{p}" varTex="\tfrac{r(1-p)}{p^2}" sim={enough(sim.stats)} />
     </div>
@@ -573,6 +592,7 @@ export function NegbinLab() {
 export function GammaLab() {
   const [alpha, setAlpha] = useState(3);
   const [beta, setBeta] = useState(2);
+  const { t: tr } = useT();
   const [waits, setWaits] = useState<number[]>([]);
   const [one, setOne] = useState<number[] | null>(null);
   useEffect(() => (setWaits([]), setOne(null)), [alpha, beta]);
@@ -600,8 +620,8 @@ export function GammaLab() {
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="ننتظر الحدث رقم" symbol="\alpha" value={alpha} onChange={setAlpha} min={1} max={8} step={1} digits={0} />
-        <Slider label="المعدل (أحداث في الدقيقة)" symbol="\beta" value={beta} onChange={setBeta} min={0.5} max={3} step={0.5} digits={1} />
+        <Slider label={tr('ننتظر الحدث رقم', 'We wait for event number')} symbol="\alpha" value={alpha} onChange={setAlpha} min={1} max={8} step={1} digits={0} />
+        <Slider label={tr('المعدل (أحداث في الدقيقة)', 'Rate (events per minute)')} symbol="\beta" value={beta} onChange={setBeta} min={0.5} max={3} step={0.5} digits={1} />
       </div>
       <CurveChart
         f={(x) => gammaDist.pdf(x, alpha, beta)}
@@ -609,22 +629,22 @@ export function GammaLab() {
         xMax={xMax}
         hist={hist}
         markers={[{ x: alpha / beta, label: 'E[X]' }]}
-        ariaLabel={`كثافة غاما α=${alpha}, β=${fmt(beta)}، ومتوسطها ${fmt(alpha / beta)} دقيقة`}
-        xLabel="زمن الانتظار حتى الحدث رقم α (دقيقة)"
+        ariaLabel={tr(`كثافة غاما α=${alpha}, β=${fmt(beta)}، ومتوسطها ${fmt(alpha / beta)} دقيقة`, `Gamma density α=${alpha}, β=${fmt(beta)}, with mean ${fmt(alpha / beta)} minutes`)}
+        xLabel={tr('زمن الانتظار حتى الحدث رقم α (دقيقة)', 'Waiting time until event number α (minutes)')}
       />
       <Legend items={hist ? ['curve', 'hist'] : ['curve']} />
       <div className="btn-row">
-        <button type="button" className="btn" onClick={() => add(1)} disabled={waits.length >= SIM_MAX}>▶ انتظر مرة واحدة</button>
-        <button type="button" className="btn" onClick={() => add(SIM_BATCH)} disabled={waits.length >= SIM_MAX}>▶▶ انتظر {SIM_BATCH} مرة</button>
-        <button type="button" className="btn btn-quiet" onClick={() => (setWaits([]), setOne(null))} disabled={!waits.length}>مسح المحاكاة</button>
+        <button type="button" className="btn" onClick={() => add(1)} disabled={waits.length >= SIM_MAX}>▶ {tr('انتظر مرة واحدة', 'Wait once')}</button>
+        <button type="button" className="btn" onClick={() => add(SIM_BATCH)} disabled={waits.length >= SIM_MAX}>▶▶ {tr(`انتظر ${SIM_BATCH} مرة`, `Wait ${SIM_BATCH} times`)}</button>
+        <button type="button" className="btn btn-quiet" onClick={() => (setWaits([]), setOne(null))} disabled={!waits.length}>{tr('مسح المحاكاة', 'Clear the simulation')}</button>
       </div>
       {one && (
         <p className="result-line">
-          <Rich text={`المراحل: $${one.map((x) => fmt(x, 2)).join(' + ')} = ${fmt(one.reduce((a, b) => a + b, 0), 2)}$ دقيقة.`} />
+          <Rich text={`${tr('المراحل', 'Stages')}: $${one.map((x) => fmt(x, 2)).join(' + ')} = ${fmt(one.reduce((a, b) => a + b, 0), 2)}$ ${tr('دقيقة', 'minutes')}.`} />
         </p>
       )}
       <SimNote count={waits.length} max={SIM_MAX} />
-      <Stats mean={gammaDist.mean(alpha, beta)} variance={gammaDist.variance(alpha, beta)} meanTex="\tfrac{\alpha}{\beta}" varTex="\tfrac{\alpha}{\beta^2}" sim={enough(stats)} unit="دقيقة" />
+      <Stats mean={gammaDist.mean(alpha, beta)} variance={gammaDist.variance(alpha, beta)} meanTex="\tfrac{\alpha}{\beta}" varTex="\tfrac{\alpha}{\beta^2}" sim={enough(stats)} unit={tr('دقيقة', 'minutes')} />
     </div>
   );
 }

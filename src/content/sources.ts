@@ -116,6 +116,7 @@ export const sources: Source[] = [
   {
     id: 'erlang-mactutor',
     cite: 'MacTutor — Agner Krarup Erlang (ورقة 1909: المكالمات العشوائية تتبع بواسون؛ ورقة 1917)',
+    citeEn: 'MacTutor — Agner Krarup Erlang (the 1909 paper: random calls follow a Poisson distribution; the 1917 paper)',
     url: 'https://mathshistory.st-andrews.ac.uk/Biographies/Erlang/',
     verified: 'multiple-search-snippets',
   },
@@ -134,12 +135,14 @@ export const sources: Source[] = [
   {
     id: 'poisson-process-libretexts',
     cite: 'LibreTexts — Discrete Stochastic Processes (Gallager), 2.2 Poisson Process: فترات انتظار أسية بمعدل λ',
+    citeEn: 'LibreTexts — Discrete Stochastic Processes (Gallager), 2.2 Poisson Process: exponential waiting times with rate λ',
     url: 'https://eng.libretexts.org/Bookshelves/Electrical_Engineering/Signal_Processing_and_Modeling/Discrete_Stochastic_Processes_(Gallager)/02%3A_Poisson_Processes/2.02%3A_Definition_and_Properties_of_a_Poisson_Process',
     verified: 'multiple-search-snippets',
   },
   {
     id: 'gambler-wiki',
     cite: "Wikipedia — Gambler's fallacy (مونت كارلو، 18 أغسطس 1913، الأسود 26 مرة)",
+    citeEn: "Wikipedia — Gambler's fallacy (Monte Carlo, 18 August 1913, black 26 times)",
     url: 'https://en.wikipedia.org/wiki/Gambler%27s_fallacy',
     verified: 'multiple-search-snippets',
   },
@@ -158,6 +161,7 @@ export const sources: Source[] = [
   {
     id: 'geostat-mathworks',
     cite: 'MathWorks — geostat (الاصطلاح الآخر: عدد الإخفاقات قبل أول نجاح)',
+    citeEn: 'MathWorks — geostat (the other convention: the number of failures before the first success)',
     url: 'https://www.mathworks.com/help/stats/geostat.html',
     verified: 'multiple-search-snippets',
   },
@@ -215,24 +219,28 @@ export const sources: Source[] = [
   {
     id: 'sheynin-history',
     cite: 'O. Sheynin — Theory of Probability: A Historical Essay (arXiv:1802.09966)؛ عن مونمور وذي الحدين السالب في مسألة النقاط، بالإحالة إلى Hald (1990)',
+    citeEn: 'O. Sheynin — Theory of Probability: A Historical Essay (arXiv:1802.09966); on Montmort and the negative binomial in the problem of points, citing Hald (1990)',
     url: 'https://arxiv.org/pdf/1802.09966',
     verified: 'search-snippet',
   },
   {
     id: 'montmort-1713',
     cite: 'On an identity by Chaundy and Bullard II: More history (arXiv:1205.6362)؛ الطبعة الثانية من Essay d’analyse sur les jeux de hazard لمونمور (1713) وحلها الجديد لمسألة النقاط',
+    citeEn: 'On an identity by Chaundy and Bullard II: More history (arXiv:1205.6362); the second edition of Montmort\'s Essay d’analyse sur les jeux de hazard (1713) and its new solution to the problem of points',
     url: 'https://arxiv.org/pdf/1205.6362',
     verified: 'search-snippet',
   },
   {
     id: 'greenwood-utah',
     cite: 'A. Treibergs, University of Utah — Munitions accidents example (Greenwood & Yule 1920: متوسط 0.47 وتباين 0.69)',
+    citeEn: 'A. Treibergs, University of Utah — Munitions accidents example (Greenwood & Yule 1920: mean 0.47 and variance 0.69)',
     url: 'https://www2.math.utah.edu/~treiberg/M3074MunitionsEg.pdf',
     verified: 'search-snippet',
   },
   {
     id: 'erlang-eom',
     cite: 'Encyclopedia of Mathematics — Erlang, Agner Krarup (طريقة «المراحل المتتالية»، وتوزيع إرلانغ مجموعًا لمتغيرات أسية مستقلة متماثلة)',
+    citeEn: 'Encyclopedia of Mathematics — Erlang, Agner Krarup (the method of “successive stages”, and the Erlang distribution as a sum of independent, identically distributed exponential variables)',
     url: 'https://encyclopediaofmath.org/wiki/Erlang,_Agner_Krarup',
     verified: 'search-snippet',
   },

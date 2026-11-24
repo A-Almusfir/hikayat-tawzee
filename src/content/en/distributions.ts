@@ -184,4 +184,121 @@ export const distEn: Partial<Record<DistId, Tr<DistContent>>> = {
       },
     ],
   },
+
+  geometric: {
+    question: 'How many trials do we need until the event happens for the first time?',
+    formula: {
+      fnName: PMF,
+      parts: [
+        { label: 'The failures before it', explain: 'The first $k-1$ trials are all failures; we multiply their probabilities thanks to independence.' },
+        { label: 'The first success', explain: 'Trial number $k$ exactly is the success.' },
+      ],
+      intuition: [
+        'There are no orderings here: the event $X = k$ has only one form: $k-1$ failures in a row, then a success.',
+        'Each extra trial multiplies the probability by $(1-p)$, so the bars shrink by a constant ratio; hence the name “geometric” (a geometric sequence).',
+      ],
+      derivation: [
+        'By independence: $P(X=k) = P(\\text{F}_1)\\cdots P(\\text{F}_{k-1})\\,P(\\text{S}_k) = (1-p)^{k-1}p$.',
+        'The sum of the probabilities is a geometric series with ratio $q = 1-p$, where $0 < p \\le 1$:',
+        undefined,
+        'The cumulative distribution function: $P(X \\le k) = 1 - (1-p)^k$, because $X > k$ means the first $k$ trials are all failures.',
+        'The mean: using $\\sum_{k\\ge1} k q^{k-1} = 1/(1-q)^2$:',
+        undefined,
+        'And computing $E[X(X-1)] = 2(1-p)/p^2$, we find:',
+      ],
+    },
+    card: {
+      params: [{ meaning: 'The probability of success in each trial, $0 < p \\le 1$.' }],
+      fnLabel: PMF,
+      conditions: ['Independent trials.', '2 outcomes per trial.', 'A constant probability of success $p$.', 'We count the trials until the first success (there is no fixed $n$).'],
+      mistake: 'Confusing counting the trials (mean $1/p$) with counting the failures before the success (mean $(1-p)/p$).',
+    },
+    quiz: [
+      {
+        prompt: 'You are trying to connect to a busy network; each attempt succeeds with probability $0.4$, independently of the others. Which model describes the number of attempts until the first successful connection?',
+        options: [
+          { text: 'The geometric: $X \\sim \\mathrm{Geom}(0.4)$ with values $1, 2, \\dots$', why: 'We repeat independent attempts with a constant probability and stop at the first success.' },
+          { text: 'The binomial $\\mathrm{Bin}(n, 0.4)$', why: 'The binomial needs a number of trials fixed in advance and counts the successes; here there is no fixed $n$.' },
+          { text: 'The Bernoulli $\\mathrm{Bernoulli}(0.4)$', why: 'The Bernoulli describes a single trial only.' },
+          { text: 'The Poisson', why: 'The Poisson counts events in an interval of time or space, not separate trials until the first success.' },
+        ],
+      },
+      {
+        prompt: 'If $X \\sim \\mathrm{Geom}(0.5)$ (the number of trials until the first success), what is $P(X = 3)$?',
+        options: [
+          { why: '$(1-0.5)^{2}\\times 0.5 = 0.25 \\times 0.5 = 0.125$.' },
+          { why: 'That is $P(X \\le 3) = 1 - 0.5^3$, not $P(X = 3)$.' },
+          { why: 'That is $(0.5)^4$; it uses 3 failures instead of 2.' },
+          { why: 'That is $\\binom{3}{1}(0.5)^3$ from the binomial formula; but here there is only one ordering: F, F, S.' },
+        ],
+      },
+      {
+        prompt: 'The probability of success is $p = 0.2$. A student said: “The mean number of trials until the first success is 4.” What do you make of it, using this site’s convention?',
+        options: [
+          { text: 'Wrong: the mean is $1/p = 5$ trials. The value 4 is the mean number of failures before the success, $(1-p)/p$, which is the other convention.', why: 'The 2 conventions always differ by exactly 1 trial: $X = Y + 1$.' },
+          { text: 'Right, because $(1-p)/p = 4$.', why: 'That is the formula for the number of failures, not the number of trials.' },
+          { text: 'Wrong: the mean is $p = 0.2$.', why: '$p$ is a probability in a single trial, not the mean number of trials.' },
+          { text: 'Wrong: the mean is $(1-p)/p^2 = 20$.', why: 'That is the variance, not the mean.' },
+        ],
+      },
+    ],
+  },
+
+  exponential: {
+    question: 'How long will we wait until the next event happens?',
+    formula: {
+      fnName: 'Probability density function (PDF)',
+      parts: [
+        { label: 'The rate', explain: 'The height of the density at $x=0$; the larger the rate, the shorter the wait tends to be.' },
+        { label: 'The probability of surviving', explain: 'It equals $P(X > x)$: the probability that no event occurs in $[0, x]$.' },
+      ],
+      intuition: [
+        'Waiting longer than $x$ means that the number of events in the interval $[0, x]$ is zero. That is a Poisson question with mean $\\theta x$.',
+        'The height of a density is not a probability; a probability is an area under the curve over an interval. That is why $f(x)$ can exceed 1 (when $\\theta > 1$) without any contradiction.',
+      ],
+      derivation: [
+        'Let $N(x)$ be the number of events in $[0, x]$ in a homogeneous Poisson process with rate $\\theta$; then $N(x) \\sim \\mathrm{Poisson}(\\theta x)$.',
+        undefined,
+        'So the cumulative distribution function is $F(x) = 1 - e^{-\\theta x}$ for $x \\ge 0$, and the density is its derivative:',
+        undefined,
+        'The mean, by integration by parts: $E[X] = \\int_0^\\infty x\\,\\theta e^{-\\theta x}\\,dx = \\dfrac{1}{\\theta}$, and likewise $E[X^2] = \\dfrac{2}{\\theta^2}$, so $\\mathrm{Var}(X) = \\dfrac{2}{\\theta^2} - \\dfrac{1}{\\theta^2} = \\dfrac{1}{\\theta^2}$.',
+        'The memoryless property: $P(X > s + x \\mid X > s) = \\dfrac{e^{-\\theta(s+x)}}{e^{-\\theta s}} = e^{-\\theta x}$; the time you have already waited does not change the distribution of what is left.',
+      ],
+    },
+    card: {
+      params: [{ meaning: 'The rate: the number of events per unit of time, $\\theta > 0$ (its unit is 1/time).' }],
+      fnLabel: 'Probability density function (PDF)',
+      conditions: ['A waiting time until the next event.', 'A homogeneous Poisson process (a constant rate).', 'A continuous variable: probability is an area over an interval.'],
+      mistake: 'Confusing the rate $\\theta$ with the mean $1/\\theta$, or treating $f(x)$ as a probability.',
+    },
+    quiz: [
+      {
+        prompt: 'Requests reach an office as a homogeneous Poisson process at a rate of 3 per hour. The question: “How long will we wait from now until the next request arrives?” Which model fits?',
+        options: [
+          { text: 'The exponential with rate $\\theta = 3$ per hour.', why: 'We want a continuous waiting time until the next event in a homogeneous Poisson process.' },
+          { text: 'The Poisson with mean $\\lambda = 3$.', why: 'The Poisson describes the **number** of requests in a given interval, not the **time** we wait.' },
+          { text: 'The geometric.', why: 'The geometric counts separate trials until the first success; time here is continuous.' },
+          { text: 'The normal.', why: 'Nothing in the data points to a symmetric bell-shaped model, and time cannot be negative.' },
+        ],
+      },
+      {
+        prompt: 'If $X \\sim \\mathrm{Exp}(\\theta = 0.5)$ per minute, what is $P(X > 4)$ (time in minutes)?',
+        options: [
+          { why: '$P(X > 4) = e^{-0.5 \\times 4} = e^{-2}$.' },
+          { why: 'That is $P(X \\le 4)$, the complementary event.' },
+          { why: 'It ignores the rate, as if $\\theta = 1$.' },
+          { why: 'That is the rate, not a probability.' },
+        ],
+      },
+      {
+        prompt: 'For $X \\sim \\mathrm{Exp}(2)$, $f(0) = 2$. A student said: “That is impossible, because a probability cannot exceed 1.” What is correct?',
+        options: [
+          { text: 'There is no contradiction: $f(0)$ is a density, not a probability. Probability is an area under the curve, and the total area is 1.', why: 'For a continuous variable $P(X = 0) = 0$, and probabilities come from integrating over intervals.' },
+          { text: 'The student is right; $\\theta$ must always be at most 1.', why: 'The rate can be any positive number.' },
+          { text: '$f(0) = 2$ means that $P(X = 0) = 2$.', why: 'The probability of any single point of a continuous variable is zero.' },
+          { text: 'The density must be divided by $\\theta$ to become a probability.', why: 'Dividing does not turn a density into a probability; we need an area over an interval.' },
+        ],
+      },
+    ],
+  },
 };

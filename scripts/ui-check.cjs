@@ -62,6 +62,44 @@ async function texOverflow(page, tag, route) {
       await texOverflow(page, tag, 'EN ' + route);
     }
 
+    // الفصول المترجمة: بعد كشف كل شيء، لا يبقى نص عربي إلا ما وُسم lang="ar" عمدًا (الاسم العربي بجانب الإنجليزي)
+    if (tag === 'mobile') {
+      for (const ch of ['bernoulli', 'binomial', 'hypergeometric', 'poisson']) {
+        await page.goto(BASE + '#/d/' + ch);
+        await page.reload();
+        await page.waitForSelector('main h1');
+        for (let round = 0; round < 6; round++) {
+          await page.evaluate(() => document.querySelectorAll('details').forEach((d) => (d.open = true)));
+          const radios = await page.locator('#scene-3 fieldset.predict input[type=radio]:not([disabled])').all();
+          if (!radios.length) break;
+          await radios[0].check();
+          await page.locator('#scene-3 fieldset.predict .check-btn').first().click();
+        }
+        for (const tab of await page.locator('#scene-4 .seg-tab').all()) {
+          await tab.click();
+          const full = page.getByRole('button', { name: 'Show the full solution' });
+          if (await full.count()) await full.click();
+        }
+        await page.evaluate(() => document.querySelectorAll('details').forEach((d) => (d.open = true)));
+        const leaks = await page.evaluate(() => {
+          const out = new Set();
+          const own = (el) => { const c = el.closest('[lang="ar"]'); return c && c !== document.documentElement; };
+          const w = document.createTreeWalker(document.querySelector('main'), NodeFilter.SHOW_TEXT);
+          for (let n; (n = w.nextNode()); ) if (/[\u0600-\u06FF]/.test(n.textContent) && !own(n.parentElement)) out.add(n.textContent.trim().slice(0, 50));
+          for (const el of document.querySelectorAll('main [aria-label], main [title]'))
+            for (const a of ['aria-label', 'title']) { const v = el.getAttribute(a); if (v && /[\u0600-\u06FF]/.test(v) && !own(el)) out.add(`@${a}: ${v.slice(0, 50)}`); }
+          return [...out];
+        });
+        leaks.forEach((l) => fail(`[${tag}] EN #/d/${ch}: نص عربي في الواجهة الإنجليزية: «${l}»`));
+        const sw = await page.evaluate(() => document.documentElement.scrollWidth - document.documentElement.clientWidth);
+        if (sw > 0) fail(`[${tag}] EN #/d/${ch}: تمرير أفقي ${sw}px`);
+        await texOverflow(page, tag, 'EN #/d/' + ch);
+      }
+      // الإجابات المحفوظة هنا لا تمتد إلى فحوص الفصول العربية بعدها
+      await page.evaluate(() => { localStorage.clear(); localStorage.setItem('hikayat:lang', 'en'); });
+      await page.reload();
+    }
+
     // الشجرة بالعربية والإنجليزية: لا تتقاطع التسميات مع الأسماء أو الدوائر أو الخطوط
     for (const lang of ['ar', 'en']) {
     await page.evaluate((l) => localStorage.setItem('hikayat:lang', l), lang);

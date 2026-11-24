@@ -1,5 +1,6 @@
 import type { Art } from '../../content/chapterTypes';
 import { choose } from '../../lib/dist';
+import { useUiLang } from '../../lib/lang';
 
 type Of<K extends Art['kind']> = Extract<Art, { kind: K }>;
 
@@ -72,6 +73,7 @@ function Urn({ a }: { a: Of<'urn'> }) {
 
 /** أكواب الشاي: «ح» حليب أولًا (ممتلئ)، «ش» شاي أولًا (مفرغ) — الحرف والشكل لا اللون فقط. */
 function Cups({ a }: { a: Of<'cups'> }) {
+  const en = useUiLang() === 'en';
   const n = a.milk + a.tea, S = 34, W = n * S + 8, H = 52;
   // ترتيب ثابت مختلط يوحي بالعشوائية
   const order = Array.from({ length: n }, (_, i) => ((i * 5 + 3) % n) < a.milk);
@@ -83,7 +85,7 @@ function Cups({ a }: { a: Of<'cups'> }) {
           <g key={i}>
             <path d={`M${x + 5} 8 h${S - 12} l-3 28 h${-(S - 18)} z`} className={milk ? 'cup milk' : 'cup'} />
             <path d={`M${x + S - 7} 14 q7 2 0 12`} className="cup-handle" />
-            <text x={x + S / 2 - 1} y={28} textAnchor="middle" className={milk ? 'cup-l on' : 'cup-l'}>{milk ? 'ح' : 'ش'}</text>
+            <text x={x + S / 2 - 1} y={28} textAnchor="middle" className={milk ? 'cup-l on' : 'cup-l'}>{en ? (milk ? 'M' : 'T') : milk ? 'ح' : 'ش'}</text>
           </g>
         );
       })}
@@ -94,6 +96,7 @@ function Cups({ a }: { a: Of<'cups'> }) {
 
 /** جولات حتى الفوز رقم r: الفوز مربع ممتلئ برقمه، والخسارة مربع متقطع «خ»، والأخير مُبرز. */
 function Runs({ a }: { a: Of<'runs'> }) {
+  const en = useUiLang() === 'en';
   const S = 34, W = a.trials.length * S + 4, H = S + 26;
   let wins = 0;
   return (
@@ -104,7 +107,7 @@ function Runs({ a }: { a: Of<'runs'> }) {
         return (
           <g key={i}>
             <rect x={x + 2} y={2} width={S - 4} height={S - 4} rx="5" className={t ? (last ? 'run win last' : 'run win') : 'run loss'} />
-            <text x={x + S / 2} y={S / 2 + 6} textAnchor="middle" className={t ? 'run-t win' : 'run-t'}>{t ? wins : 'خ'}</text>
+            <text x={x + S / 2} y={S / 2 + 6} textAnchor="middle" className={t ? 'run-t win' : 'run-t'}>{t ? wins : en ? 'L' : 'خ'}</text>
             <text x={x + S / 2} y={S + 18} textAnchor="middle" className="run-n">{i + 1}</text>
           </g>
         );
@@ -195,6 +198,7 @@ function Timeline({ a }: { a: Of<'timeline'> }) {
 
 /** سلسلة إخفاقات متتالية تنتهي بعلامة استفهام. */
 function Streak({ a }: { a: Of<'streak'> }) {
+  const en = useUiLang() === 'en';
   const cols = 9, S = 30, rows = Math.ceil((a.length + 1) / cols);
   return (
     <svg viewBox={`0 0 ${cols * S + 4} ${rows * S + 4}`} role="img" aria-label={a.ariaLabel} direction="ltr">
@@ -204,7 +208,7 @@ function Streak({ a }: { a: Of<'streak'> }) {
         return (
           <g key={i}>
             <rect x={x + 2} y={y + 2} width={S - 4} height={S - 4} rx="5" className={last ? 'stk q' : 'stk'} />
-            <text x={x + S / 2} y={y + S / 2 + 5} textAnchor="middle" className={last ? 'stk-t q' : 'stk-t'}>{last ? '؟' : i + 1}</text>
+            <text x={x + S / 2} y={y + S / 2 + 5} textAnchor="middle" className={last ? 'stk-t q' : 'stk-t'}>{last ? (en ? '?' : '؟') : i + 1}</text>
           </g>
         );
       })}

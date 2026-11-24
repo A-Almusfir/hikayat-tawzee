@@ -1,6 +1,7 @@
 import { useId, type ReactNode } from 'react';
 import { fmt } from '../lib/dist';
 import { Rich, Tex } from './Tex';
+import { useUiLang } from '../lib/lang';
 
 export function Slider({
   label,
@@ -66,19 +67,20 @@ export function Stats({
   sim?: { mean: number; variance: number; n: number } | null;
   unit?: string;
 }) {
+  const en = useUiLang() === 'en';
   return (
     <table className="stats">
-      <caption className="sr-only">المتوسط والتباين</caption>
+      <caption className="sr-only">{en ? 'Mean and variance' : 'المتوسط والتباين'}</caption>
       <thead>
         <tr>
           <th scope="col"></th>
-          <th scope="col">نظريًا (من القانون)</th>
-          {sim && <th scope="col">من المحاكاة ({sim.n.toLocaleString('en-US')} عينة)</th>}
+          <th scope="col">{en ? 'Theoretical (from the formula)' : 'نظريًا (من القانون)'}</th>
+          {sim && <th scope="col">{en ? `Simulated (${sim.n.toLocaleString('en-US')} samples)` : `من المحاكاة (${sim.n.toLocaleString('en-US')} عينة)`}</th>}
         </tr>
       </thead>
       <tbody>
         <tr>
-          <th scope="row">المتوسط</th>
+          <th scope="row">{en ? 'Mean' : 'المتوسط'}</th>
           <td>
             <Tex tex={`${meanTex} = ${fmt(mean, 4)}`} />
             {unit && <small> {unit}</small>}
@@ -86,7 +88,7 @@ export function Stats({
           {sim && <td className="num" dir="ltr">≈ {fmt(sim.mean, 3)}</td>}
         </tr>
         <tr>
-          <th scope="row">التباين</th>
+          <th scope="row">{en ? 'Variance' : 'التباين'}</th>
           <td>
             <Tex tex={`${varTex} = ${fmt(variance, 4)}`} />
           </td>
@@ -98,6 +100,14 @@ export function Stats({
 }
 
 export function SimNote({ count, max }: { count: number; max: number }) {
+  const en = useUiLang() === 'en';
+  if (en)
+    return (
+      <p className="sim-note" role="note">
+        <span aria-hidden="true">◆ </span>
+        Simulation results are random and change from run to run; the theoretical values do not. {count > 0 && <>Samples so far: {count.toLocaleString('en-US')} (limit {max.toLocaleString('en-US')}).</>} {count > 0 && count < 20 && <>The comparison with the theoretical values appears in the chart and table after at least 20 samples.</>}
+      </p>
+    );
   return (
     <p className="sim-note" role="note">
       <span aria-hidden="true">◆ </span>

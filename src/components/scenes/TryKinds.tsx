@@ -4,6 +4,7 @@ import { binomial, choose, exponential, fmt, geometric, normal, sample } from '.
 import { BarChart, CurveChart, type Bin } from '../charts';
 import { Rich, Tex } from '../Tex';
 import { Scene } from './Scene';
+import { useUiLang } from '../../lib/lang';
 
 type Of<K extends TryIt['kind']> = Extract<TryIt, { kind: K }>;
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -11,12 +12,14 @@ const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i)
 const spins = (n: number) => (n === 0 ? 'أي دورة' : n === 1 ? 'دورة واحدة' : n === 2 ? 'دورتين' : n <= 10 ? `${n} دورات` : `${n} دورة`);
 
 function SimNoteLine() {
-  return <p className="sim-note">◆ نتائج المحاكاة عشوائية وتتغير من تشغيل لآخر؛ القيم النظرية لا تتغير.</p>;
+  const en = useUiLang() === 'en';
+  return <p className="sim-note">{en ? '◆ Simulation results are random and change from run to run; the theoretical values do not.' : '◆ نتائج المحاكاة عشوائية وتتغير من تشغيل لآخر؛ القيم النظرية لا تتغير.'}</p>;
 }
 
 // ———— برنولي: قانون الأعداد الكبيرة ————
 export function LlnTry({ t }: { t: Of<'lln'> }) {
   const MAX = 5000;
+  const en = useUiLang() === 'en';
   const [draws, setDraws] = useState<number[]>([]);
   const add = (k: number) => setDraws((d) => d.concat(Array.from({ length: Math.min(k, MAX - d.length) }, () => sample.bernoulli(t.p))));
   const n = draws.length;
@@ -40,7 +43,11 @@ export function LlnTry({ t }: { t: Of<'lln'> }) {
       title={t.headline}
       art={
         <figure className="hk-chart">
-          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={n ? `بعد ${n} سحبة: نسبة ${t.successLabel} ${fmt(prop!, 3)}، والحقيقية ${t.p}` : 'لم تُسحب أي حصاة بعد'} direction="ltr">
+          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={
+              en
+                ? n ? `After ${n} draws: share of ${t.successLabel} ${fmt(prop!, 3)}, true value ${t.p}` : 'No pebble drawn yet'
+                : n ? `بعد ${n} سحبة: نسبة ${t.successLabel} ${fmt(prop!, 3)}، والحقيقية ${t.p}` : 'لم تُسحب أي حصاة بعد'
+            } direction="ltr">
             {[0, 0.25, 0.5, 0.75, 1].map((v) => (
               <g key={v}>
                 <line x1={L} x2={W - 4} y1={Y(v)} y2={Y(v)} className="grid" />
@@ -55,9 +62,9 @@ export function LlnTry({ t }: { t: Of<'lln'> }) {
             <text x={W - 6} y={H - 8} textAnchor="end" className="tick">{Math.max(n, 10)}</text>
           </svg>
           <figcaption>
-            <span className="lg"><i className="lg-run" /> نسبة {t.successLabel} حتى الآن (محاكاة)</span>
-            <span className="lg"><i className="lg-p" /> الاحتمال الحقيقي</span>
-            <span className="lg-x">عدد السحبات</span>
+            <span className="lg"><i className="lg-run" /> {en ? `Share of ${t.successLabel} so far (simulation)` : `نسبة ${t.successLabel} حتى الآن (محاكاة)`}</span>
+            <span className="lg"><i className="lg-p" /> {en ? 'The true probability' : 'الاحتمال الحقيقي'}</span>
+            <span className="lg-x">{en ? 'Number of draws' : 'عدد السحبات'}</span>
           </figcaption>
         </figure>
       }
@@ -66,16 +73,24 @@ export function LlnTry({ t }: { t: Of<'lln'> }) {
       <div className="btn-row">
         {[1, 10, 100, 1000].map((k) => (
           <button key={k} type="button" className="btn btn-c" disabled={n >= MAX} onClick={() => add(k)}>
-            اسحب {k === 1 ? 'حصاة' : k}
+            {en ? `Draw ${k === 1 ? 'a pebble' : k}` : `اسحب ${k === 1 ? 'حصاة' : k}`}
           </button>
         ))}
-        <button type="button" className="btn btn-quiet" disabled={!n} onClick={() => setDraws([])}>ابدأ من جديد</button>
+        <button type="button" className="btn btn-quiet" disabled={!n} onClick={() => setDraws([])}>{en ? 'Start over' : 'ابدأ من جديد'}</button>
       </div>
       <p className="fit" aria-live="polite">
         {n ? (
-          <>
-            بعد <strong className="num">{n}</strong> سحبة: نسبة {t.successLabel} <strong className="num" dir="ltr">{fmt(prop!, 3)}</strong>، والفرق عن <Tex tex={`p = ${t.p}`} /> هو <strong className="num" dir="ltr">{fmt(Math.abs(prop! - t.p), 3)}</strong>.
-          </>
+          en ? (
+            <>
+              After <strong className="num">{n}</strong> draws: share of {t.successLabel} <strong className="num" dir="ltr">{fmt(prop!, 3)}</strong>, and the difference from <Tex tex={`p = ${t.p}`} /> is <strong className="num" dir="ltr">{fmt(Math.abs(prop! - t.p), 3)}</strong>.
+            </>
+          ) : (
+            <>
+              بعد <strong className="num">{n}</strong> سحبة: نسبة {t.successLabel} <strong className="num" dir="ltr">{fmt(prop!, 3)}</strong>، والفرق عن <Tex tex={`p = ${t.p}`} /> هو <strong className="num" dir="ltr">{fmt(Math.abs(prop! - t.p), 3)}</strong>.
+            </>
+          )
+        ) : en ? (
+          'Start drawing.'
         ) : (
           'ابدأ بالسحب.'
         )}
@@ -89,6 +104,7 @@ export function LlnTry({ t }: { t: Of<'lln'> }) {
 // ———— ذو الحدين: مسألة النقاط ————
 export function PointsTry({ t }: { t: Of<'points'> }) {
   const [b, setB] = useState(t.bStart);
+  const en = useUiLang() === 'en';
   const a = t.aNeeds;
   const n = a + b - 1;
   const bars = range(0, n).map((k) => ({ x: k, p: binomial.pmf(k, n, 0.5) }));
@@ -98,20 +114,34 @@ export function PointsTry({ t }: { t: Of<'points'> }) {
     <Scene
       n={2}
       title={t.headline}
-      art={<BarChart bars={bars} highlight={(k) => k >= a} ariaLabel={`في ${n} جولات: يفوز أ إن ربح ${a} أو أكثر، باحتمال ${fmt(share, 4)}`} xLabel={`عدد الجولات التي يفوز بها أ من ${n}`} />}
+      art={<BarChart bars={bars} highlight={(k) => k >= a} ariaLabel={en ? `In ${n} rounds: A wins with ${a} or more, with probability ${fmt(share, 4)}` : `في ${n} جولات: يفوز أ إن ربح ${a} أو أكثر، باحتمال ${fmt(share, 4)}`}
+          xLabel={en ? `Number of rounds A wins out of ${n}` : `عدد الجولات التي يفوز بها أ من ${n}`}
+        />
+      }
     >
       <Rich as="p" text={t.prompt} />
       <div className="one-control">
-        <label htmlFor="pts-b">عدد النقاط التي يحتاجها ب</label>
+        <label htmlFor="pts-b">{en ? 'Points B needs' : 'عدد النقاط التي يحتاجها ب'}</label>
         <div className="slider-row">
           <input id="pts-b" type="range" min={t.bMin} max={t.bMax} step={1} value={b} onChange={(e) => setB(Number(e.target.value))} dir="ltr" />
           <output htmlFor="pts-b" className="num big-out" dir="ltr">{b}</output>
         </div>
       </div>
-      <p className="fit" aria-live="polite">
-        أ يحتاج {a} وب يحتاج {b}: تنتهي اللعبة خلال <strong className="num">{n}</strong> جولات على الأكثر، ففيها <Tex tex={`2^{${n}} = ${2 ** n}`} /> طريقًا متساوي الاحتمال. يفوز أ في <strong className="num">{ways}</strong> منها، فنصيبه العادل <Tex tex={`\\tfrac{${ways}}{${2 ** n}} \\approx ${fmt(share, 4)}`} /> من الرهان.
-      </p>
-      <p className="hint">الأعمدة المظللة: الطرق التي يفوز فيها أ. ارتفاع كل عمود = عدد الطرق ÷ <Tex tex={`2^{${n}}`} />.</p>
+      {en ? (
+        <>
+          <p className="fit" aria-live="polite">
+            A needs {a} and B needs {b}: the game ends within at most <strong className="num">{n}</strong> rounds, giving <Tex tex={`2^{${n}} = ${2 ** n}`} /> equally likely ways. A wins in <strong className="num">{ways}</strong> of them, so A's fair share is <Tex tex={`\\tfrac{${ways}}{${2 ** n}} \\approx ${fmt(share, 4)}`} /> of the stake.
+          </p>
+          <p className="hint">Shaded bars: the ways in which A wins. The height of each bar = the number of ways ÷ <Tex tex={`2^{${n}}`} />.</p>
+        </>
+      ) : (
+        <>
+          <p className="fit" aria-live="polite">
+            أ يحتاج {a} وب يحتاج {b}: تنتهي اللعبة خلال <strong className="num">{n}</strong> جولات على الأكثر، ففيها <Tex tex={`2^{${n}} = ${2 ** n}`} /> طريقًا متساوي الاحتمال. يفوز أ في <strong className="num">{ways}</strong> منها، فنصيبه العادل <Tex tex={`\\tfrac{${ways}}{${2 ** n}} \\approx ${fmt(share, 4)}`} /> من الرهان.
+          </p>
+          <p className="hint">الأعمدة المظللة: الطرق التي يفوز فيها أ. ارتفاع كل عمود = عدد الطرق ÷ <Tex tex={`2^{${n}}`} />.</p>
+        </>
+      )}
     </Scene>
   );
 }

@@ -10,12 +10,14 @@ import { Glyph } from '../Glyph';
 import { Rich, Tex } from '../Tex';
 import { ChoiceCheck } from './ChoiceCheck';
 import { Scene } from './Scene';
+import { useUiLang } from '../../lib/lang';
 
 const BOX = String.raw`\boxed{\;?\;}`;
 
 export function AnchorScene({ ch, next, color }: { ch: Chapter; next?: DistId; color: string }) {
   const a = ch.anchor;
   const quiz = useProgress().quiz;
+  const en = useUiLang() === 'en';
   // أسئلة الاسترجاع تظهر بعد كتابة القانون (أو إن سبقت الإجابة عنها، أو بطلب الطالب)
   const [stage2, setStage2] = useState(() => a.recall.some((q) => quiz[q.id] !== undefined));
   return (
@@ -35,26 +37,26 @@ export function AnchorScene({ ch, next, color }: { ch: Chapter; next?: DistId; c
         <Recall ch={ch} />
       ) : (
         <button type="button" className="link-btn" onClick={() => setStage2(true)}>
-          روح لأسئلة الاسترجاع ({a.recall.length})
+          {en ? `Go to the recall questions (${a.recall.length})` : `روح لأسئلة الاسترجاع (${a.recall.length})`}
         </button>
       )}
       {next && (
         <a className="bridge" href={href.dist(next)} style={{ '--to': identity[next].color } as CSSProperties}>
           <Glyph id={next} size={36} />
           <span>
-            <span className="bridge-k">الفصل التالي: {sheetById[next].nameAr}</span>
+            <span className="bridge-k">{en ? `Next chapter: ${sheetById[next].nameEn}` : `الفصل التالي: ${sheetById[next].nameAr}`}</span>
             <Rich as="span" className="bridge-t" text={a.bridge} />
           </span>
-          <span aria-hidden="true" className="bridge-arr">←</span>
+          <span aria-hidden="true" className="bridge-arr">{en ? '→' : '←'}</span>
         </a>
       )}
       {!next && (
         <a className="bridge" href={href.drill} style={{ '--to': 'var(--ink)' } as CSSProperties}>
           <span>
-            <span className="bridge-k">أنهيت الرحلة: تدريب مختلط</span>
+            <span className="bridge-k">{en ? 'You finished the journey: mixed practice' : 'أنهيت الرحلة: تدريب مختلط'}</span>
             <Rich as="span" className="bridge-t" text={a.bridge} />
           </span>
-          <span aria-hidden="true" className="bridge-arr">←</span>
+          <span aria-hidden="true" className="bridge-arr">{en ? '→' : '←'}</span>
         </a>
       )}
     </Scene>
@@ -65,6 +67,7 @@ export function AnchorScene({ ch, next, color }: { ch: Chapter; next?: DistId; c
 function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onChecked: () => void }) {
   const law = ch.build.law;
   const n = law.slots.length;
+  const en = useUiLang() === 'en';
   const [fill, setFill] = useState<(string | null)[]>(() => Array(n).fill(null));
   const [active, setActive] = useState(0);
   const [checked, setChecked] = useState(false);
@@ -111,7 +114,7 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
     return (
       <div className="compose done feedback ok" role="status" tabIndex={-1} ref={doneRef}>
         <p>
-          <strong>✓ كفو! كتبت القانون كامل من راسك:</strong>
+          <strong>{en ? '✓ Well done! You wrote the whole formula from memory:' : '✓ كفو! كتبت القانون كامل من راسك:'}</strong>
         </p>
         <Tex tex={tex} display />
         <ul>
@@ -122,24 +125,24 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
           ))}
         </ul>
         <button type="button" className="link-btn" onClick={reset}>
-          أعد الكتابة
+          {en ? 'Write it again' : 'أعد الكتابة'}
         </button>
       </div>
     );
   return (
     <div className="compose">
-      <p className="pk">من الذاكرة</p>
-      <p className="pq">اكتب القانون: اختر خانة ثم البطاقة التي تناسبها.</p>
+      <p className="pk">{en ? 'From memory' : 'من الذاكرة'}</p>
+      <p className="pq">{en ? 'Write the formula: choose a slot, then the card that fits it.' : 'اكتب القانون: اختر خانة ثم البطاقة التي تناسبها.'}</p>
       <Tex tex={tex} display />
-      <div className="slots" role="group" aria-label="خانات القانون">
+      <div className="slots" role="group" aria-label={en ? 'Formula slots' : 'خانات القانون'}>
         {law.slots.map((_, i) => (
           <button key={i} type="button" className={`slot ${i === active ? 'on' : ''} ${checked ? (ok(i) ? 'ok' : 'no') : ''}`} aria-pressed={i === active} onClick={() => setActive(i)}>
-            <span>الخانة ({i + 1})</span> {fill[i] ? <Tex tex={fill[i]!} /> : <span aria-label="فارغة">؟</span>}
+            <span>{en ? `Slot (${i + 1})` : `الخانة (${i + 1})`}</span> {fill[i] ? <Tex tex={fill[i]!} /> : <span aria-label={en ? 'empty' : 'فارغة'}>{en ? '?' : '؟'}</span>}
             {checked && <span aria-hidden="true">{ok(i) ? ' ✓' : ' ✗'}</span>}
           </button>
         ))}
       </div>
-      <div className="tiles" role="group" aria-label={`بطاقات للخانة ${active + 1}`}>
+      <div className="tiles" role="group" aria-label={en ? `Cards for slot ${active + 1}` : `بطاقات للخانة ${active + 1}`}>
         {ch.anchor.compose.tiles.map((t, i) => (
           <button key={t} type="button" className="tile" onClick={() => place(t)} ref={i === 0 ? firstTile : undefined}>
             <Tex tex={t} />
@@ -148,20 +151,20 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
       </div>
       <div className="btn-row">
         <button type="button" className="btn btn-c" disabled={fill.some((v) => v === null)} onClick={check}>
-          تحقّق
+          {en ? 'Check' : 'تحقّق'}
         </button>
         <button type="button" className="btn btn-quiet" onClick={reset}>
-          امسح
+          {en ? 'Clear' : 'امسح'}
         </button>
       </div>
       {checked && (
         <div className="feedback no" role="status">
           <p>
-            <strong>شف الخانات اللي عليها ✗ وجرّب لها بطاقة ثانية.</strong>
+            <strong>{en ? 'Look at the slots marked ✗ and try a different card for them.' : 'شف الخانات اللي عليها ✗ وجرّب لها بطاقة ثانية.'}</strong>
           </p>
           {/* الإجابة لا تُكشف من أول محاولة: بعد محاولتين خاطئتين، أو بطلب الطالب */}
           {showAnswer || wrongTries >= 2 ? (
-            <ul ref={answerRef} tabIndex={-1} aria-label="الإجابة">
+            <ul ref={answerRef} tabIndex={-1} aria-label={en ? 'Answer' : 'الإجابة'}>
               {law.slots.map((sl, i) => (
                 <li key={i}>
                   ({i + 1}) <Tex tex={sl} />: <Rich text={ch.anchor.compose.meanings[i]} />
@@ -170,7 +173,7 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
             </ul>
           ) : (
             <button type="button" className="link-btn" onClick={() => setShowAnswer(true)}>
-              ورّني الإجابة
+              {en ? 'Show me the answer' : 'ورّني الإجابة'}
             </button>
           )}
         </div>
@@ -183,15 +186,16 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
 function Recall({ ch }: { ch: Chapter }) {
   const qs = ch.anchor.recall;
   const [i, setI] = useState(0);
+  const en = useUiLang() === 'en';
   return (
     <div className="recall">
-      <ChoiceCheck key={qs[i].id} id={qs[i].id} q={qs[i]} kicker={`من الذاكرة · ${i + 1} من ${qs.length}`} />
+      <ChoiceCheck key={qs[i].id} id={qs[i].id} q={qs[i]} kicker={en ? `From memory · ${i + 1} of ${qs.length}` : `من الذاكرة · ${i + 1} من ${qs.length}`} />
       <div className="btn-row">
         <button type="button" className="btn btn-quiet" disabled={i === 0} onClick={() => setI(i - 1)}>
-          → السابق
+          {en ? '← Previous' : '→ السابق'}
         </button>
         <button type="button" className="btn btn-quiet" disabled={i === qs.length - 1} onClick={() => setI(i + 1)}>
-          السؤال التالي ←
+          {en ? 'Next question →' : 'السؤال التالي ←'}
         </button>
       </div>
     </div>

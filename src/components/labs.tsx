@@ -7,6 +7,13 @@ import { BarChart, CurveChart, Legend, type Bin } from './charts';
 import { Rich, Tex } from './Tex';
 import { ProbLine, SimNote, Slider, Stats } from './ui';
 import type { DistId } from '../content/types';
+import { useUiLang } from '../lib/lang';
+
+/** نص بلغتين: العربي ثم الإنجليزي. */
+function useT() {
+  const en = useUiLang() === 'en';
+  return { en, t: (ar: string, enS: string) => (en ? enS : ar) };
+}
 
 // ———————— أدوات مشتركة للمحاكاة ————————
 
@@ -41,19 +48,23 @@ function simBars(stats: ReturnType<typeof useDiscreteSim>['stats'], xs: number[]
 }
 
 /** شريط محاولات: «ن» نجاح (مربع ممتلئ) و«خ» إخفاق (مربع مفرغ) — الشكل والحرف لا اللون فقط. */
-function TrialStrip({ trials, successWord = 'نجاح', failWord = 'إخفاق' }: { trials: number[]; successWord?: string; failWord?: string }) {
+function TrialStrip({ trials, successWord, failWord }: { trials: number[]; successWord?: string; failWord?: string }) {
+  const { en, t: tr } = useT();
+  successWord ??= tr('نجاح', 'success');
+  failWord ??= tr('إخفاق', 'failure');
+  const [S, F] = en ? ['S', 'F'] : ['ن', 'خ'];
   const s = trials.filter((t) => t === 1).length;
   return (
     <div className="strip-wrap">
-      <ol className="strip" aria-label={`${trials.length} محاولة: ${s} ${successWord} و${trials.length - s} ${failWord}`}>
+      <ol className="strip" aria-label={en ? `${trials.length} trials: ${s} ${successWord} and ${trials.length - s} ${failWord}` : `${trials.length} محاولة: ${s} ${successWord} و${trials.length - s} ${failWord}`}>
         {trials.map((t, i) => (
-          <li key={i} className={t ? 'ok' : 'no'} title={`المحاولة ${i + 1}: ${t ? successWord : failWord}`} aria-hidden="true">
-            {t ? 'ن' : 'خ'}
+          <li key={i} className={t ? 'ok' : 'no'} title={`${tr('المحاولة', 'Trial')} ${i + 1}: ${t ? successWord : failWord}`} aria-hidden="true">
+            {t ? S : F}
           </li>
         ))}
       </ol>
       <p className="strip-key">
-        <span className="mini ok" aria-hidden="true">ن</span> {successWord} (<Tex tex="1" />) · <span className="mini no" aria-hidden="true">خ</span> {failWord} (<Tex tex="0" />)
+        <span className="mini ok" aria-hidden="true">{S}</span> {successWord} (<Tex tex="1" />) · <span className="mini no" aria-hidden="true">{F}</span> {failWord} (<Tex tex="0" />)
       </p>
     </div>
   );
@@ -76,6 +87,7 @@ function SimButtons({
   full: boolean;
   hasData: boolean;
 }) {
+  const { t } = useT();
   return (
     <div className="btn-row">
       {onOne && (
@@ -87,7 +99,7 @@ function SimButtons({
         ▶▶ {batchLabel}
       </button>
       <button type="button" className="btn btn-quiet" onClick={onClear} disabled={!hasData}>
-        مسح المحاكاة
+        {t('مسح المحاكاة', 'Clear the simulation')}
       </button>
     </div>
   );
@@ -98,6 +110,7 @@ const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i)
 // ———————— برنولي ————————
 export function BernoulliLab() {
   const [p, setP] = useState(0.08);
+  const { t } = useT();
   const sim = useDiscreteSim(String(p));
   const [last, setLast] = useState<number[]>([]);
   useEffect(() => setLast([]), [p]);
@@ -109,13 +122,13 @@ export function BernoulliLab() {
   const bars = [0, 1].map((x) => ({ x, p: bernoulli.pmf(x, p) }));
   return (
     <div className="lab">
-      <Slider label="احتمال أن تكون العلبة معيبة" symbol="p" value={p} onChange={setP} {...RANGES.bernoulliP} />
-      <BarChart bars={bars} sim={simBars(sim.stats, [0, 1])} ariaLabel={`توزيع برنولي: P(X=0)=${fmt(1 - p)}, P(X=1)=${fmt(p)}`} xLabel="قيمة X: ‏0 = سليمة، 1 = معيبة («نجاح»)" />
+      <Slider label={t('احتمال أن تكون العلبة معيبة', 'Probability that a can is defective')} symbol="p" value={p} onChange={setP} {...RANGES.bernoulliP} />
+      <BarChart bars={bars} sim={simBars(sim.stats, [0, 1])} ariaLabel={`${t('توزيع برنولي', 'Bernoulli distribution')}: P(X=0)=${fmt(1 - p)}, P(X=1)=${fmt(p)}`} xLabel={t('قيمة X: ‏0 = سليمة، 1 = معيبة («نجاح»)', 'Value of X: 0 = sound, 1 = defective (the “success”)')} />
       <Legend items={enough(sim.stats) ? ['theory', 'sim'] : ['theory']} />
       <ProbLine tex={`P(X=1) = p`} value={p} />
       <ProbLine tex={`P(X=0) = 1-p`} value={1 - p} />
-      <SimButtons onOne={() => run(1)} oneLabel="افحص علبة واحدة" onBatch={() => run(100)} batchLabel="افحص 100 علبة" onClear={() => (sim.clear(), setLast([]))} full={sim.full} hasData={!!sim.stats} />
-      {last.length > 0 && <TrialStrip trials={last} successWord="معيبة" failWord="سليمة" />}
+      <SimButtons onOne={() => run(1)} oneLabel={t('افحص علبة واحدة', 'Inspect one can')} onBatch={() => run(100)} batchLabel={t('افحص 100 علبة', 'Inspect 100 cans')} onClear={() => (sim.clear(), setLast([]))} full={sim.full} hasData={!!sim.stats} />
+      {last.length > 0 && <TrialStrip trials={last} successWord={t('معيبة', 'defective')} failWord={t('سليمة', 'sound')} />}
       <SimNote count={sim.values.length} max={SIM_MAX} />
       <Stats mean={bernoulli.mean(p)} variance={bernoulli.variance(p)} meanTex="E[X]=p" varTex="\mathrm{Var}(X)=p(1-p)" sim={enough(sim.stats)} />
     </div>
@@ -126,6 +139,7 @@ export function BernoulliLab() {
 export function BinomialLab({ initialN = 10, initialP = 0.25 }: { initialN?: number; initialP?: number }) {
   const [n, setN] = useState(initialN);
   const [p, setP] = useState(initialP);
+  const { t } = useT();
   const [k, setK] = useState(3);
   const kk = Math.min(k, n);
   const sim = useDiscreteSim(`${n}|${p}`);
@@ -142,19 +156,19 @@ export function BinomialLab({ initialN = 10, initialP = 0.25 }: { initialN?: num
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="عدد المحاولات" symbol="n" value={n} onChange={setN} {...RANGES.binomialN} digits={0} />
-        <Slider label="احتمال النجاح" symbol="p" value={p} onChange={setP} {...RANGES.binomialP} />
-        <Slider label="عدد النجاحات المطلوب" symbol="k" value={kk} onChange={setK} min={0} max={n} step={1} digits={0} />
+        <Slider label={t('عدد المحاولات', 'Number of trials')} symbol="n" value={n} onChange={setN} {...RANGES.binomialN} digits={0} />
+        <Slider label={t('احتمال النجاح', 'Probability of success')} symbol="p" value={p} onChange={setP} {...RANGES.binomialP} />
+        <Slider label={t('عدد النجاحات المطلوب', 'Number of successes')} symbol="k" value={kk} onChange={setK} min={0} max={n} step={1} digits={0} />
       </div>
-      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === kk} ariaLabel={`توزيع ذي الحدين n=${n}, p=${fmt(p)}. P(X=${kk}) = ${fmt(binomial.pmf(kk, n, p))}`} xLabel="عدد النجاحات k" />
+      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === kk} ariaLabel={`${t('توزيع ذي الحدين', 'Binomial distribution')} n=${n}, p=${fmt(p)}. P(X=${kk}) = ${fmt(binomial.pmf(kk, n, p))}`} xLabel={t('عدد النجاحات k', 'Number of successes k')} />
       <Legend items={enough(sim.stats) ? ['theory', 'highlight', 'sim'] : ['theory', 'highlight']} />
       <ProbLine tex={`P(X=${kk}) = \\binom{${n}}{${kk}}(${fmt(p)})^{${kk}}(${fmt(1 - p)})^{${n - kk}}`} value={binomial.pmf(kk, n, p)} />
-      <SimButtons onOne={runOne} oneLabel={`نفّذ ${n} محاولة مرة واحدة`} onBatch={batch} batchLabel={`كرّر التجربة ${SIM_BATCH} مرة`} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
+      <SimButtons onOne={runOne} oneLabel={t(`نفّذ ${n} محاولة مرة واحدة`, `Run ${n} trials once`)} onBatch={batch} batchLabel={t(`كرّر التجربة ${SIM_BATCH} مرة`, `Repeat the experiment ${SIM_BATCH} times`)} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
       {one && (
         <>
           <TrialStrip trials={one} />
           <p className="result-line">
-            عدد النجاحات في هذه التجربة: <Tex tex={`X = ${one.reduce((a, b) => a + b, 0)}`} />
+            {t('عدد النجاحات في هذه التجربة: ', 'Successes in this run: ')}<Tex tex={`X = ${one.reduce((a, b) => a + b, 0)}`} />
           </p>
         </>
       )}
@@ -214,6 +228,7 @@ export function GeometricLab() {
 
 // ———————— بواسون ————————
 function Timeline({ times, t, unit, label }: { times: number[]; t: number; unit: string; label: string }) {
+  const { en } = useT();
   const W = 560, H = 70, L = 16, R = 16;
   const X = (s: number) => L + (s / t) * (W - L - R);
   const ticks = range(0, Math.floor(t / 0.5)).map((i) => i * 0.5).filter((v) => v <= t + 1e-9);
@@ -231,7 +246,7 @@ function Timeline({ times, t, unit, label }: { times: number[]; t: number; unit:
           <path key={i} d={`M ${X(s)} 12 L ${X(s) + 7} 22 L ${X(s)} 32 L ${X(s) - 7} 22 Z`} className="event" />
         ))}
       </svg>
-      <figcaption>الزمن ({unit}) — كل معيّن ◆ حدث واحد</figcaption>
+      <figcaption>{en ? `Time (${unit}) — each diamond ◆ is one event` : `الزمن (${unit}) — كل معيّن ◆ حدث واحد`}</figcaption>
     </figure>
   );
 }
@@ -239,6 +254,7 @@ function Timeline({ times, t, unit, label }: { times: number[]; t: number; unit:
 export function PoissonLab() {
   const [r, setR] = useState(3);
   const [t, setT] = useState(2);
+  const { t: tr } = useT();
   const lambda = r * t;
   const K = Math.max(10, Math.min(40, discreteUpper((k) => poisson.cdf(k, lambda), 0.995, 0, 40)));
   const [k, setK] = useState(4);
@@ -258,25 +274,30 @@ export function PoissonLab() {
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="المعدل" symbol="r" value={r} onChange={setR} {...RANGES.poissonRate} unit="حدث/ساعة" digits={1} />
-        <Slider label="طول الفترة" symbol="t" value={t} onChange={setT} {...RANGES.poissonT} unit="ساعة" digits={1} />
-        <Slider label="عدد الأحداث" symbol="k" value={kk} onChange={setK} min={0} max={K} step={1} digits={0} />
+        <Slider label={tr('المعدل', 'Rate')} symbol="r" value={r} onChange={setR} {...RANGES.poissonRate} unit={tr('حدث/ساعة', 'events/hour')} digits={1} />
+        <Slider label={tr('طول الفترة', 'Length of the interval')} symbol="t" value={t} onChange={setT} {...RANGES.poissonT} unit={tr('ساعة', 'hours')} digits={1} />
+        <Slider label={tr('عدد الأحداث', 'Number of events')} symbol="k" value={kk} onChange={setK} min={0} max={K} step={1} digits={0} />
       </div>
       <p className="lambda-line">
-        <Tex tex={`\\lambda = r\\,t = ${fmt(r)} \\times ${fmt(t)} = ${fmt(lambda)}`} /> <span>حدثًا في المتوسط خلال الفترة</span>
+        <Tex tex={`\\lambda = r\\,t = ${fmt(r)} \\times ${fmt(t)} = ${fmt(lambda)}`} /> <span>{tr('حدثًا في المتوسط خلال الفترة', 'events on average over the interval')}</span>
       </p>
-      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === kk} ariaLabel={`توزيع بواسون λ=${fmt(lambda)}. P(X=${kk}) = ${fmt(poisson.pmf(kk, lambda))}`} xLabel="عدد الأحداث في الفترة k" />
+      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === kk} ariaLabel={`${tr('توزيع بواسون', 'Poisson distribution')} λ=${fmt(lambda)}. P(X=${kk}) = ${fmt(poisson.pmf(kk, lambda))}`} xLabel={tr('عدد الأحداث في الفترة k', 'Number of events in the interval k')} />
       <Legend items={enough(sim.stats) ? ['theory', 'highlight', 'sim'] : ['theory', 'highlight']} />
       <p className="trunc-note">
-        <Rich text={`الرسم يعرض $k$ من 0 إلى ${K}؛ التوزيع يمتد بلا نهاية، والاحتمال غير المعروض $P(X > ${K}) \\approx ${fmt(tail, 4)}$.`} />
+        <Rich
+          text={tr(
+            `الرسم يعرض $k$ من 0 إلى ${K}؛ التوزيع يمتد بلا نهاية، والاحتمال غير المعروض $P(X > ${K}) \\approx ${fmt(tail, 4)}$.`,
+            `The chart shows $k$ from 0 to ${K}; the distribution goes on forever, and the probability not shown is $P(X > ${K}) \\approx ${fmt(tail, 4)}$.`,
+          )}
+        />
       </p>
       <ProbLine tex={`P(X=${kk}) = \\frac{e^{-${fmt(lambda)}}\\,${fmt(lambda)}^{${kk}}}{${kk}!}`} value={poisson.pmf(kk, lambda)} />
-      <SimButtons onOne={runOne} oneLabel="ولّد فترة واحدة" onBatch={batch} batchLabel={`كرّر ${SIM_BATCH} فترة`} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
+      <SimButtons onOne={runOne} oneLabel={tr('ولّد فترة واحدة', 'Generate one interval')} onBatch={batch} batchLabel={tr(`كرّر ${SIM_BATCH} فترة`, `Repeat ${SIM_BATCH} intervals`)} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
       {one && (
         <>
-          <Timeline times={one} t={t} unit="ساعة" label={`فترة طولها ${t} ساعة وصل فيها ${one.length} طلبًا`} />
+          <Timeline times={one} t={t} unit={tr('ساعة', 'hours')} label={tr(`فترة طولها ${t} ساعة وصل فيها ${one.length} طلبًا`, `An interval of ${t} hours with ${one.length} arrivals`)} />
           <p className="result-line">
-            عدد الأحداث في هذه الفترة: <Tex tex={`X = ${one.length}`} />
+            {tr('عدد الأحداث في هذه الفترة: ', 'Events in this interval: ')}<Tex tex={`X = ${one.length}`} />
           </p>
         </>
       )}
@@ -419,17 +440,26 @@ export function NormalLab() {
 /** صف الأكواب: «ح» حليب أولًا (نجاح) و«ش» شاي أولًا، والمختارة محاطة بإطار. */
 function CupStrip({ N, k, picked }: { N: number; k: number; picked: number[] }) {
   const hits = picked.filter((i) => i < k).length;
+  const { en } = useT();
   return (
     <div className="strip-wrap">
-      <ol className="strip cups-strip" role="img" aria-label={`${N} كوبًا، اخترت ${picked.length} منها، أصبت ${hits}`}>
+      <ol className="strip cups-strip" role="img" aria-label={en ? `${N} cups; you picked ${picked.length} of them and got ${hits} right` : `${N} كوبًا، اخترت ${picked.length} منها، أصبت ${hits}`}>
         {Array.from({ length: N }, (_, i) => (
           <li key={i} className={`${i < k ? 'ok' : 'no'} ${picked.includes(i) ? 'picked' : ''}`} aria-hidden="true">
-            {i < k ? 'ح' : 'ش'}
+            {en ? (i < k ? 'M' : 'T') : i < k ? 'ح' : 'ش'}
           </li>
         ))}
       </ol>
       <p className="strip-key">
-        <span className="mini ok" aria-hidden="true">ح</span> حليب أولًا · <span className="mini no" aria-hidden="true">ش</span> شاي أولًا · المحاط بإطار: ما اخترته
+        {en ? (
+          <>
+            <span className="mini ok" aria-hidden="true">M</span> milk first · <span className="mini no" aria-hidden="true">T</span> tea first · framed: your picks
+          </>
+        ) : (
+          <>
+            <span className="mini ok" aria-hidden="true">ح</span> حليب أولًا · <span className="mini no" aria-hidden="true">ش</span> شاي أولًا · المحاط بإطار: ما اخترته
+          </>
+        )}
       </p>
     </div>
   );
@@ -438,6 +468,7 @@ function CupStrip({ N, k, picked }: { N: number; k: number; picked: number[] }) 
 export function HypergeometricLab() {
   const [N, setN] = useState(8);
   const [k, setK] = useState(4);
+  const { t } = useT();
   // كما في تجربة الشاي: تعرف عدد أكواب «الحليب أولًا» فتختار العدد نفسه (n = k)
   const kk = Math.min(k, N - 1), nn = kk;
   const sim = useDiscreteSim(`${N}|${kk}|${nn}`);
@@ -456,20 +487,25 @@ export function HypergeometricLab() {
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="عدد الأكواب" symbol="N" value={N} onChange={setN} min={4} max={40} step={1} digits={0} />
-        <Slider label="أكواب «حليب أولًا»، وتختار العدد نفسه" symbol="k = n" value={kk} onChange={setK} min={1} max={N - 1} step={1} digits={0} />
+        <Slider label={t('عدد الأكواب', 'Number of cups')} symbol="N" value={N} onChange={setN} min={4} max={40} step={1} digits={0} />
+        <Slider label={t('أكواب «حليب أولًا»، وتختار العدد نفسه', '“Milk first” cups (you pick the same number)')} symbol="k = n" value={kk} onChange={setK} min={1} max={N - 1} step={1} digits={0} />
       </div>
-      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === hi} ariaLabel={`فوق الهندسي N=${N}, k=${kk}, n=${nn}. احتمال إصابة ${hi} كلها بالتخمين ${fmt(hypergeometric.pmf(hi, N, kk, nn))}`} xLabel="عدد الإصابات بالتخمين x" />
+      <BarChart bars={bars} sim={simBars(sim.stats, xs)} highlight={(x) => x === hi} ariaLabel={t(
+          `فوق الهندسي N=${N}, k=${kk}, n=${nn}. احتمال إصابة ${hi} كلها بالتخمين ${fmt(hypergeometric.pmf(hi, N, kk, nn))}`,
+          `Hypergeometric N=${N}, k=${kk}, n=${nn}. Probability of getting all ${hi} right by guessing: ${fmt(hypergeometric.pmf(hi, N, kk, nn))}`,
+        )}
+        xLabel={t('عدد الإصابات بالتخمين x', 'Number right by guessing x')}
+      />
       <Legend items={enough(sim.stats) ? ['theory', 'highlight', 'sim'] : ['theory', 'highlight']} />
-      {lo > 0 && <Rich as="p" className="hint" text={`لاحظ: $x$ لا يقل عن $${lo}$، لأنك تختار $${nn}$ ولا يوجد إلا $${N - kk}$ من النوع الآخر.`} />}
+      {lo > 0 && <Rich as="p" className="hint" text={t(`لاحظ: $x$ لا يقل عن $${lo}$، لأنك تختار $${nn}$ ولا يوجد إلا $${N - kk}$ من النوع الآخر.`, `Note: $x$ is at least $${lo}$, because you pick $${nn}$ and there are only $${N - kk}$ of the other kind.`)} />}
       <ProbLine tex={`P(X=${hi}) = \\frac{\\binom{${kk}}{${hi}}\\binom{${N - kk}}{${nn - hi}}}{\\binom{${N}}{${nn}}}`} value={hypergeometric.pmf(hi, N, kk, nn)} />
-      <ProbLine tex={`P(X=${xm}) = ${fmt(hypergeometric.pmf(xm, N, kk, nn), 4)},\\quad P_{\\mathrm{Bin}}(X=${xm})`} value={binomial.pmf(xm, nn, kk / N)} label="عند أرجح قيمة، مقارنة بذي الحدين (لو أُعيد كل كوب):" />
-      <SimButtons onOne={runOne} oneLabel="خمّن مرة واحدة" onBatch={batch} batchLabel={`خمّن ${SIM_BATCH} مرة`} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
+      <ProbLine tex={`P(X=${xm}) = ${fmt(hypergeometric.pmf(xm, N, kk, nn), 4)},\\quad P_{\\mathrm{Bin}}(X=${xm})`} value={binomial.pmf(xm, nn, kk / N)} label={t('عند أرجح قيمة، مقارنة بذي الحدين (لو أُعيد كل كوب):', 'At the most likely value, compared with the binomial (if each cup were put back):')} />
+      <SimButtons onOne={runOne} oneLabel={t('خمّن مرة واحدة', 'Guess once')} onBatch={batch} batchLabel={t(`خمّن ${SIM_BATCH} مرة`, `Guess ${SIM_BATCH} times`)} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
       {one && (
         <>
           <CupStrip N={N} k={kk} picked={one} />
           <p className="result-line">
-            أصبت في هذه المرة: <Tex tex={`X = ${one.filter((i) => i < kk).length}`} />
+            {t('أصبت في هذه المرة: ', 'Right this time: ')}<Tex tex={`X = ${one.filter((i) => i < kk).length}`} />
           </p>
         </>
       )}

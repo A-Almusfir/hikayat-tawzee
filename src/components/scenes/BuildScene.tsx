@@ -3,6 +3,7 @@ import { useProgress } from '../../lib/storage';
 import { Rich, Tex } from '../Tex';
 import { ChoiceCheck } from './ChoiceCheck';
 import { Scene } from './Scene';
+import { useUiLang } from '../../lib/lang';
 
 const BOX = String.raw`\boxed{\;?\;}`;
 
@@ -18,6 +19,7 @@ export function lawTex(law: LawTemplate, color: string, filled: (n: number) => b
 
 export function BuildScene({ id, headline, law, steps, note, color }: { id: string; headline: string; law: LawTemplate; steps: BuildStep[]; note: string; color: string }) {
   const quiz = useProgress().quiz;
+  const en = useUiLang() === 'en';
   const key = (i: number) => `${id}-build-${i}`;
   const done = (i: number) => !steps[i].predict || quiz[key(i)] !== undefined;
   // تظهر الخطوة التالية بعد الإجابة عن توقّع الخطوة الحالية
@@ -33,7 +35,7 @@ export function BuildScene({ id, headline, law, steps, note, color }: { id: stri
       title={headline}
       art={
         <div className="build-art" aria-live="polite">
-          <p className="build-k">{complete ? 'القانون كاملًا' : 'القانون حتى الآن'}</p>
+          <p className="build-k">{en ? (complete ? 'The complete formula' : 'The formula so far') : complete ? 'القانون كاملًا' : 'القانون حتى الآن'}</p>
           <Tex tex={lawTex(law, color, (n) => revealed.has(n), complete)} display />
           {law.range && <p className="build-range"><Tex tex={law.range} /></p>}
           {complete && <Rich as="p" className="hint" text={note} />}
@@ -44,7 +46,7 @@ export function BuildScene({ id, headline, law, steps, note, color }: { id: stri
         {steps.slice(0, visible).map((s, i) => (
           <li key={i}>
             <Rich as="p" text={s.story} />
-            {s.predict && <ChoiceCheck id={key(i)} q={s.predict} kicker="توقّع قبل أن تكشف" />}
+            {s.predict && <ChoiceCheck id={key(i)} q={s.predict} kicker={en ? 'Predict before you reveal' : 'توقّع قبل أن تكشف'} />}
             {done(i) && s.tex.map((t, j) => <Tex key={j} tex={t} display />)}
           </li>
         ))}

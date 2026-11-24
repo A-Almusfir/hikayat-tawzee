@@ -4,9 +4,11 @@ import { displayOrder } from '../lib/shuffle';
 import { progress, useProgress } from '../lib/storage';
 import { Rich, Tex } from './Tex';
 import { RichList } from './ui';
+import { useUiLang } from '../lib/lang';
 
 export function FormulaSection({ d }: { d: DistContent }) {
   const f = d.formula;
+  const en = useUiLang() === 'en';
   return (
     <div className="formula">
       <p className="fn-name">{f.fnName}</p>
@@ -17,7 +19,7 @@ export function FormulaSection({ d }: { d: DistContent }) {
             <span className="part-n" aria-hidden="true">({p.n})</span>
             <div>
               <strong>
-                <span className="sr-only">الجزء {p.n}: </span>
+                <span className="sr-only">{en ? `Part ${p.n}: ` : `الجزء ${p.n}: `}</span>
                 {p.label} <Tex tex={p.tex} />
               </strong>
               <Rich as="p" text={p.explain} />
@@ -25,15 +27,15 @@ export function FormulaSection({ d }: { d: DistContent }) {
           </li>
         ))}
       </ol>
-      <h3>الفكرة الحدسية</h3>
+      <h3>{en ? 'The intuition' : 'الفكرة الحدسية'}</h3>
       {f.intuition.map((t, i) => (
         <Rich key={i} as="p" text={t} />
       ))}
       <details className="deep">
-        <summary>تعمّق في الاشتقاق</summary>
+        <summary>{en ? 'Go deeper into the derivation' : 'تعمّق في الاشتقاق'}</summary>
         <p className="badge-line">
           <span className={`badge ${f.derivationKind === 'proof' ? 'badge-proof' : 'badge-intuit'}`}>
-            {f.derivationKind === 'proof' ? 'اشتقاق رياضي' : 'حقائق قابلة للإثبات + حدود ما نقدمه'}
+            {en ? (f.derivationKind === 'proof' ? 'Mathematical derivation' : 'Provable facts + the limits of what we present') : f.derivationKind === 'proof' ? 'اشتقاق رياضي' : 'حقائق قابلة للإثبات + حدود ما نقدمه'}
           </span>
         </p>
         {f.derivation.map((t, i) => (
@@ -46,15 +48,17 @@ export function FormulaSection({ d }: { d: DistContent }) {
 
 export function DistCardView({ d }: { d: DistContent }) {
   const c = d.card;
+  const en = useUiLang() === 'en';
   return (
     <div className="dcard">
       <div className="dcard-head">
-        <strong>{d.nameAr}</strong> <span className="en" lang="en" dir="ltr">{d.nameEn}</span>
+        <strong>{en ? d.nameEn : d.nameAr}</strong>{' '}
+        <span className="en" lang={en ? 'ar' : 'en'} dir={en ? 'rtl' : 'ltr'}>{en ? d.nameAr : d.nameEn}</span>
         <Tex tex={d.notation} />
-        <span className="tag">{d.type === 'discrete' ? 'متقطع' : 'مستمر'}</span>
+        <span className="tag">{en ? (d.type === 'discrete' ? 'discrete' : 'continuous') : d.type === 'discrete' ? 'متقطع' : 'مستمر'}</span>
       </div>
       <dl className="dcard-grid">
-        <dt>المعلمات</dt>
+        <dt>{en ? 'Parameters' : 'المعلمات'}</dt>
         <dd>
           <ul>
             {c.params.map((p) => (
@@ -64,22 +68,22 @@ export function DistCardView({ d }: { d: DistContent }) {
             ))}
           </ul>
         </dd>
-        <dt>مجال X</dt>
+        <dt>{en ? 'Support of X' : 'مجال X'}</dt>
         <dd><Tex tex={c.support} /></dd>
         <dt>{c.fnLabel}</dt>
         <dd><Tex tex={c.fnTex} display /></dd>
-        <dt>المتوسط</dt>
+        <dt>{en ? 'Mean' : 'المتوسط'}</dt>
         <dd><Tex tex={c.mean} /></dd>
-        <dt>التباين</dt>
+        <dt>{en ? 'Variance' : 'التباين'}</dt>
         <dd><Tex tex={c.variance} /></dd>
-        <dt>شروط الاستخدام</dt>
+        <dt>{en ? 'Conditions for use' : 'شروط الاستخدام'}</dt>
         <dd><RichList items={c.conditions} /></dd>
-        <dt>خطأ شائع</dt>
+        <dt>{en ? 'Common mistake' : 'خطأ شائع'}</dt>
         <dd><Rich text={c.mistake} /></dd>
       </dl>
       {d.type === 'continuous' && (
         <p className="hint">
-          <Rich text="في التوزيع المستمر: $P(X = x) = 0$ لأي قيمة مفردة، والاحتمال مساحة تحت منحنى الكثافة على فترة." />
+          <Rich text={en ? 'For a continuous distribution: $P(X = x) = 0$ for any single value, and probability is the area under the density curve over an interval.' : 'في التوزيع المستمر: $P(X = x) = 0$ لأي قيمة مفردة، والاحتمال مساحة تحت منحنى الكثافة على فترة.'} />
         </p>
       )}
     </div>
@@ -87,6 +91,7 @@ export function DistCardView({ d }: { d: DistContent }) {
 }
 
 const KIND_LABEL = { choose: 'اختيار التوزيع / التحقق من الشروط', compute: 'سؤال حسابي', concept: 'سؤال مفاهيمي / اكتشف الخطأ' };
+const KIND_LABEL_EN = { choose: 'Choose the distribution / check the conditions', compute: 'Calculation', concept: 'Concept / spot the mistake' };
 
 function QuizItem({ q, index }: { q: QuizQuestion; index: number }) {
   const saved = useProgress().quiz[q.id];
@@ -95,10 +100,11 @@ function QuizItem({ q, index }: { q: QuizQuestion; index: number }) {
   const correctIdx = q.options.findIndex((o) => o.correct);
   const isRight = chosen === correctIdx;
   const name = `q-${q.id}`;
+  const en = useUiLang() === 'en';
   return (
     <fieldset className="quiz-q">
       <legend>
-        <span className="q-kind">سؤال {index + 1} · {KIND_LABEL[q.kind]}</span>
+        <span className="q-kind">{en ? `Question ${index + 1} · ${KIND_LABEL_EN[q.kind]}` : `سؤال ${index + 1} · ${KIND_LABEL[q.kind]}`}</span>
         <Rich as="span" className="q-prompt" text={q.prompt} />
       </legend>
       <div className="options">
@@ -116,9 +122,9 @@ function QuizItem({ q, index }: { q: QuizQuestion; index: number }) {
       </div>
       {answered && (
         <div className={`feedback ${isRight ? 'ok' : 'no'}`} role="status">
-          <p className="verdict">{isRight ? '✓ إجابة صحيحة.' : '✗ ليست الإجابة الصحيحة.'}</p>
+          <p className="verdict">{en ? (isRight ? '✓ Correct.' : '✗ Not the correct answer.') : isRight ? '✓ إجابة صحيحة.' : '✗ ليست الإجابة الصحيحة.'}</p>
           <p>
-            <strong>لماذا الصحيحة صحيحة؟ </strong>
+            <strong>{en ? 'Why the correct answer is correct: ' : 'لماذا الصحيحة صحيحة؟ '}</strong>
             <Rich text={q.options[correctIdx].why} />
           </p>
           <ul className="whys">
@@ -131,7 +137,7 @@ function QuizItem({ q, index }: { q: QuizQuestion; index: number }) {
             )}
           </ul>
           <button type="button" className="btn btn-quiet" onClick={() => progress.setQuiz(q.id, undefined)}>
-            جرّب مرة ثانية
+            {en ? 'Try again' : 'جرّب مرة ثانية'}
           </button>
         </div>
       )}
@@ -143,6 +149,7 @@ export function Quiz({ d }: { d: DistContent }) {
   const quiz = useProgress().quiz;
   const done = d.quiz.filter((q) => quiz[q.id] !== undefined);
   const right = done.filter((q) => q.options[quiz[q.id]]?.correct).length;
+  const en = useUiLang() === 'en';
   return (
     <div className="quiz">
       {d.quiz.map((q, i) => (
@@ -150,7 +157,9 @@ export function Quiz({ d }: { d: DistContent }) {
       ))}
       {done.length === d.quiz.length && (
         <p className="score" role="status">
-          النتيجة: {right} من {d.quiz.length}. {right === d.quiz.length ? 'كفو.' : 'شف التفسيرات فوق وجرّب مرة ثانية.'}
+          {en
+            ? `Score: ${right} of ${d.quiz.length}. ${right === d.quiz.length ? 'Well done.' : 'Read the explanations above and try again.'}`
+            : `النتيجة: ${right} من ${d.quiz.length}. ${right === d.quiz.length ? 'كفو.' : 'شف التفسيرات فوق وجرّب مرة ثانية.'}`}
         </p>
       )}
     </div>

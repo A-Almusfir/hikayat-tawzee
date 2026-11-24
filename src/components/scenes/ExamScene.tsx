@@ -2,10 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import type { ExamProblem } from '../../content/chapterTypes';
 import { Rich, Tex } from '../Tex';
 import { Scene } from './Scene';
+import { useUiLang } from '../../lib/lang';
 
 /** مسألة واحدة معروضة في كل مرة؛ التبديل بأزرار، والكشف خطوة خطوة. */
 export function ExamScene({ headline, problems, tricks }: { headline: string; problems: ExamProblem[]; tricks: string[] }) {
   const [idx, setIdx] = useState(0);
+  const en = useUiLang() === 'en';
   return (
     <Scene
       n={4}
@@ -13,7 +15,7 @@ export function ExamScene({ headline, problems, tricks }: { headline: string; pr
       artAfter
       art={
         <aside className="tricks">
-          <h3>حيل تختصر عليك</h3>
+          <h3>{en ? 'Shortcuts' : 'حيل تختصر عليك'}</h3>
           <ul>
             {tricks.map((t, i) => (
               <Rich key={i} as="li" text={t} />
@@ -22,7 +24,7 @@ export function ExamScene({ headline, problems, tricks }: { headline: string; pr
         </aside>
       }
     >
-      <div className="seg-tabs" role="group" aria-label="اختر المسألة">
+      <div className="seg-tabs" role="group" aria-label={en ? 'Choose a problem' : 'اختر المسألة'}>
         {problems.map((p, i) => (
           <button key={i} type="button" className={`seg-tab ${i === idx ? 'on' : ''}`} aria-pressed={i === idx} onClick={() => setIdx(i)}>
             {i + 1}. {p.label}
@@ -36,6 +38,7 @@ export function ExamScene({ headline, problems, tricks }: { headline: string; pr
 
 function ExamBlock({ p }: { p: ExamProblem }) {
   const [shown, setShown] = useState(0);
+  const en = useUiLang() === 'en';
   const listRef = useRef<HTMLOListElement>(null);
   const moved = useRef(false);
   useEffect(() => {
@@ -62,7 +65,7 @@ function ExamBlock({ p }: { p: ExamProblem }) {
       </ol>
       {shown === p.steps.length && (
         <p className="exam-answer" role="status">
-          <strong>الجواب: </strong>
+          <strong>{en ? 'Answer: ' : 'الجواب: '}</strong>
           <Rich text={p.answer} />
         </p>
       )}
@@ -70,15 +73,15 @@ function ExamBlock({ p }: { p: ExamProblem }) {
         {shown < p.steps.length ? (
           <>
             <button type="button" className="btn btn-c" onClick={() => reveal(shown + 1)}>
-              {shown === 0 ? 'جرّبت؟ ورّني أول خطوة' : `الخطوة التالية: ${p.steps[shown].title}`}
+              {shown === 0 ? (en ? 'Tried it? Show the first step' : 'جرّبت؟ ورّني أول خطوة') : `${en ? 'Next step' : 'الخطوة التالية'}: ${p.steps[shown].title}`}
             </button>
             <button type="button" className="btn btn-quiet" onClick={() => reveal(p.steps.length)}>
-              ورّني الحل كامل
+              {en ? 'Show the full solution' : 'ورّني الحل كامل'}
             </button>
           </>
         ) : (
           <button type="button" className="btn btn-quiet" onClick={() => reveal(0)}>
-            سكّر الحل
+            {en ? 'Hide the solution' : 'سكّر الحل'}
           </button>
         )}
       </div>

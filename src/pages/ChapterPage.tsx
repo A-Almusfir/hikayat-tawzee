@@ -19,9 +19,18 @@ import { ZTable } from '../components/scenes/ZTable';
 import { DistCardView, FormulaSection, Quiz } from '../components/sections';
 import { Rich, Tex } from '../components/Tex';
 import { href, scrollToId } from '../lib/router';
+import { useUiLang } from '../lib/lang';
+import { overlay } from '../lib/i18n';
+import { chaptersEn } from '../content/en';
+import { distEn } from '../content/en/distributions';
+import { SCENES_EN } from '../components/scenes/Scene';
 
-export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
-  const d = distById[ch.id];
+export function ChapterPage({ ch: chAr, scene }: { ch: Chapter; scene?: number }) {
+  // الفصل المترجم: نصوص إنجليزية فوق الفصل العربي (الأرقام والفحوص من الأصل)
+  const en = useUiLang() === 'en' && !!chaptersEn[chAr.id];
+  const ch = useMemo(() => (en ? overlay(chAr, chaptersEn[chAr.id]) : chAr), [chAr, en]);
+  const dAr = distById[chAr.id];
+  const d = useMemo(() => (dAr && en ? overlay(dAr, distEn[chAr.id]) : dAr), [dAr, en, chAr.id]);
   const s = sheetById[ch.id];
   const color = identity[ch.id].color;
   const number = chapterNumber(ch.id);
@@ -61,15 +70,20 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
       <header className="ch-head">
         <p className="ch-num" aria-hidden="true">{number}</p>
         <div>
-          <p className="ch-kicker">الفصل {number} من {journey.length} · {s.group === 'discrete' ? 'متقطع' : 'مستمر'}</p>
+          <p className="ch-kicker">
+            {en
+              ? `Chapter ${number} of ${journey.length} · ${s.group === 'discrete' ? 'discrete' : 'continuous'}`
+              : `الفصل ${number} من ${journey.length} · ${s.group === 'discrete' ? 'متقطع' : 'مستمر'}`}
+          </p>
           <h1 tabIndex={-1}>
-            <Glyph id={ch.id} size={40} /> {s.nameAr} <span className="en" lang="en" dir="ltr">{s.nameEn}</span>
+            <Glyph id={ch.id} size={40} /> {en ? s.nameEn : s.nameAr}{' '}
+            <span className="en" lang={en ? 'ar' : 'en'} dir={en ? 'rtl' : 'ltr'}>{en ? s.nameAr : s.nameEn}</span>
           </h1>
           <p className="ch-q">{ch.question}</p>
         </div>
       </header>
 
-      <nav className="ch-progress" aria-label="مشاهد الفصل">
+      <nav className="ch-progress" aria-label={en ? 'Chapter scenes' : 'مشاهد الفصل'}>
         <ol>
           {SCENES.map((t, i) => (
             <li key={t}>
@@ -83,7 +97,7 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
                 }}
               >
                 <span className="pn">{i + 1}</span>
-                <span className="pt">{t}</span>
+                <span className="pt">{en ? SCENES_EN[i] : t}</span>
               </a>
             </li>
           ))}
@@ -97,7 +111,7 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
               <Rich as="p" className="claim" text={c.text} /> <Cites ids={c.src} order={srcOrder} />
               {c.links && (
                 <p className="claim-link">
-                  <span aria-hidden="true">↙ </span>
+                  <span aria-hidden="true">{en ? '↳ ' : '↙ '}</span>
                   <Rich text={c.links} />
                 </p>
               )}
@@ -105,7 +119,7 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
           ))}
         </ol>
         <details className="more">
-          <summary>تبي تعرف أكثر عن الحكاية؟</summary>
+          <summary>{en ? 'Want to know more about the story?' : 'تبي تعرف أكثر عن الحكاية؟'}</summary>
           {ch.story.more.map((c, i) => (
             <div key={i} className="more-item">
               <Rich as="p" text={c.text} /> <Cites ids={c.src} order={srcOrder} />
@@ -128,8 +142,8 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
       <AnchorScene ch={ch} next={nextInJourney(ch.id)} color={color} />
 
       <section className="reference" aria-labelledby="ref-h">
-        <h2 id="ref-h">المرجع</h2>
-        <p className="hint">للتعمق والمراجعة: المختبر الكامل، والاشتقاق، والبطاقة، وأسئلة إضافية.</p>
+        <h2 id="ref-h">{en ? 'Reference' : 'المرجع'}</h2>
+        <p className="hint">{en ? 'To go deeper and review: the full lab, the derivation, the card and extra questions.' : 'للتعمق والمراجعة: المختبر الكامل، والاشتقاق، والبطاقة، وأسئلة إضافية.'}</p>
         {Lab && ch.tryIt.kind !== 'lab' && (
           <details>
             <summary>{ch.reference.labTitle}</summary>
@@ -139,38 +153,42 @@ export function ChapterPage({ ch, scene }: { ch: Chapter; scene?: number }) {
         {d ? (
           <>
             <details>
-              <summary>القانون والاشتقاق الكامل</summary>
+              <summary>{en ? 'The formula and full derivation' : 'القانون والاشتقاق الكامل'}</summary>
               <FormulaSection d={d} />
             </details>
             <details>
-              <summary>بطاقة التوزيع</summary>
+              <summary>{en ? 'Distribution card' : 'بطاقة التوزيع'}</summary>
               <DistCardView d={d} />
             </details>
             <details>
-              <summary>أسئلة إضافية</summary>
+              <summary>{en ? 'Extra questions' : 'أسئلة إضافية'}</summary>
               <Quiz d={d} />
             </details>
           </>
         ) : (
           <details>
-            <summary>بطاقة التوزيع (من ورقة القوانين)</summary>
+            <summary>{en ? 'Distribution card' : 'بطاقة التوزيع'}</summary>
             <SheetCard id={ch.id} />
           </details>
         )}
       </section>
 
       <section className="ch-sources" aria-labelledby="src-h">
-        <h2 id="src-h">مصادر هذا الفصل</h2>
+        <h2 id="src-h">{en ? 'Sources for this chapter' : 'مصادر هذا الفصل'}</h2>
         <ol>
           {srcOrder.map((id) => (
             <li key={id} id={`src-${id}`} tabIndex={-1}>
               <a href={sourceById[id].url} target="_blank" rel="noopener noreferrer">
-                {sourceById[id].cite}
+                {(en && sourceById[id].citeEn) || sourceById[id].cite}
               </a>
             </li>
           ))}
         </ol>
-        <p className="hint">جرى التحقق من هذه المصادر عبر نتائج البحث ومقتطفاته أثناء الإعداد، لا بقراءة النصوص الأصلية كاملة.</p>
+        <p className="hint">
+          {en
+            ? 'These sources were checked through search results and their excerpts during preparation, not by reading the original texts in full.'
+            : 'جرى التحقق من هذه المصادر عبر نتائج البحث ومقتطفاته أثناء الإعداد، لا بقراءة النصوص الأصلية كاملة.'}
+        </p>
       </section>
     </article>
   );

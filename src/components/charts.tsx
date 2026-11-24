@@ -1,5 +1,6 @@
 import { useId } from 'react';
 import { fmt } from '../lib/dist';
+import { useUiLang } from '../lib/lang';
 
 // رسوم SVG مبنية مباشرة من القيم المحسوبة. المحور السيني يسير من اليسار إلى اليمين كما في الرياضيات.
 const W = 560;
@@ -40,7 +41,7 @@ export function BarChart({
   sim,
   highlight,
   ariaLabel,
-  yLabel = 'الاحتمال',
+  yLabel,
   xLabel,
   curve,
 }: {
@@ -54,6 +55,8 @@ export function BarChart({
   curve?: ((x: number) => number) | null;
 }) {
   const uid = useId().replace(/:/g, '');
+  const en = useUiLang() === 'en';
+  yLabel ??= en ? 'Probability' : 'الاحتمال';
   const maxP = Math.max(...bars.map((b) => b.p), ...(sim ?? []).map((b) => b.p));
   const { max: yMax, ticks: yt } = niceScale(maxP * 1.05);
   const n = bars.length;
@@ -145,7 +148,7 @@ export function CurveChart({
   markers = [],
   ariaLabel,
   xLabel,
-  yLabel = 'الكثافة f(x)',
+  yLabel,
 }: {
   f: (x: number) => number;
   xMin: number;
@@ -158,6 +161,8 @@ export function CurveChart({
   yLabel?: string;
 }) {
   const uid = useId().replace(/:/g, '');
+  const en = useUiLang() === 'en';
+  yLabel ??= en ? 'Density f(x)' : 'الكثافة f(x)';
   const N = 220;
   const pts = Array.from({ length: N + 1 }, (_, i) => {
     const x = xMin + ((xMax - xMin) * i) / N;
@@ -229,14 +234,24 @@ export function CurveChart({
 
 /** مفتاح الرسم: أشكال مختلفة لا تعتمد على اللون وحده. */
 export function Legend({ items }: { items: ('theory' | 'sim' | 'highlight' | 'hist' | 'curve' | 'shade')[] }) {
-  const label = {
+  const en = useUiLang() === 'en';
+  const label = en
+    ? ({
+        theory: 'Bar: theoretical probability',
+        sim: 'Diamond ◆: simulated share',
+        highlight: 'Hatched shading: the chosen values',
+        hist: 'Light rectangles: simulation histogram',
+        curve: 'Line: theoretical density',
+        shade: 'Hatched shading: area = probability',
+      } as const)
+    : ({
     theory: 'عمود: الاحتمال النظري',
     sim: 'معيّن ◆: نسبة المحاكاة',
     highlight: 'تظليل مخطط: القيم المختارة',
     hist: 'مستطيلات فاتحة: مدرج المحاكاة',
     curve: 'خط: الكثافة النظرية',
     shade: 'تظليل مخطط: المساحة = الاحتمال',
-  } as const;
+  } as const);
   return (
     <ul className="legend">
       {items.map((i) => (

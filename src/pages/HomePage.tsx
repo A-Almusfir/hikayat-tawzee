@@ -9,7 +9,7 @@ import { href } from '../lib/router';
 import { Tex } from '../components/Tex';
 import { moreCards } from '../content/more';
 import { matches } from '../lib/search';
-import { useLang } from '../lib/lang';
+import { TRANSLATED_CHAPTERS, useLang } from '../lib/lang';
 import { Rich } from '../components/Tex';
 
 // ما في ورقة القوانين بلا فصل: يظهر في البحث برابط إلى بطاقته أو الفصل الأقرب
@@ -31,9 +31,11 @@ export function HomePage() {
             <h1 tabIndex={-1}>Hikayat Tawzee</h1>
             <p className="h2-slogan">Understand the story, and the formula follows.</p>
             <p className="h2-sub">{journey.length} probability distributions, one family. Each one has a true story: where it came from, why people needed it, and how its formula is built from that story.</p>
-            <p className="h2-sub">This English version is a beta: the home page, the family tree and Exam night are translated; the chapters are still in Arabic.</p>
-            <a className="btn btn-primary" href={href.exam}>
-              See all the formulas: Exam night →
+            <p className="h2-sub">
+              This English version is a beta: the home page, the family tree, Exam night and the first {TRANSLATED_CHAPTERS.size} chapters are translated; the other chapters are still in Arabic.
+            </p>
+            <a className="btn btn-primary" href={href.dist('bernoulli')}>
+              Start the journey: Bernoulli's urn →
             </a>
           </>
         ) : (
@@ -59,7 +61,7 @@ export function HomePage() {
       </section>
 
       <section className="h2-journey" aria-labelledby="j-h">
-        <h2 id="j-h">{en ? `The journey: ${journey.length} chapters (in Arabic)` : `الرحلة: ${journey.length} فصلًا`}</h2>
+        <h2 id="j-h">{en ? `The journey: ${journey.length} chapters` : `الرحلة: ${journey.length} فصلًا`}</h2>
         <div className="j-search">
           <label htmlFor="j-q">{en ? 'Search by name' : 'ابحث بالاسم'}</label>
           <input id="j-q" type="search" value={q} onChange={(e) => setQ(e.target.value)} placeholder={en ? 'e.g. gamma, Poisson, chi' : 'مثل: غاما، Poisson، كاي'} autoComplete="off" aria-describedby="j-count" />
@@ -78,7 +80,10 @@ export function HomePage() {
                   <span className="j-body">
                     {en ? (
                       <>
-                        <span className="j-name">{d.nameEn} <span className="en" lang="ar" dir="rtl">{d.nameAr}</span></span>
+                        <span className="j-name">
+                          {d.nameEn} <span className="en" lang="ar" dir="rtl">{d.nameAr}</span>
+                          {!TRANSLATED_CHAPTERS.has(id) && <span className="en"> (Arabic)</span>}
+                        </span>
                         <Rich className="j-q" text={d.en.when} />
                       </>
                     ) : (

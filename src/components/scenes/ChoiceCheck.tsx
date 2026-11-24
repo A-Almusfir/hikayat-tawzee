@@ -3,6 +3,7 @@ import type { Choice } from '../../content/chapterTypes';
 import { displayOrder } from '../../lib/shuffle';
 import { progress, useProgress } from '../../lib/storage';
 import { Rich } from '../Tex';
+import { useUiLang } from '../../lib/lang';
 
 /**
  * سؤال اختيار من متعدد: يختار الطالب ثم يضغط «تحقّق».
@@ -10,6 +11,7 @@ import { Rich } from '../Tex';
  */
 export function ChoiceCheck({ id, q, kicker }: { id: string; q: Choice; kicker: string }) {
   const saved = useProgress().quiz[id];
+  const en = useUiLang() === 'en';
   const answered = saved !== undefined;
   const [pick, setPick] = useState<number | null>(null);
   const fb = useRef<HTMLDivElement>(null);
@@ -71,20 +73,20 @@ export function ChoiceCheck({ id, q, kicker }: { id: string; q: Choice; kicker: 
       </div>
       {!answered ? (
         <button type="button" className="btn btn-c check-btn" onClick={check} disabled={pick === null}>
-          تحقّق
+          {en ? 'Check' : 'تحقّق'}
         </button>
       ) : (
         <div className={`feedback ${saved === ci ? 'ok' : 'no'}`} role="status" tabIndex={-1} ref={fb}>
           <p>
-            <strong>✗ اخترت: </strong>
+            <strong>{en ? '✗ You chose: ' : '✗ اخترت: '}</strong>
             <Rich text={q.options[saved].text} /> — <Rich text={q.options[saved].why} />
           </p>
           <p>
-            <strong>✓ الصحيح: </strong>
+            <strong>{en ? '✓ Correct: ' : '✓ الصحيح: '}</strong>
             <Rich text={q.options[ci].text} /> — <Rich text={q.options[ci].why} />
           </p>
           <button type="button" className="link-btn" onClick={() => ((retried.current = true), progress.setQuiz(id, undefined), setPick(null))}>
-            جرّب مرة ثانية
+            {en ? 'Try again' : 'جرّب مرة ثانية'}
           </button>
         </div>
       )}

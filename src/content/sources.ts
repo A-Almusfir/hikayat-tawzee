@@ -3,6 +3,8 @@
 export interface Source {
   id: string;
   cite: string;
+  /** الإشارة بالإنجليزية حين تحمل cite ملاحظة عربية (للفصول المترجمة). */
+  citeEn?: string;
   url: string;
   verified: 'search-snippet' | 'multiple-search-snippets';
 }
@@ -11,6 +13,7 @@ export const sources: Source[] = [
   {
     id: 'bortkiewicz-york',
     cite: 'L. von Bortkiewicz (1898), Das Gesetz der kleinen Zahlen — جدول البيانات الأصلي (University of York, History of Statistics)',
+    citeEn: 'L. von Bortkiewicz (1898), Das Gesetz der kleinen Zahlen — the original data table (University of York, History of Statistics)',
     url: 'https://www.york.ac.uk/depts/maths/histstat/bortkiewicz.htm',
     verified: 'search-snippet',
   },
@@ -41,6 +44,7 @@ export const sources: Source[] = [
   {
     id: 'stigler1982',
     cite: 'S. M. Stigler (1982), Poisson on the Poisson distribution, Statistics & Probability Letters 1(1): 33–35 — ترجمة نص بواسون 1837 مع إشارة إلى عمل دي موافر السابق',
+    citeEn: 'S. M. Stigler (1982), Poisson on the Poisson distribution, Statistics & Probability Letters 1(1): 33–35 — a translation of Poisson\'s 1837 text, noting de Moivre\'s earlier work',
     url: 'https://ideas.repec.org/a/eee/stapro/v1y1982i1p33-35.html',
     verified: 'multiple-search-snippets',
   },
@@ -59,6 +63,7 @@ export const sources: Source[] = [
   {
     id: 'ars-conjectandi',
     cite: 'Wikipedia — Ars Conjectandi (نُشر 1713 بعد وفاة ياكوب برنولي؛ قانون الأعداد الكبيرة في الجزء الرابع)',
+    citeEn: 'Wikipedia — Ars Conjectandi (published in 1713 after Jacob Bernoulli’s death; the law of large numbers is in Part 4)',
     url: 'https://en.wikipedia.org/wiki/Ars_Conjectandi',
     verified: 'multiple-search-snippets',
   },
@@ -71,18 +76,21 @@ export const sources: Source[] = [
   {
     id: 'urn-problem',
     cite: 'Wikipedia — Urn problem (جرة برنولي في Ars Conjectandi)',
+    citeEn: 'Wikipedia — Urn problem (Bernoulli\'s urn in Ars Conjectandi)',
     url: 'https://en.wikipedia.org/wiki/Urn_problem',
     verified: 'multiple-search-snippets',
   },
   {
     id: 'bernoulli-urn-unibo',
     cite: 'Rivista di Statistica (Università di Bologna) — شرح مثال جرة برنولي: 3000 بيضاء و2000 سوداء مع الإرجاع',
+    citeEn: 'Rivista di Statistica (Università di Bologna) — an explanation of Bernoulli\'s urn example: 3000 white and 2000 black, with replacement',
     url: 'https://rivista-statistica.unibo.it/article/download/6029/5802/17778',
     verified: 'search-snippet',
   },
   {
     id: 'points-wiki',
     cite: 'Wikipedia — Problem of points (باسكال وفيرما 1654؛ باتشولي 1494؛ غومبو)',
+    citeEn: 'Wikipedia — Problem of points (Pascal and Fermat 1654; Pacioli 1494; Gombaud)',
     url: 'https://en.wikipedia.org/wiki/Problem_of_points',
     verified: 'multiple-search-snippets',
   },
@@ -95,6 +103,7 @@ export const sources: Source[] = [
   {
     id: 'samawal-mactutor',
     cite: 'MacTutor — Al-Samawal (حفظ عمل الكرجي في المعاملات)',
+    citeEn: 'MacTutor — Al-Samawal (preserving al-Karaji\'s work on the coefficients)',
     url: 'https://mathshistory.st-andrews.ac.uk/Biographies/Al-Samawal/',
     verified: 'search-snippet',
   },
@@ -185,18 +194,21 @@ export const sources: Source[] = [
   {
     id: 'tea-wiki',
     cite: 'Lady tasting tea — Wikipedia (تجربة فيشر في The Design of Experiments, 1935، واختبار فيشر الدقيق)',
+    citeEn: 'Lady tasting tea — Wikipedia (Fisher\'s experiment in The Design of Experiments, 1935, and Fisher\'s exact test)',
     url: 'https://en.wikipedia.org/wiki/Lady_tasting_tea',
     verified: 'multiple-search-snippets',
   },
   {
     id: 'tea-uprm',
     cite: 'W. Rolke, University of Puerto Rico — The Lady tasting tea (ثمانية أكواب، و70 اختيارًا متساوي الاحتمال)',
+    citeEn: 'W. Rolke, University of Puerto Rico — The Lady tasting tea (8 cups, and 70 equally likely choices)',
     url: 'https://academic.uprm.edu/wrolke/esma3015/lady-tea.html',
     verified: 'search-snippet',
   },
   {
     id: 'muriel-bristol-wiki',
     cite: 'Muriel Bristol — Wikipedia (السيدة في التجربة، واقتراح وليم روتش، وعدم نشر النتيجة)',
+    citeEn: 'Muriel Bristol — Wikipedia (the lady in the experiment, William Roach\'s suggestion, and the unpublished result)',
     url: 'https://en.wikipedia.org/wiki/Muriel_Bristol',
     verified: 'multiple-search-snippets',
   },

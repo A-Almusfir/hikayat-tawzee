@@ -3,12 +3,14 @@ import type { TryIt } from '../../content/chapterTypes';
 import { fmt } from '../../lib/dist';
 import { Rich, Tex } from '../Tex';
 import { Scene } from './Scene';
+import { useUiLang } from '../../lib/lang';
 
 type Fit = Extract<TryIt, { kind: 'fit' }>;
 
 /** المشهد ②: منزلق واحد يطابق القانون على بيانات حقيقية. */
 export function FitLab({ t }: { t: Fit }) {
   const [theta, setTheta] = useState(t.param.start);
+  const en = useUiLang() === 'en';
   const [shown, setShown] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -37,7 +39,11 @@ export function FitLab({ t }: { t: Fit }) {
       title={t.headline}
       art={
         <figure className="hk-chart">
-          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={`عند ${t.param.label} = ${fmt(theta, 2)}: المتوقع ${cats.map((c) => `${c.label}: ${fmt(c.e, 1)}`).join('، ')}. الواقع: ${cats.map((c) => c.o).join('، ')}`} direction="ltr">
+          <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={
+              en
+                ? `At ${t.param.label} = ${fmt(theta, 2)}: expected ${cats.map((c) => `${c.label}: ${fmt(c.e, 1)}`).join(', ')}. Observed: ${cats.map((c) => c.o).join(', ')}`
+                : `عند ${t.param.label} = ${fmt(theta, 2)}: المتوقع ${cats.map((c) => `${c.label}: ${fmt(c.e, 1)}`).join('، ')}. الواقع: ${cats.map((c) => c.o).join('، ')}`
+            } direction="ltr">
             <defs>
               <pattern id="obsHatch" width="6" height="6" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
                 <line x1="0" y1="0" x2="0" y2="6" stroke="#1b2a4a" strokeWidth="1.6" />
@@ -62,8 +68,8 @@ export function FitLab({ t }: { t: Fit }) {
             <line x1={L} x2={W - 4} y1={Y(0)} y2={Y(0)} className="axis" />
           </svg>
           <figcaption>
-            <span className="lg"><i className="lg-obs" /> ما وقع (عدد الوحدات)</span>
-            <span className="lg"><i className="lg-exp" /> ما يتوقعه القانون</span>
+            <span className="lg"><i className="lg-obs" /> {en ? 'Observed (number of units)' : 'ما وقع (عدد الوحدات)'}</span>
+            <span className="lg"><i className="lg-exp" /> {en ? 'Expected by the formula' : 'ما يتوقعه القانون'}</span>
             <span className="lg-x">{t.xLabel}</span>
           </figcaption>
         </figure>
@@ -80,7 +86,7 @@ export function FitLab({ t }: { t: Fit }) {
         </div>
       </div>
       <p className="fit" aria-live="polite">
-        الفرق الكلي بين ما وقع وما يتوقعه القانون: <strong className="num" dir="ltr">{fmt(diff, 1)}</strong> {t.unitLabel}
+        {en ? 'Total difference between observed and expected: ' : 'الفرق الكلي بين ما وقع وما يتوقعه القانون: '}<strong className="num" dir="ltr">{fmt(diff, 1)}</strong> {t.unitLabel}
       </p>
       {!shown ? (
         <button type="button" className="btn btn-c" onClick={() => setShown(true)}>
@@ -90,25 +96,25 @@ export function FitLab({ t }: { t: Fit }) {
         <div className="reveal-box" role="status" tabIndex={-1} ref={box}>
           <Rich as="p" text={t.reveal} />
           <button type="button" className="btn btn-quiet" onClick={() => setTheta(t.param.best)}>
-            ضع <Tex tex={`${t.param.symbol} = ${t.param.best}`} />
+            {en ? 'Set ' : 'ضع '}<Tex tex={`${t.param.symbol} = ${t.param.best}`} />
           </button>
         </div>
       )}
       <table className="hk-table">
-        <caption className="sr-only">ما وقع مقابل المتوقع</caption>
+        <caption className="sr-only">{en ? 'Observed versus expected' : 'ما وقع مقابل المتوقع'}</caption>
         <thead>
           <tr>
-            <th scope="row">العدد</th>
+            <th scope="row">{en ? 'Count' : 'العدد'}</th>
             {cats.map((c) => <th key={c.label} scope="col" dir="ltr">{c.label}</th>)}
           </tr>
         </thead>
         <tbody>
           <tr>
-            <th scope="row">وقع</th>
+            <th scope="row">{en ? 'Observed' : 'وقع'}</th>
             {cats.map((c) => <td key={c.label} dir="ltr">{c.o}</td>)}
           </tr>
           <tr>
-            <th scope="row">متوقع</th>
+            <th scope="row">{en ? 'Expected' : 'متوقع'}</th>
             {cats.map((c) => <td key={c.label} dir="ltr">{fmt(c.e, 1)}</td>)}
           </tr>
         </tbody>

@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { href, useRoute } from './lib/router';
-import { setLang, TRANSLATED, useLang } from './lib/lang';
+import { ArabicOnlyScope, isTranslated, setLang, useLang } from './lib/lang';
 import { progress } from './lib/storage';
 import { chapters } from './content/chapters';
 import { sheetById } from './content/sheet';
@@ -116,12 +116,14 @@ export default function App() {
       <main id="main">
         {/* مفتاح لكل صفحة: لا تبقى الصفحة السابقة مخفية في الشجرة أثناء تحميل الجديدة */}
         <Suspense key={pageKey} fallback={<p className="loading" role="status">{en ? 'Loading…' : 'جارٍ التحميل…'}</p>}>
-          {en && !TRANSLATED.has(route.name) ? (
+          {en && !isTranslated(route as { name: string; id?: string }) ? (
             <>
               <p className="lang-note" lang="en" dir="ltr">
-                This page is in Arabic only for now. The English beta covers the home page, the family tree and Exam night.
+                This page is in Arabic only for now. The English beta covers the home page, the family tree, Exam night and the first four chapters.
               </p>
-              <div lang="ar" dir="rtl">{page}</div>
+              <div lang="ar" dir="rtl">
+                <ArabicOnlyScope value={true}>{page}</ArabicOnlyScope>
+              </div>
             </>
           ) : (
             page

@@ -235,7 +235,7 @@ export const distEn: Partial<Record<DistId, Tr<DistContent>>> = {
       {
         prompt: 'The probability of success is $p = 0.2$. A student said: “The mean number of trials until the first success is 4.” What do you make of it, using this site’s convention?',
         options: [
-          { text: 'Wrong: the mean is $1/p = 5$ trials. The value 4 is the mean number of failures before the success, $(1-p)/p$, which is the other convention.', why: 'The 2 conventions always differ by exactly 1 trial: $X = Y + 1$.' },
+          { text: 'Wrong: the mean is $1/p = 5$ trials. The value 4 is the mean number of failures before the success, $(1-p)/p$, which is the other convention.', why: 'The two conventions always differ by exactly one trial: $X = Y + 1$.' },
           { text: 'Right, because $(1-p)/p = 4$.', why: 'That is the formula for the number of failures, not the number of trials.' },
           { text: 'Wrong: the mean is $p = 0.2$.', why: '$p$ is a probability in a single trial, not the mean number of trials.' },
           { text: 'Wrong: the mean is $(1-p)/p^2 = 20$.', why: 'That is the variance, not the mean.' },
@@ -250,7 +250,7 @@ export const distEn: Partial<Record<DistId, Tr<DistContent>>> = {
       fnName: 'Probability density function (PDF)',
       parts: [
         { label: 'The rate', explain: 'The height of the density at $x=0$; the larger the rate, the shorter the wait tends to be.' },
-        { label: 'The probability of surviving', explain: 'It equals $P(X > x)$: the probability that no event occurs in $[0, x]$.' },
+        { label: 'The survival probability', explain: 'It equals $P(X > x)$: the probability that no event occurs in $[0, x]$.' },
       ],
       intuition: [
         'Waiting longer than $x$ means that the number of events in the interval $[0, x]$ is zero. That is a Poisson question with mean $\\theta x$.',

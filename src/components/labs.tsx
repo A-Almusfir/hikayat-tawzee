@@ -52,11 +52,11 @@ function TrialStrip({ trials, successWord, failWord }: { trials: number[]; succe
   const { en, t: tr } = useT();
   successWord ??= tr('نجاح', 'success');
   failWord ??= tr('إخفاق', 'failure');
-  const [S, F] = en ? ['S', 'F'] : ['ن', 'خ'];
+  const [S, F] = en ? [successWord[0].toUpperCase(), failWord[0].toUpperCase()] : ['ن', 'خ'];
   const s = trials.filter((t) => t === 1).length;
   return (
     <div className="strip-wrap">
-      <ol className="strip" aria-label={en ? `${trials.length} trials: ${s} ${successWord} and ${trials.length - s} ${failWord}` : `${trials.length} محاولة: ${s} ${successWord} و${trials.length - s} ${failWord}`}>
+      <ol className="strip" aria-label={en ? `${trials.length} trials: ${successWord} ${s}, ${failWord} ${trials.length - s}` : `${trials.length} محاولة: ${s} ${successWord} و${trials.length - s} ${failWord}`}>
         {trials.map((t, i) => (
           <li key={i} className={t ? 'ok' : 'no'} title={`${tr('المحاولة', 'Trial')} ${i + 1}: ${t ? successWord : failWord}`} aria-hidden="true">
             {t ? S : F}
@@ -281,7 +281,7 @@ export function PoissonLab() {
     <div className="lab">
       <div className="slider-grid">
         <Slider label={tr('المعدل', 'Rate')} symbol="r" value={r} onChange={setR} {...RANGES.poissonRate} unit={tr('حدث/ساعة', 'events/hour')} digits={1} />
-        <Slider label={tr('طول الفترة', 'Length of the interval')} symbol="t" value={t} onChange={setT} {...RANGES.poissonT} unit={tr('ساعة', 'hours')} digits={1} />
+        <Slider label={tr('طول الفترة', 'Length of the interval')} symbol="t" value={t} onChange={setT} {...RANGES.poissonT} unit={tr('ساعة', 'h')} digits={1} />
         <Slider label={tr('عدد الأحداث', 'Number of events')} symbol="k" value={kk} onChange={setK} min={0} max={K} step={1} digits={0} />
       </div>
       <p className="lambda-line">
@@ -301,7 +301,7 @@ export function PoissonLab() {
       <SimButtons onOne={runOne} oneLabel={tr('ولّد فترة واحدة', 'Generate one interval')} onBatch={batch} batchLabel={tr(`كرّر ${SIM_BATCH} فترة`, `Repeat ${SIM_BATCH} intervals`)} onClear={() => (sim.clear(), setOne(null))} full={sim.full} hasData={!!sim.stats} />
       {one && (
         <>
-          <Timeline times={one} t={t} unit={tr('ساعة', 'hours')} label={tr(`فترة طولها ${t} ساعة وصل فيها ${one.length} طلبًا`, `An interval of ${t} hours with ${one.length} arrivals`)} />
+          <Timeline times={one} t={t} unit={tr('ساعة', 'h')} label={tr(`فترة طولها ${t} ساعة وصل فيها ${one.length} طلبًا`, `An interval of ${t} h with ${one.length} arrivals`)} />
           <p className="result-line">
             {tr('عدد الأحداث في هذه الفترة: ', 'Events in this interval: ')}<Tex tex={`X = ${one.length}`} />
           </p>
@@ -348,7 +348,7 @@ export function ExponentialLab() {
     <div className="lab">
       <div className="slider-grid">
         <Slider label={tr('المعدل', 'Rate')} symbol="\theta" value={theta} onChange={setTheta} {...RANGES.expTheta} unit={tr('حدث/ساعة', 'events/hour')} digits={1} />
-        <Slider label={tr('الزمن', 'Time')} symbol="t" value={t} onChange={setT} min={0.05} max={3} step={0.05} unit={tr('ساعة', 'hours')} />
+        <Slider label={tr('الزمن', 'Time')} symbol="t" value={t} onChange={setT} min={0.05} max={3} step={0.05} unit={tr('ساعة', 'h')} />
       </div>
       <fieldset className="seg">
         <legend>{tr('الاحتمال المطلوب', 'The probability you want')}</legend>
@@ -356,7 +356,7 @@ export function ExponentialLab() {
           <input type="radio" name="expmode" checked={mode === 'gt'} onChange={() => setMode('gt')} /> {tr('انتظار أطول من ', 'Waiting longer than ')}<Tex tex="t" />: <Tex tex="P(X>t)" />
         </label>
         <label>
-          <input type="radio" name="expmode" checked={mode === 'le'} onChange={() => setMode('le')} /> {tr('خلال ', 'Within ')}<Tex tex="t" />{tr(' أو أقل', ' or less')}: <Tex tex="P(X\le t)" />
+          <input type="radio" name="expmode" checked={mode === 'le'} onChange={() => setMode('le')} /> {tr('خلال ', 'Waiting ')}<Tex tex="t" />{tr(' أو أقل', ' or less')}: <Tex tex="P(X\le t)" />
         </label>
       </fieldset>
       <CurveChart
@@ -368,10 +368,10 @@ export function ExponentialLab() {
         markers={[{ x: 1 / theta, label: 'E[X]' }]}
         ariaLabel={
           en
-            ? `Exponential density with rate ${fmt(theta)} per hour. ${mode === 'le' ? 'P(X ≤ t)' : 'P(X > t)'} = ${fmt(pr)} at t = ${fmt(t)} hours`
+            ? `Exponential density with rate ${fmt(theta)} per hour. ${mode === 'le' ? 'P(X ≤ t)' : 'P(X > t)'} = ${fmt(pr)} at t = ${fmt(t)} h`
             : `كثافة أسية بمعدل ${fmt(theta)} لكل ساعة. ${mode === 'le' ? 'P(X ≤ t)' : 'P(X > t)'} = ${fmt(pr)} عند t = ${fmt(t)} ساعة`
         }
-        xLabel={tr('زمن الانتظار x (ساعة)', 'Waiting time x (hours)')}
+        xLabel={tr('زمن الانتظار x (ساعة)', 'Waiting time x (h)')}
       />
       <Legend items={hist && waits.length >= MIN_SIM ? ['curve', 'shade', 'hist'] : ['curve', 'shade']} />
       <ProbLine
@@ -379,28 +379,28 @@ export function ExponentialLab() {
         value={pr}
       />
       <p className="hint">
-        <Rich text={tr(`$t = ${fmt(t)}$ ساعة = ${fmt(t * 60, 1)} دقيقة. المساحة المظللة هي الاحتمال.`, `$t = ${fmt(t)}$ hours = ${fmt(t * 60, 1)} minutes. The shaded area is the probability.`)} />
+        <Rich text={tr(`$t = ${fmt(t)}$ ساعة = ${fmt(t * 60, 1)} دقيقة. المساحة المظللة هي الاحتمال.`, `$t = ${fmt(t)}$ h = ${fmt(t * 60, 1)} min. The shaded area is the probability.`)} />
       </p>
       <p className="trunc-note">
         <Rich
           text={tr(
             `الرسم يتوقف عند $x \\approx ${fmt(xMax, 2)}$ ساعة؛ المساحة بعدها $\\approx ${fmt(1 - exponential.cdf(xMax, theta), 4)}$ غير معروضة لكنها محسوبة في الاحتمالات. ارتفاع المنحنى كثافة لا احتمال: عند $\\theta > 1$ تتجاوز $f(0) = \\theta$ القيمة 1 دون أي تناقض.`,
-            `The chart stops at $x \\approx ${fmt(xMax, 2)}$ hours; the area beyond it, $\\approx ${fmt(1 - exponential.cdf(xMax, theta), 4)}$, is not shown but is included in the probabilities. The height of the curve is a density, not a probability: when $\\theta > 1$, $f(0) = \\theta$ exceeds 1 without any contradiction.`,
+            `The chart stops at $x \\approx ${fmt(xMax, 2)}$ h; the area beyond it, $\\approx ${fmt(1 - exponential.cdf(xMax, theta), 4)}$, is not shown but is included in the probabilities. The height of the curve is a density, not a probability: when $\\theta > 1$, $f(0) = \\theta$ exceeds 1 without any contradiction.`,
           )}
         />
       </p>
       <SimButtons onOne={() => add(1)} oneLabel={tr('انتظر الطلب التالي', 'Wait for the next request')} onBatch={() => add(SIM_BATCH)} batchLabel={tr(`ولّد ${SIM_BATCH} زمن انتظار`, `Generate ${SIM_BATCH} waiting times`)} onClear={() => (setWaits([]), setOne(null))} full={full} hasData={waits.length > 0} />
       {one !== null && (
         <>
-          <Timeline times={[one]} t={Math.max(xMax, one)} unit={tr('ساعة', 'hours')} label={tr(`وصل الطلب التالي بعد ${fmt(one, 3)} ساعة`, `The next request arrived after ${fmt(one, 3)} hours`)} />
+          <Timeline times={[one]} t={Math.max(xMax, one)} unit={tr('ساعة', 'h')} label={tr(`وصل الطلب التالي بعد ${fmt(one, 3)} ساعة`, `The next request arrived after ${fmt(one, 3)} h`)} />
           <p className="result-line">
-            {tr('وصل الطلب التالي بعد ', 'The next request arrived after ')}<Tex tex={`X \\approx ${fmt(one, 3)}`} /> {tr('ساعة', 'hours')} (≈ {fmt(one * 60, 1)} {tr('دقيقة', 'minutes')})
+            {tr('وصل الطلب التالي بعد ', 'The next request arrived after ')}<Tex tex={`X \\approx ${fmt(one, 3)}`} /> {tr('ساعة', 'h')} (≈ {fmt(one * 60, 1)} {tr('دقيقة', 'min')})
           </p>
         </>
       )}
       {beyond > 0 && <p className="trunc-note">{tr(`أزمنة في المحاكاة تجاوزت نطاق الرسم ولا تظهر في المدرج: ${beyond}.`, `Simulated times beyond the chart, not shown in the histogram: ${beyond}.`)}</p>}
       <SimNote count={waits.length} max={SIM_MAX} />
-      <Stats mean={exponential.mean(theta)} variance={exponential.variance(theta)} meanTex="\tfrac{1}{\theta}" varTex="\tfrac{1}{\theta^2}" sim={enough(stats)} unit={tr('ساعة', 'hours')} />
+      <Stats mean={exponential.mean(theta)} variance={exponential.variance(theta)} meanTex="\tfrac{1}{\theta}" varTex="\tfrac{1}{\theta^2}" sim={enough(stats)} unit={tr('ساعة', 'h')} />
     </div>
   );
 }
@@ -629,8 +629,8 @@ export function GammaLab() {
         xMax={xMax}
         hist={hist}
         markers={[{ x: alpha / beta, label: 'E[X]' }]}
-        ariaLabel={tr(`كثافة غاما α=${alpha}, β=${fmt(beta)}، ومتوسطها ${fmt(alpha / beta)} دقيقة`, `Gamma density α=${alpha}, β=${fmt(beta)}, with mean ${fmt(alpha / beta)} minutes`)}
-        xLabel={tr('زمن الانتظار حتى الحدث رقم α (دقيقة)', 'Waiting time until event number α (minutes)')}
+        ariaLabel={tr(`كثافة غاما α=${alpha}, β=${fmt(beta)}، ومتوسطها ${fmt(alpha / beta)} دقيقة`, `Gamma density α=${alpha}, β=${fmt(beta)}, with mean ${fmt(alpha / beta)} min`)}
+        xLabel={tr('زمن الانتظار حتى الحدث رقم α (دقيقة)', 'Waiting time until event number α (min)')}
       />
       <Legend items={hist ? ['curve', 'hist'] : ['curve']} />
       <div className="btn-row">
@@ -640,11 +640,11 @@ export function GammaLab() {
       </div>
       {one && (
         <p className="result-line">
-          <Rich text={`${tr('المراحل', 'Stages')}: $${one.map((x) => fmt(x, 2)).join(' + ')} = ${fmt(one.reduce((a, b) => a + b, 0), 2)}$ ${tr('دقيقة', 'minutes')}.`} />
+          <Rich text={`${tr('المراحل', 'Stages')}: $${one.map((x) => fmt(x, 2)).join(' + ')} = ${fmt(one.reduce((a, b) => a + b, 0), 2)}$ ${tr('دقيقة', 'min')}.`} />
         </p>
       )}
       <SimNote count={waits.length} max={SIM_MAX} />
-      <Stats mean={gammaDist.mean(alpha, beta)} variance={gammaDist.variance(alpha, beta)} meanTex="\tfrac{\alpha}{\beta}" varTex="\tfrac{\alpha}{\beta^2}" sim={enough(stats)} unit={tr('دقيقة', 'minutes')} />
+      <Stats mean={gammaDist.mean(alpha, beta)} variance={gammaDist.variance(alpha, beta)} meanTex="\tfrac{\alpha}{\beta}" varTex="\tfrac{\alpha}{\beta^2}" sim={enough(stats)} unit={tr('دقيقة', 'min')} />
     </div>
   );
 }

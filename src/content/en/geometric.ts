@@ -73,7 +73,7 @@ export const geometricEn: Tr<Chapter> = {
         label: 'From the story',
         given: 'On a European wheel ($p = \\tfrac{18}{37}$ for red), what is the probability that red does not appear in the first 10 spins?',
         steps: [
-          { title: 'Define the variable', body: '$X$ = the number of the first red spin, and $X \\sim \\mathrm{Geom}(\\tfrac{18}{37})$.' },
+          { title: 'Define the variable', body: '$X$ = the spin on which red first appears, and $X \\sim \\mathrm{Geom}(\\tfrac{18}{37})$.' },
           { title: '“No red in 10 spins” means $X > 10$' },
           { title: 'Compute and interpret', body: 'Rare, but it does not make red “due” on the eleventh spin: its probability there is still $\\tfrac{18}{37}$.' },
         ],

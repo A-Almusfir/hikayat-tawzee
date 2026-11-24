@@ -23,7 +23,7 @@ export const exponentialEn: Tr<Chapter> = {
         links: r`The number of calls in time $t$: Poisson with mean $\theta t$.`,
       },
       {
-        text: 'And the opposite question: how long do we wait until the next call? Its answer follows mathematically from the same Poisson count: the exponential distribution.',
+        text: 'The flip side: how long do we wait until the next call? Its answer follows mathematically from the same Poisson count: the exponential distribution.',
         links: r`$X$ = the waiting time (continuous), and $\theta$ = the rate (the rate $r$ in the Poisson chapter).`,
       },
     ],
@@ -42,7 +42,7 @@ export const exponentialEn: Tr<Chapter> = {
     headline: 'Waiting is a Poisson count of zero',
     steps: [
       {
-        story: 'Waiting longer than $x$ minutes means: not a single call in the interval $[0, x]$. And the number of calls in it is Poisson with mean $\\theta x$.',
+        story: 'Waiting longer than $x$ minutes means: not a single call in the interval $[0, x]$. The number of calls in it is Poisson with mean $\\theta x$.',
         predict: {
           prompt: 'What is the probability that no call arrives in $[0, x]$?',
           options: [
@@ -66,7 +66,7 @@ export const exponentialEn: Tr<Chapter> = {
         },
       },
     ],
-    note: 'The derivation assumes a homogeneous Poisson process: a constant rate. And the height of a density is not a probability: when $\\theta > 1$, $f(0) = \\theta$ exceeds 1 without any contradiction. We write the rate as $\\theta$; it is the rate $r$ in the Poisson chapter, so the mean count in time $t$ is $\\lambda = \\theta t$.',
+    note: 'The derivation assumes a homogeneous Poisson process: a constant rate. The height of a density is not a probability: when $\\theta > 1$, $f(0) = \\theta$ exceeds 1 without any contradiction. We write the rate as $\\theta$; it is the rate $r$ in the Poisson chapter, so the mean count in time $t$ is $\\lambda = \\theta t$.',
   },
   exam: {
     headline: 'The exam problem',
@@ -115,8 +115,8 @@ export const exponentialEn: Tr<Chapter> = {
         prompt: 'You have waited 5 minutes and no call has arrived (a homogeneous Poisson process). How does that affect the rest of the wait?',
         options: [
           { text: 'No effect: the distribution of the remaining wait is the original distribution (memorylessness).', why: '$P(X > s + t \\mid X > s) = e^{-\\theta t} = P(X > t)$.' },
-          { text: 'It is sure to be shorter, because the call is “overdue”.', why: 'That is the gambler’s fallacy in continuous form.' },
-          { text: 'It is sure to be longer.', why: 'The distribution does not change in either direction.' },
+          { text: 'It is now bound to be shorter, because the call is “overdue”.', why: 'That is the gambler’s fallacy in continuous form.' },
+          { text: 'It is now bound to be longer.', why: 'The distribution does not change in either direction.' },
           { text: 'The distribution has become uniform.', why: 'It stays exponential with the same rate.' },
         ],
       },

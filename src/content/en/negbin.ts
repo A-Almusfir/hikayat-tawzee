@@ -49,7 +49,7 @@ export const negbinEn: Tr<Chapter> = {
         predict: {
           prompt: 'Why do we count with $\\binom{x-1}{r-1}$ and not $\\binom{x}{r}$?',
           options: [
-            { text: 'Because the last round is certain to be a win, so we do not choose a position for it.', why: 'If one of the 3 wins came after the last round, the third win would have come earlier. So we only choose among the previous rounds.' },
+            { text: 'Because the last round is certain to be a win, so we do not choose a position for it.', why: 'If round $x$ were a loss, the third win would have come earlier and $X$ would be smaller than $x$. So we only choose among the previous rounds.' },
             { text: 'Because the first round does not count.', why: 'The first round counts; it is the last one that is settled.' },
             { text: 'Because $\\binom{x}{r}$ and $\\binom{x-1}{r-1}$ are equal.', why: 'They are not equal: $\\binom{5}{3} = 10$ and $\\binom{4}{2} = 6$.' },
             { text: 'Because the wins are not independent.', why: 'The rounds are independent; the only constraint is on where the last win falls.' },
@@ -64,7 +64,7 @@ export const negbinEn: Tr<Chapter> = {
     problems: [
       {
         label: 'From the story',
-        given: 'In a fair game ($p = \\tfrac12$), A needs 3 wins. What is the probability that the third win comes in exactly round 5?',
+        given: 'In a fair game ($p = \\tfrac12$), A needs 3 wins. What is the probability that the third win comes in round 5 exactly?',
         steps: [
           { title: 'Define the variable', body: '$X$ = the round in which the third win comes: negative binomial with $r = 3$ and $p = \\tfrac12$.' },
           { title: 'Substitute' },
@@ -75,7 +75,7 @@ export const negbinEn: Tr<Chapter> = {
         label: 'Course style',
         given: 'A salesperson succeeds on each call with probability $0.2$, independently of other calls. What is the probability of making the second sale on the fifth call? And how many calls are needed on average for 2 sales?',
         steps: [
-          { title: 'Define the variable', body: '$X$ = the number of the call on which the second sale comes: $r = 2$, $p = 0.2$.' },
+          { title: 'Define the variable', body: '$X$ = the call on which the second sale is made: $r = 2$, $p = 0.2$.' },
           { title: 'Substitute' },
           { title: 'The mean' },
         ],
@@ -100,7 +100,7 @@ export const negbinEn: Tr<Chapter> = {
       {
         prompt: 'What is the difference between the binomial and the negative binomial?',
         options: [
-          { text: 'Binomial: the number of trials is fixed and we count the successes. Negative binomial: the number of successes is fixed and we count the trials.', why: 'What is fixed and what varies trade places, hence the name.' },
+          { text: 'Binomial: the number of trials is fixed and we count the successes. Negative binomial: the number of successes is fixed and we count the trials.', why: 'What is fixed and what varies trade places between the two.' },
           { text: 'The negative binomial gives negative probabilities.', why: 'Probabilities are never negative; the name comes from an algebraic form of its coefficients.' },
           { text: 'The negative binomial is for drawing without replacement.', why: 'That is the hypergeometric.' },
           { text: 'There is no difference; they are 2 names for one distribution.', why: 'The variable is different: a number of successes versus a number of trials.' },
@@ -111,7 +111,7 @@ export const negbinEn: Tr<Chapter> = {
         options: [
           { why: '$\\frac{r}{p} = \\frac{4}{0.5} = 8$.' },
           { why: 'That is $r$: the smallest possible number of tosses, not the mean.' },
-          { why: 'That is the geometric mean $\\frac{1}{p}$, that is, until the first heads only.' },
+          { why: 'That is the mean of the geometric, $\\frac{1}{p}$: the wait until the first heads only.' },
           { why: 'The denominator is $p$, not $p^{2}$.' },
         ],
       },

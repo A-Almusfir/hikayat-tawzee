@@ -196,7 +196,7 @@ export function WaitsTry({ t }: { t: Of<'waits'> }) {
         {en ? 'Theoretical mean wait ' : 'متوسط الانتظار نظريًا '}<Tex tex={`\\tfrac{1}{\\theta} = ${fmt(1 / theta, 3)}`} /> {t.unit}
         {mean !== null && (
           <>
-            {en ? ', and in the simulation ' : '، وفي المحاكاة '}<strong className="num" dir="ltr">≈ {fmt(mean, 3)}</strong>
+            {en ? ', and in the simulation ' : '، وفي المحاكاة '}<strong className="num" dir="ltr">≈ {fmt(mean, 3)}</strong> {t.unit}
           </>
         )}
         .

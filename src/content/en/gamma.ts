@@ -8,7 +8,7 @@ const r = String.raw;
 const calls = gammaChapter.story.art.kind === 'timeline' ? gammaChapter.story.art.times.length : 0;
 
 export const gammaEn: Tr<Chapter> = {
-  question: 'How long do we wait until the α-th event happens?',
+  question: 'How long do we wait until event number α happens?',
   story: {
     headline: 'Erlang splits the wait into stages',
     art: {
@@ -22,7 +22,7 @@ export const gammaEn: Tr<Chapter> = {
         links: r`Each gap between 2 calls: exponential with rate $\beta$ (the $\theta$ of the exponential).`,
       },
       {
-        text: 'When the exponential did not fit the length of calls, Erlang split a call into successive stages, each with an independent exponential duration.',
+        text: 'When the exponential did not fit call durations, Erlang split a call into successive stages, each with an independent exponential duration.',
         links: r`The same logic: the wait until call number $\alpha$ is the sum of $\alpha$ exponential gaps.`,
       },
       {
@@ -43,7 +43,7 @@ export const gammaEn: Tr<Chapter> = {
     headline: 'A long wait = few events',
     steps: [
       {
-        story: 'Waiting longer than $x$ for event number $\\alpha$ means: **fewer than** $\\alpha$ events happened in $[0, x]$. And the number of events in that interval is Poisson with mean $\\beta x$.',
+        story: 'Waiting longer than $x$ for event number $\\alpha$ means: **fewer than** $\\alpha$ events happened in $[0, x]$. The number of events in that interval is Poisson with mean $\\beta x$.',
         predict: {
           prompt: 'Why “fewer than $\\alpha$” events, and not “zero” as in the exponential?',
           options: [
@@ -130,8 +130,8 @@ export const gammaEn: Tr<Chapter> = {
         options: [
           { text: 'Chi-square with $v$ degrees of freedom is the gamma with $\\alpha = \\frac{v}{2}$ and $\\beta = \\frac{1}{2}$.', why: 'Substitute into the gamma density and you get the chi-square density exactly.' },
           { text: 'Chi-square is the gamma with $\\alpha = 1$.', why: 'That is the exponential.' },
-          { text: 'They are unrelated.', why: 'Compare the 2 MGFs: $(1 - 2t)^{-v/2} = (1 - \\frac{t}{1/2})^{-v/2}$.' },
-          { text: 'Chi-square is the square of a gamma variable.', why: 'Chi-square is the square of a **standard normal** variable (and with $v$ degrees of freedom, the sum of $v$ of them).' },
+          { text: 'They are unrelated.', why: 'Compare the two MGFs: $(1 - 2t)^{-v/2} = (1 - \\frac{t}{1/2})^{-v/2}$.' },
+          { text: 'Chi-square is the square of a gamma variable.', why: 'Chi-square with 1 degree of freedom is the square of a **standard normal** variable; with $v$ degrees of freedom it is the sum of $v$ independent such squares.' },
         ],
       },
     ],

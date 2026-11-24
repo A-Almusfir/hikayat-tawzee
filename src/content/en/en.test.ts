@@ -46,6 +46,10 @@ function checkTranslation(name: string, ar: object, tr: unknown, ignore: (path: 
     }
     expect(bad, bad.join('\n')).toEqual([]);
   });
+  it(`${name}: لا نجمة مفردة (Rich يدعم **عريض** فقط، فالمفردة تظهر حرفيًا)`, () => {
+    const bad = enStr.filter(([, s]) => /(^|[^*])\*(?!\*)/.test(s.replace(/\$[^$]*\$/g, '').replace(/\*\*/g, ''))).map(([p]) => p);
+    expect(bad, bad.join('\n')).toEqual([]);
+  });
   it(`${name}: رياضيات النصوص الإنجليزية تُعرض في KaTeX`, () => {
     const tex = enStr.flatMap(([, s]) => [...s.matchAll(/\$([^$]+?)\$/g)].map((m) => m[1]));
     for (const t of tex) expect(() => katex.renderToString(t, { throwOnError: true, strict: 'ignore' }), t).not.toThrow();

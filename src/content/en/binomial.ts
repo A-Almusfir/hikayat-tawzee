@@ -32,7 +32,7 @@ export const binomialEn: Tr<Chapter> = {
   },
   tryIt: {
     headline: 'How should the stake be divided fairly?',
-    prompt: 'In a fair game, A needs 2 points to win. Choose how many points B needs, and see in how many ways of finishing the game A wins.',
+    prompt: 'In a fair game, A needs 2 points to win. Choose how many points B needs, and see in how many of the ways to finish the game A comes out on top.',
   },
   build: {
     headline: 'The number of ways × the probability of one way',
@@ -62,7 +62,7 @@ export const binomialEn: Tr<Chapter> = {
         },
       },
     ],
-    note: 'The different ways are separate events, so we add their equal probabilities. If $p$ changed, or the rounds were not independent, the ways would not be equally likely and the formula would not hold.',
+    note: 'The different ways are mutually exclusive events, so we add their equal probabilities. If $p$ changed, or the rounds were not independent, the ways would not be equally likely and the formula would not hold.',
   },
   exam: {
     headline: 'The exam problem',

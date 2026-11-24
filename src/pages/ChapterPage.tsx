@@ -20,17 +20,19 @@ import { DistCardView, FormulaSection, Quiz } from '../components/sections';
 import { Rich, Tex } from '../components/Tex';
 import { href, scrollToId } from '../lib/router';
 import { useUiLang } from '../lib/lang';
-import { overlay } from '../lib/i18n';
-import { chaptersEn } from '../content/en';
-import { distEn } from '../content/en/distributions';
+import { overlay, type Tr } from '../lib/i18n';
+import type { DistContent } from '../content/types';
 import { SCENES_EN } from '../components/scenes/Scene';
 
-export function ChapterPage({ ch: chAr, scene }: { ch: Chapter; scene?: number }) {
-  // الفصل المترجم: نصوص إنجليزية فوق الفصل العربي (الأرقام والفحوص من الأصل)
-  const en = useUiLang() === 'en' && !!chaptersEn[chAr.id];
-  const ch = useMemo(() => (en ? overlay(chAr, chaptersEn[chAr.id]) : chAr), [chAr, en]);
+/**
+ * tr: ترجمة الفصل ومرجعه، تمررها ChapterPageEn فقط، فلا يُحمَّل النص الإنجليزي لقارئ العربية.
+ * النصوص الإنجليزية تُوضع فوق الفصل العربي، والأرقام والفحوص من الأصل.
+ */
+export function ChapterPage({ ch: chAr, scene, tr }: { ch: Chapter; scene?: number; tr?: { ch?: Tr<Chapter>; dist?: Tr<DistContent> } }) {
+  const en = useUiLang() === 'en' && !!tr?.ch;
+  const ch = useMemo(() => (en ? overlay(chAr, tr!.ch) : chAr), [chAr, en, tr]);
   const dAr = distById[chAr.id];
-  const d = useMemo(() => (dAr && en ? overlay(dAr, distEn[chAr.id]) : dAr), [dAr, en, chAr.id]);
+  const d = useMemo(() => (dAr && en ? overlay(dAr, tr!.dist) : dAr), [dAr, en, tr]);
   const s = sheetById[ch.id];
   const color = identity[ch.id].color;
   const number = chapterNumber(ch.id);

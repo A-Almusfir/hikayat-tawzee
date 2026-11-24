@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { href, useRoute } from './lib/router';
-import { ArabicOnlyScope, isTranslated, setLang, useLang } from './lib/lang';
+import { ArabicOnlyScope, isTranslated, setLang, TRANSLATED_CHAPTERS, useLang } from './lib/lang';
 import { progress } from './lib/storage';
 import { chapters } from './content/chapters';
 import { sheetById } from './content/sheet';
@@ -9,6 +9,7 @@ import { HomePage } from './pages/HomePage';
 
 // الصفحات غير الرئيسية تُحمَّل عند الحاجة فقط، فتصغر الحزمة الأولى على الجوال
 const ChapterPage = lazy(() => import('./pages/ChapterPage').then((m) => ({ default: m.ChapterPage })));
+const ChapterPageEn = lazy(() => import('./pages/ChapterPageEn').then((m) => ({ default: m.ChapterPageEn })));
 const DrillPage = lazy(() => import('./pages/DrillPage').then((m) => ({ default: m.DrillPage })));
 const ExamNightPage = lazy(() => import('./pages/ExamNightPage').then((m) => ({ default: m.ExamNightPage })));
 const MgfPage = lazy(() => import('./pages/MgfPage').then((m) => ({ default: m.MgfPage })));
@@ -69,7 +70,8 @@ export default function App() {
       case 'home': return <HomePage />;
       case 'dist': {
         const ch = chapters[route.id as DistId];
-        return ch ? <ChapterPage key={route.id} ch={ch} scene={route.scene} /> : <NotFound />;
+        if (!ch) return <NotFound />;
+        return en && TRANSLATED_CHAPTERS.has(route.id) ? <ChapterPageEn key={route.id} ch={ch} scene={route.scene} /> : <ChapterPage key={route.id} ch={ch} scene={route.scene} />;
       }
       case 'choose': return <ChooserPage />;
       case 'cards': return <CardsPage />;

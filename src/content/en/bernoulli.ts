@@ -13,28 +13,28 @@ export const bernoulliEn: Tr<Chapter> = {
     },
     claims: [
       {
-        text: 'Jacob Bernoulli (died 1705) left his book *Ars Conjectandi* (“The Art of Conjecturing”) unfinished; his nephew Nicolaus published it in 1713.',
+        text: 'Jacob Bernoulli (died 1705) left his book Ars Conjectandi (“The Art of Conjecturing”) unfinished; his nephew Nicolaus published it in 1713.',
       },
       {
         text: 'In it he imagined an urn with 3000 white pebbles and 2000 black ones: you draw a pebble, record its colour, then put it back.',
         links: r`One draw: $X = 1$ if it is white, and $P(X=1) = p = 0.6$.`,
       },
       {
-        text: 'He proved that the probability that the share of white pebbles strays from $\\tfrac35$ by any margin you choose approaches zero as the draws pile up: the “law of large numbers”.',
-        links: r`The mean $E[X] = p$ is what the share approaches.`,
+        text: 'He proved that the probability that the proportion of white pebbles strays from $\\tfrac35$ by any margin you choose approaches zero as the draws pile up: the “law of large numbers”.',
+        links: r`The mean $E[X] = p$ is what the proportion approaches.`,
       },
     ],
     more: [
       { text: 'The law of large numbers is in the fourth part of the book, and that part itself was left unfinished.' },
-      { text: "Bernoulli's real aim was the reverse: if we do not know what is in the urn, how many draws do we need to estimate the unknown share with confidence?" },
+      { text: "Bernoulli's real aim was the reverse: if we do not know what is in the urn, how many draws do we need to estimate the unknown proportion with confidence?" },
     ],
   },
   tryIt: {
-    headline: 'Does the share approach the truth?',
-    prompt: "Draw pebbles from Bernoulli's urn (3 white : 2 black), and watch the share of white in your draws.",
+    headline: 'Does the proportion approach the truth?',
+    prompt: "Draw pebbles from Bernoulli's urn (3 white : 2 black), and watch the proportion of white in your draws.",
     successLabel: 'white',
     reveal:
-      'This is what Bernoulli proved: the probability that the share strays from $0.6$ by more than any margin you choose approaches zero as the draws pile up. But a single draw is still $0$ or $1$.',
+      'This is what Bernoulli proved: the probability that the proportion strays from $0.6$ by more than any margin you choose approaches zero as the draws pile up. But a single draw is still $0$ or $1$.',
   },
   build: {
     headline: 'One formula for two lines',
@@ -110,7 +110,7 @@ export const bernoulliEn: Tr<Chapter> = {
           { text: 'Drawing a white pebble: the event we chose to watch for.', why: '“Success” names the event we watch for, and here we chose white.' },
           { text: 'That the draw was “good”.', why: 'Success is not a judgement of quality; it names the event we watch for.' },
           { text: 'Drawing two pebbles.', why: 'A Bernoulli variable is a single trial.' },
-          { text: 'That the share has reached $0.6$.', why: 'The share is about many draws; a single draw is 0 or 1.' },
+          { text: 'That the proportion has reached $0.6$.', why: 'The proportion is about many draws; a single draw is 0 or 1.' },
         ],
       },
       {

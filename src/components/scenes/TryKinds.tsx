@@ -45,7 +45,7 @@ export function LlnTry({ t }: { t: Of<'lln'> }) {
         <figure className="hk-chart">
           <svg viewBox={`0 0 ${W} ${H}`} role="img" aria-label={
               en
-                ? n ? `After ${n} draws: share of ${t.successLabel} ${fmt(prop!, 3)}, true value ${t.p}` : 'No pebble drawn yet'
+                ? n ? `After ${n} draws: proportion of ${t.successLabel} ${fmt(prop!, 3)}, true value ${t.p}` : 'No pebble drawn yet'
                 : n ? `بعد ${n} سحبة: نسبة ${t.successLabel} ${fmt(prop!, 3)}، والحقيقية ${t.p}` : 'لم تُسحب أي حصاة بعد'
             } direction="ltr">
             {[0, 0.25, 0.5, 0.75, 1].map((v) => (
@@ -62,7 +62,7 @@ export function LlnTry({ t }: { t: Of<'lln'> }) {
             <text x={W - 6} y={H - 8} textAnchor="end" className="tick">{Math.max(n, 10)}</text>
           </svg>
           <figcaption>
-            <span className="lg"><i className="lg-run" /> {en ? `Share of ${t.successLabel} so far (simulation)` : `نسبة ${t.successLabel} حتى الآن (محاكاة)`}</span>
+            <span className="lg"><i className="lg-run" /> {en ? `Proportion of ${t.successLabel} so far (simulation)` : `نسبة ${t.successLabel} حتى الآن (محاكاة)`}</span>
             <span className="lg"><i className="lg-p" /> {en ? 'The true probability' : 'الاحتمال الحقيقي'}</span>
             <span className="lg-x">{en ? 'Number of draws' : 'عدد السحبات'}</span>
           </figcaption>
@@ -82,7 +82,7 @@ export function LlnTry({ t }: { t: Of<'lln'> }) {
         {n ? (
           en ? (
             <>
-              After <strong className="num">{n}</strong> draws: share of {t.successLabel} <strong className="num" dir="ltr">{fmt(prop!, 3)}</strong>, and the difference from <Tex tex={`p = ${t.p}`} /> is <strong className="num" dir="ltr">{fmt(Math.abs(prop! - t.p), 3)}</strong>.
+              After <strong className="num">{n}</strong> draws: proportion of {t.successLabel} <strong className="num" dir="ltr">{fmt(prop!, 3)}</strong>, and the difference from <Tex tex={`p = ${t.p}`} /> is <strong className="num" dir="ltr">{fmt(Math.abs(prop! - t.p), 3)}</strong>.
             </>
           ) : (
             <>
@@ -130,7 +130,7 @@ export function PointsTry({ t }: { t: Of<'points'> }) {
       {en ? (
         <>
           <p className="fit" aria-live="polite">
-            A needs {a} and B needs {b}: the game ends within at most <strong className="num">{n}</strong> rounds, giving <Tex tex={`2^{${n}} = ${2 ** n}`} /> equally likely ways. A wins in <strong className="num">{ways}</strong> of them, so A's fair share is <Tex tex={`\\tfrac{${ways}}{${2 ** n}} \\approx ${fmt(share, 4)}`} /> of the stake.
+            A needs {a} and B needs {b}: the game ends in at most <strong className="num">{n}</strong> rounds, giving <Tex tex={`2^{${n}} = ${2 ** n}`} /> equally likely ways. A wins in <strong className="num">{ways}</strong> of them, so A's fair share is <Tex tex={`\\tfrac{${ways}}{${2 ** n}} \\approx ${fmt(share, 4)}`} /> of the stake.
           </p>
           <p className="hint">Shaded bars: the ways in which A wins. The height of each bar = the number of ways ÷ <Tex tex={`2^{${n}}`} />.</p>
         </>

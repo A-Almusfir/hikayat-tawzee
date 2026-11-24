@@ -27,7 +27,7 @@ export const poissonEn: Tr<Chapter> = {
     ],
     more: [
       { text: 'The full data cover 14 corps over 20 years (1875–1894), that is 280 corps-years. The common table shown here (200) leaves out corps G, I, VI and XI.' },
-      { text: 'They were army corps of the Prussian army, not “cavalry corps” as is sometimes written.' },
+      { text: 'They were ordinary corps of the Prussian army, not “cavalry corps” as is sometimes written.' },
       { text: 'Because de Moivre reached a form of the result first, this distribution is a standard example of “Stigler’s law”: many discoveries are named after someone other than their first discoverer.' },
     ],
   },
@@ -51,7 +51,7 @@ export const poissonEn: Tr<Chapter> = {
       {
         story: 'A year with no deaths at all means all $n$ chances passed safely.',
         predict: {
-          prompt: 'What does $\\left(1-\\tfrac{\\lambda}{n}\\right)^{n}$ become as the chances increase without limit?',
+          prompt: 'What does $\\left(1-\\tfrac{\\lambda}{n}\\right)^{n}$ become as the number of chances grows without limit?',
           options: [
             { why: 'A well-known limit. With $\\lambda = 0.61$ it gives $0.543$, and what actually happened was $109/200 = 0.545$.' },
             { why: 'Each factor is less than 1, but it approaches 1 as fast as the number of factors grows, so the product does not collapse to zero.' },
@@ -73,7 +73,7 @@ export const poissonEn: Tr<Chapter> = {
         },
       },
     ],
-    note: 'An exact limit under assumptions: a constant rate, independence, and no two events at the same instant.',
+    note: 'The limit is exact, provided its assumptions hold: a constant rate, independence, and no two events at the same instant.',
   },
   exam: {
     headline: 'The exam problem',
@@ -84,7 +84,7 @@ export const poissonEn: Tr<Chapter> = {
         steps: [
           { title: 'Define the variable', body: '$X$ = the number of deaths in a corps over a year, and $X \\sim \\mathrm{Poisson}(0.61)$.' },
           { title: 'Substitute', body: '“Without any deaths” means $X = 0$:' },
-          { title: 'Interpret', body: 'We expect $200 \\times 0.5434 \\approx 108.7$ corps-years, and 109 actually occurred.' },
+          { title: 'Interpret', body: 'We expect $200 \\times 0.5434 \\approx 108.7$ corps-years, and 109 were actually observed.' },
         ],
         answer: '$P(X = 0) \\approx 0.5434$',
       },
@@ -110,7 +110,7 @@ export const poissonEn: Tr<Chapter> = {
     hook: 'The Poisson counts independent events that occur at a constant rate over an interval. And a single number governs everything:',
     hookNote: 'And in the horse-kick data themselves: the mean is $0.61$ and the variance ${\\approx 0.61}$.',
     compose: {
-      meanings: ['The remaining chances pass safely (which is also $P(X=0)$)', 'The effect of the mean raised to the number of events', 'The order does not matter'],
+      meanings: ['The remaining chances pass safely (which is also $P(X=0)$)', 'The mean raised to the power of the number of events', 'The order does not matter'],
     },
     recall: [
       {

@@ -1,6 +1,9 @@
 // طبقة الترجمة: النسخة الإنجليزية لا تكرر المحتوى، بل تكتب نصوصه فقط فوقه.
 // الأرقام والمعادلات ودوال الفحص تبقى من الأصل العربي، فلا يختلف حساب بين اللغتين.
 
+/** مفاتيح بنيوية لا تُترجم: معرّفات يعتمد عليها حفظ التقدم، وأنواع، ومصادر، ورموز رياضية. */
+type Structural = 'id' | 'kind' | 'src' | 'symbol' | 'correct' | 'check' | 'type' | 'nameAr' | 'nameEn' | 'notation';
+
 /** نصوص كائن فقط: كل حقل نصي اختياري، والدوال والأرقام لا تُترجم. المصفوفات تُطابق بالترتيب. */
 export type Tr<T> = T extends string
   ? string
@@ -9,7 +12,7 @@ export type Tr<T> = T extends string
     : T extends readonly (infer U)[]
       ? (Tr<U> | undefined)[]
       : T extends object
-        ? { [K in keyof T]?: Tr<T[K]> }
+        ? { [K in keyof T as K extends Structural ? never : K]?: Tr<T[K]> }
         : never;
 
 /** يضع نصوص الترجمة فوق الأصل: النص يُستبدل، والكائن يُدمج، والمصفوفة تُدمج عنصرًا بعنصر. */

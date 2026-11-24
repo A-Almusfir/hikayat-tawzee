@@ -31,7 +31,7 @@ export function SheetCard({ id }: { id: SheetId }) {
               <Tex tex={s.mgf.tex} /> <Rich text={`(${en ? s.en.mgf : s.mgf.domain})`} />
             </>
           ) : en ? (
-            <Rich text={`**${s.mgf.kind === 'none' ? 'Does not exist' : 'No simple closed form'}:** ${s.en.mgf}`} />
+            <Rich text={`**${s.mgf.kind === 'none' ? 'Does not exist' : 'No simple closed form'}.** ${s.en.mgf}`} />
           ) : (
             <Rich text={`**${s.mgf.kind === 'none' ? 'غير موجودة' : 'بلا صيغة بسيطة'}:** ${s.mgf.note}`} />
           )}

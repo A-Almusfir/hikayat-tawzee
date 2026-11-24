@@ -238,7 +238,7 @@ export function Legend({ items }: { items: ('theory' | 'sim' | 'highlight' | 'hi
   const label = en
     ? ({
         theory: 'Bar: theoretical probability',
-        sim: 'Diamond ◆: simulated share',
+        sim: 'Diamond ◆: simulated proportion',
         highlight: 'Hatched shading: the chosen values',
         hist: 'Light rectangles: simulation histogram',
         curve: 'Line: theoretical density',

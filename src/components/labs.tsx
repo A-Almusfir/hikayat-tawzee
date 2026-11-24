@@ -494,7 +494,7 @@ export function HypergeometricLab() {
           `فوق الهندسي N=${N}, k=${kk}, n=${nn}. احتمال إصابة ${hi} كلها بالتخمين ${fmt(hypergeometric.pmf(hi, N, kk, nn))}`,
           `Hypergeometric N=${N}, k=${kk}, n=${nn}. Probability of getting all ${hi} right by guessing: ${fmt(hypergeometric.pmf(hi, N, kk, nn))}`,
         )}
-        xLabel={t('عدد الإصابات بالتخمين x', 'Number right by guessing x')}
+        xLabel={t('عدد الإصابات بالتخمين x', 'Correct picks by guessing, x')}
       />
       <Legend items={enough(sim.stats) ? ['theory', 'highlight', 'sim'] : ['theory', 'highlight']} />
       {lo > 0 && <Rich as="p" className="hint" text={t(`لاحظ: $x$ لا يقل عن $${lo}$، لأنك تختار $${nn}$ ولا يوجد إلا $${N - kk}$ من النوع الآخر.`, `Note: $x$ is at least $${lo}$, because you pick $${nn}$ and there are only $${N - kk}$ of the other kind.`)} />}

@@ -13,7 +13,7 @@ export const hypergeometricEn: Tr<Chapter> = {
     },
     claims: [
       {
-        text: 'In his book *The Design of Experiments* (1935), Fisher told of a lady who said she could tell by taste whether the milk or the tea had been poured first.',
+        text: 'In his book The Design of Experiments (1935), Fisher told of a lady who said she could tell by taste whether the milk or the tea had been poured first.',
         links: r`The population: $N = 8$ cups, of which $k = 4$ are “milk first”.`,
       },
       {
@@ -26,8 +26,8 @@ export const hypergeometricEn: Tr<Chapter> = {
       },
     ],
     more: [
-      { text: 'The lady is said to have been the algologist Muriel Bristol, and the person who proposed testing her William Roach, who later married her.' },
-      { text: 'Fisher did not report the outcome of the experiment in his book, and the accounts of it are late and conflicting.' },
+      { text: 'The lady is said to have been the algae scientist Muriel Bristol, and it was William Roach, who later married her, who suggested testing her.' },
+      { text: 'Fisher did not report the outcome of the experiment in his book, and the accounts of it came later and conflict with one another.' },
       { text: "The test Fisher built on this calculation is known today as Fisher's exact test, and its probabilities come from the hypergeometric distribution." },
     ],
   },
@@ -52,7 +52,7 @@ export const hypergeometricEn: Tr<Chapter> = {
         },
       },
       {
-        story: 'The groups with $x$ correct picks: take $x$ of the 4 “milk first” cups, and the remaining $4 - x$ from the other 4 cups. The two choices are independent, so we multiply.',
+        story: 'The groups with $x$ correct picks: take $x$ of the 4 “milk first” cups, and the remaining $4 - x$ from the other 4 cups. The two choices are made separately, so by the multiplication principle we multiply.',
         predict: {
           prompt: 'How many groups have exactly 3 correct picks?',
           options: [
@@ -77,7 +77,7 @@ export const hypergeometricEn: Tr<Chapter> = {
           { title: '“At least 3” = 3 or 4' },
           { title: 'Compute' },
         ],
-        answer: "$P(X \\ge 3) \\approx 0.2429$: about 1 time in 4 by guessing alone. That is why 3 correct cups would not have convinced Fisher.",
+        answer: "$P(X \\ge 3) \\approx 0.2429$: about once in every 4 tries by guessing alone. That is why 3 correct cups would not have convinced Fisher.",
       },
       {
         label: 'Course style',

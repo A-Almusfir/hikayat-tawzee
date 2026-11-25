@@ -1,6 +1,6 @@
 import { useId } from 'react';
 import { fmt } from '../lib/dist';
-import { useUiLang } from '../lib/lang';
+import { useLang } from '../lib/lang';
 
 // رسوم SVG مبنية مباشرة من القيم المحسوبة. المحور السيني يسير من اليسار إلى اليمين كما في الرياضيات.
 const W = 560;
@@ -55,7 +55,7 @@ export function BarChart({
   curve?: ((x: number) => number) | null;
 }) {
   const uid = useId().replace(/:/g, '');
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   yLabel ??= en ? 'Probability' : 'الاحتمال';
   const maxP = Math.max(...bars.map((b) => b.p), ...(sim ?? []).map((b) => b.p));
   const { max: yMax, ticks: yt } = niceScale(maxP * 1.05);
@@ -161,7 +161,7 @@ export function CurveChart({
   yLabel?: string;
 }) {
   const uid = useId().replace(/:/g, '');
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   yLabel ??= en ? 'Density f(x)' : 'الكثافة f(x)';
   const N = 220;
   const pts = Array.from({ length: N + 1 }, (_, i) => {
@@ -234,7 +234,7 @@ export function CurveChart({
 
 /** مفتاح الرسم: أشكال مختلفة لا تعتمد على اللون وحده. */
 export function Legend({ items }: { items: ('theory' | 'sim' | 'highlight' | 'hist' | 'curve' | 'shade')[] }) {
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const label = en
     ? ({
         theory: 'Bar: theoretical probability',

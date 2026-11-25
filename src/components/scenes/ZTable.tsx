@@ -3,14 +3,14 @@ import { fmt, normal } from '../../lib/dist';
 import { CurveChart, Legend } from '../charts';
 import { Rich, Tex } from '../Tex';
 import { Slider } from '../ui';
-import { useUiLang } from '../../lib/lang';
+import { useLang } from '../../lib/lang';
 
 const PHI = (z: number) => normal.cdf(z, 0, 1);
 const COLS = Array.from({ length: 10 }, (_, i) => i / 100);
 
 /** من x إلى z إلى Φ(z): التحويل إلى الطبيعي المعياري، ثم قراءة الجدول كما في الاختبار. */
 export function ZTable() {
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const tr = (ar: string, e: string) => (en ? e : ar);
   const [mu, setMu] = useState(100);
   const [sigma, setSigma] = useState(15);

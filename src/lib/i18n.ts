@@ -34,3 +34,21 @@ export function overlay<T>(base: T, tr: Tr<T> | undefined): T {
 }
 
 export const hasArabic = (s: string) => /[؀-ۿ]/.test(s);
+
+/**
+ * يبني ترجمة من قائمة مسطحة «المسار → النص»، مثل '[0].steps[1].title'.
+ * هكذا تُكتب ترجمات المحتوى الطويل (التدريب، الدالة المولدة…) دون تكرار بنيته.
+ */
+export function unflatten<T>(map: Record<string, string>): Tr<T> {
+  let root: unknown;
+  for (const [path, value] of Object.entries(map)) {
+    const keys = [...path.matchAll(/\[(\d+)\]|\.?([^.[\]]+)/g)].map((m) => (m[1] !== undefined ? Number(m[1]) : m[2]));
+    if (root === undefined) root = typeof keys[0] === 'number' ? [] : {};
+    let node = root as Record<string | number, unknown>;
+    keys.forEach((k, i) => {
+      if (i === keys.length - 1) node[k] = value;
+      else node = (node[k] ??= typeof keys[i + 1] === 'number' ? [] : {}) as Record<string | number, unknown>;
+    });
+  }
+  return root as Tr<T>;
+}

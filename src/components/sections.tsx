@@ -4,11 +4,11 @@ import { displayOrder } from '../lib/shuffle';
 import { progress, useProgress } from '../lib/storage';
 import { Rich, Tex } from './Tex';
 import { RichList } from './ui';
-import { useUiLang } from '../lib/lang';
+import { useLang } from '../lib/lang';
 
 export function FormulaSection({ d }: { d: DistContent }) {
   const f = d.formula;
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   return (
     <div className="formula">
       <p className="fn-name">{f.fnName}</p>
@@ -48,7 +48,7 @@ export function FormulaSection({ d }: { d: DistContent }) {
 
 export function DistCardView({ d }: { d: DistContent }) {
   const c = d.card;
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   return (
     <div className="dcard">
       <div className="dcard-head">
@@ -100,7 +100,7 @@ function QuizItem({ q, index }: { q: QuizQuestion; index: number }) {
   const correctIdx = q.options.findIndex((o) => o.correct);
   const isRight = chosen === correctIdx;
   const name = `q-${q.id}`;
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   return (
     <fieldset className="quiz-q">
       <legend>
@@ -149,7 +149,7 @@ export function Quiz({ d }: { d: DistContent }) {
   const quiz = useProgress().quiz;
   const done = d.quiz.filter((q) => quiz[q.id] !== undefined);
   const right = done.filter((q) => q.options[quiz[q.id]]?.correct).length;
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   return (
     <div className="quiz">
       {d.quiz.map((q, i) => (

@@ -2,12 +2,12 @@ import { useEffect, useRef, useState } from 'react';
 import type { ExamProblem } from '../../content/chapterTypes';
 import { Rich, Tex } from '../Tex';
 import { Scene } from './Scene';
-import { useUiLang } from '../../lib/lang';
+import { useLang } from '../../lib/lang';
 
 /** مسألة واحدة معروضة في كل مرة؛ التبديل بأزرار، والكشف خطوة خطوة. */
 export function ExamScene({ headline, problems, tricks }: { headline: string; problems: ExamProblem[]; tricks: string[] }) {
   const [idx, setIdx] = useState(0);
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   return (
     <Scene
       n={4}
@@ -38,7 +38,7 @@ export function ExamScene({ headline, problems, tricks }: { headline: string; pr
 
 function ExamBlock({ p }: { p: ExamProblem }) {
   const [shown, setShown] = useState(0);
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const listRef = useRef<HTMLOListElement>(null);
   const moved = useRef(false);
   useEffect(() => {

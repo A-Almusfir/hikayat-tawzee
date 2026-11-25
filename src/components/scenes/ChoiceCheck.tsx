@@ -3,7 +3,7 @@ import type { Choice } from '../../content/chapterTypes';
 import { displayOrder } from '../../lib/shuffle';
 import { progress, useProgress } from '../../lib/storage';
 import { Rich } from '../Tex';
-import { useUiLang } from '../../lib/lang';
+import { useLang } from '../../lib/lang';
 
 /**
  * سؤال اختيار من متعدد: يختار الطالب ثم يضغط «تحقّق».
@@ -11,7 +11,7 @@ import { useUiLang } from '../../lib/lang';
  */
 export function ChoiceCheck({ id, q, kicker }: { id: string; q: Choice; kicker: string }) {
   const saved = useProgress().quiz[id];
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const answered = saved !== undefined;
   const [pick, setPick] = useState<number | null>(null);
   const fb = useRef<HTMLDivElement>(null);

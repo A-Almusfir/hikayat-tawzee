@@ -9,13 +9,13 @@ import { href } from '../lib/router';
 import { Tex } from '../components/Tex';
 import { moreCards } from '../content/more';
 import { matches } from '../lib/search';
-import { TRANSLATED_CHAPTERS, useLang } from '../lib/lang';
+import { useLang } from '../lib/lang';
 import { Rich } from '../components/Tex';
 
 // ما في ورقة القوانين بلا فصل: يظهر في البحث برابط إلى بطاقته أو الفصل الأقرب
 const extras = [
-  ...moreCards.map((c) => ({ id: c.id, href: href.more(c.id), note: 'بطاقة في «توزيعات أخرى»', noteEn: 'A card in “Other distributions” (Arabic)' })),
-  { id: 'stdnormal' as const, href: href.dist('normal'), note: 'في فصل الطبيعي، مع جدول Φ', noteEn: 'In the normal chapter, with the Φ table (Arabic)' },
+  ...moreCards.map((c) => ({ id: c.id, href: href.more(c.id), note: 'بطاقة في «توزيعات أخرى»', noteEn: 'A card in “Other distributions”' })),
+  { id: 'stdnormal' as const, href: href.dist('normal'), note: 'في فصل الطبيعي، مع جدول Φ', noteEn: 'In the normal chapter, with the Φ table' },
 ];
 
 export function HomePage() {
@@ -31,9 +31,6 @@ export function HomePage() {
             <h1 tabIndex={-1}>Hikayat Tawzee</h1>
             <p className="h2-slogan">Understand the story, and the formula follows.</p>
             <p className="h2-sub">{journey.length} probability distributions, one family. Each one has a true story: where it came from, why people needed it, and how its formula is built from that story.</p>
-            <p className="h2-sub">
-              This English version is a beta: the home page, the family tree, Exam night and the first {TRANSLATED_CHAPTERS.size} chapters are translated; the other chapters are still in Arabic.
-            </p>
             <a className="btn btn-primary" href={href.dist('bernoulli')}>
               Start the journey: Bernoulli's urn →
             </a>
@@ -82,7 +79,6 @@ export function HomePage() {
                       <>
                         <span className="j-name">
                           {d.nameEn} <span className="en" lang="ar" dir="rtl">{d.nameAr}</span>
-                          {!TRANSLATED_CHAPTERS.has(id) && <span className="en"> (Arabic)</span>}
                         </span>
                         <Rich className="j-q" text={d.en.when} />
                       </>
@@ -125,10 +121,22 @@ export function HomePage() {
           <h2 id="t-h">Review tools</h2>
           <ul>
             <li>
-              <a href={href.exam}>Exam night</a> <span>All the formulas as cards ({sheet.length} distributions): the formula, mean, variance and moment generating function, side by side.</span>
+              <a href={href.exam}>Exam night</a> <span>All the formulas as cards ({sheet.length} distributions): the formula, mean, variance and moment generating function, a chart that identifies the distribution, and the “twins” that are easy to mix up.</span>
             </li>
             <li>
-              <span>In Arabic for now: mixed practice, deriving moments from <Tex tex="M_X(t)" />, other distributions (Weibull, beta, F), “which distribution?” scenarios and review cards. Switch to Arabic from the button at the top.</span>
+              <a href={href.drill}>Mixed practice</a> <span>Problems from all the chapters together: choose the distribution, then the parameters, then compute.</span>
+            </li>
+            <li>
+              <a href={href.mgf}>The moment generating function</a> <span>Derive the mean and variance from <Tex tex="M_X(t)" /> step by step, and identify a distribution from the form of its function.</span>
+            </li>
+            <li>
+              <a href={href.more()}>Other distributions</a> <span>Weibull, beta and F: a card, an example and a curve for each.</span>
+            </li>
+            <li>
+              <a href={href.choose}>Which distribution?</a> <span>{scenarios.length} situations for telling the distributions apart.</span>
+            </li>
+            <li>
+              <a href={href.cards}>Review cards</a> <span>Test your memory of each formula, mean, variance and condition.</span>
             </li>
           </ul>
         </section>

@@ -152,7 +152,7 @@ export function FamilyTree({ initial = 'bin-poi' }: { initial?: string }) {
           const p = POS[id]!;
           const np = namePos(p, name(id), en);
           return (
-            <a key={id} href={href.dist(id)} className="t-node" aria-label={en ? `Open the chapter (Arabic): ${sheetById[id].nameEn}` : `افتح الفصل: ${sheetById[id].nameAr}`}>
+            <a key={id} href={href.dist(id)} className="t-node" aria-label={en ? `Open the chapter: ${sheetById[id].nameEn}` : `افتح الفصل: ${sheetById[id].nameAr}`}>
               <circle cx={p.x} cy={p.y} r={R} fill="#fffdf8" stroke={identity[id].color} strokeWidth="2.5" />
               <svg x={p.x - 15} y={p.y - 15} width="30" height="30" viewBox="0 0 24 24" fill={identity[id].color} stroke={identity[id].color} aria-hidden="true">
                 <GlyphPaths id={id} />

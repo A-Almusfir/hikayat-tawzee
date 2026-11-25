@@ -3,11 +3,24 @@ import { describe, expect, it } from 'vitest';
 import { chapters } from '../chapters';
 import type { DistId } from '../types';
 import { hasArabic, overlay } from '../../lib/i18n';
-import { TRANSLATED_CHAPTERS } from '../../lib/lang';
 import { chaptersEn } from './index';
 import { distById } from '../distributions';
 import { distEn } from './distributions';
-import { sourceById } from '../sources';
+import { sourceById, sources } from '../sources';
+import { mgfRules, derive, identify } from '../mgf';
+import { drill } from '../drill';
+import { moreCards } from '../more';
+import { choiceLabels, scenarios } from '../chooser';
+import { hint, decisionTree, decisionNote } from '../decision';
+import { twins } from '../twins';
+import { references } from '../references';
+import { mgfRulesEn, choiceLabelsEn, hintEn, decisionNoteEn, referencesEn } from './small';
+import { deriveEn } from './mgfDerive';
+import { identifyEn } from './mgfIdentify';
+import { drillEn } from './drill';
+import { moreCardsEn } from './more';
+import { scenariosEn } from './chooser';
+import { decisionTreeEn, twinsEn } from './exam';
 
 /** كل النصوص في كائن مع مساراتها. */
 function strings(x: unknown, path = ''): [string, string][] {
@@ -57,8 +70,8 @@ function checkTranslation(name: string, ar: object, tr: unknown, ignore: (path: 
 }
 
 describe('الترجمة الإنجليزية للفصول', () => {
-  it('قائمة الفصول المترجمة تطابق ملفات الترجمة', () => {
-    expect([...TRANSLATED_CHAPTERS].sort()).toEqual([...ids].sort());
+  it('كل فصل عربي له ترجمة', () => {
+    expect(Object.keys(chapters).sort()).toEqual([...ids].sort());
   });
 
   for (const id of ids) checkTranslation(id, chapters[id]!, chaptersEn[id]);
@@ -82,5 +95,46 @@ describe('الترجمة الإنجليزية للفصول', () => {
 
   it('لكل فصل مترجم له «مرجع» قديم ترجمةُ مرجعه', () => {
     for (const id of ids) if (distById[id]) expect(distEn[id], id).toBeDefined();
+  });
+
+  // الصفحات العامة: كل مجموعة محتوى لها ترجمة كاملة
+  const pages: [string, object, unknown][] = [
+    ['قواعد الدالة المولدة', mgfRules, mgfRulesEn],
+    ['اشتق', derive, deriveEn],
+    ['تعرّف', identify, identifyEn],
+    ['التدريب المختلط', drill, drillEn],
+    ['توزيعات أخرى', moreCards, moreCardsEn],
+    ['أسماء الخيارات', choiceLabels, choiceLabelsEn],
+    ['أي توزيع أختار؟', scenarios, scenariosEn],
+    ['تلميحات المخطط', hint, hintEn],
+    ['مخطط القرار', decisionTree, decisionTreeEn],
+    ['التوائم', twins, twinsEn],
+    ['المراجع', references, referencesEn],
+  ];
+  for (const [name, ar, en] of pages) checkTranslation(name, ar, en);
+
+  it('تعليقات منحنيات «توزيعات أخرى» بالإنجليزية في كل قيم المنزلقات', () => {
+    for (const c of moreCards) {
+      const grid = c.sliders.reduce<Record<string, number>[]>((acc, sl) => {
+        const vals: number[] = [];
+        for (let v = sl.min; v <= sl.max + 1e-9; v += sl.step) vals.push(+v.toFixed(6));
+        return acc.flatMap((o) => vals.map((v) => ({ ...o, [sl.key]: v })));
+      }, [{}]);
+      for (const sv of grid) {
+        const t = c.captionEn(c.toParams(sv));
+        expect(hasArabic(t), `${c.id}: ${t}`).toBe(false);
+        for (const m of t.matchAll(/\$([^$]+?)\$/g)) expect(() => katex.renderToString(m[1], { throwOnError: true, strict: 'ignore' }), m[1]).not.toThrow();
+      }
+    }
+  });
+
+  it('ملاحظة المخطط مترجمة', () => {
+    expect(hasArabic(decisionNoteEn)).toBe(false);
+    expect(hasArabic(decisionNote)).toBe(true);
+  });
+
+  it('كل المصادر لها إشارة بلا عربية في الواجهة الإنجليزية (صفحة المراجع تعرضها كلها)', () => {
+    const bad = sources.filter((s) => hasArabic(s.citeEn ?? s.cite)).map((s) => s.id);
+    expect(bad).toEqual([]);
   });
 });

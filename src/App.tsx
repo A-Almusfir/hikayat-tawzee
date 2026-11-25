@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect, useState } from 'react';
 import { href, useRoute } from './lib/router';
-import { ArabicOnlyScope, isTranslated, setLang, TRANSLATED_CHAPTERS, useLang } from './lib/lang';
+import { setLang, useLang } from './lib/lang';
 import { progress } from './lib/storage';
 import { chapters } from './content/chapters';
 import { sheetById } from './content/sheet';
@@ -18,6 +18,16 @@ const CardsPage = lazy(() => import('./pages/pages').then((m) => ({ default: m.C
 const ChooserPage = lazy(() => import('./pages/pages').then((m) => ({ default: m.ChooserPage })));
 const RefsPage = lazy(() => import('./pages/pages').then((m) => ({ default: m.RefsPage })));
 const NotFound = lazy(() => import('./pages/pages').then((m) => ({ default: m.NotFound })));
+// النسخ الإنجليزية: تحمل ترجماتها في حزمة منفصلة لا يحمّلها قارئ العربية
+const enPage = <K extends 'ExamNightPageEn' | 'MgfPageEn' | 'DrillPageEn' | 'MorePageEn' | 'ChooserPageEn' | 'CardsPageEn' | 'RefsPageEn'>(k: K) =>
+  lazy(() => import('./pages/en').then((m) => ({ default: m[k] })));
+const ExamNightPageEn = enPage('ExamNightPageEn');
+const MgfPageEn = enPage('MgfPageEn');
+const DrillPageEn = enPage('DrillPageEn');
+const MorePageEn = enPage('MorePageEn');
+const ChooserPageEn = enPage('ChooserPageEn');
+const CardsPageEn = enPage('CardsPageEn');
+const RefsPageEn = enPage('RefsPageEn');
 
 
 const LINKEDIN = 'https://www.linkedin.com/in/abdullah-a-365a082b3';
@@ -30,7 +40,7 @@ const NAV = [
   { to: href.more(), label: 'توزيعات أخرى', en: 'Other distributions', match: 'more' },
   { to: href.choose, label: 'أي توزيع أختار؟', en: 'Which distribution?', match: 'choose' },
   { to: href.cards, label: 'بطاقات المراجعة', en: 'Review cards', match: 'cards' },
-  { to: href.refs, label: 'المراجع والمنهج', en: 'Sources & syllabus', match: 'refs' },
+  { to: href.refs, label: 'المراجع والمنهج', en: 'Sources & method', match: 'refs' },
 ];
 
 export default function App() {
@@ -71,15 +81,15 @@ export default function App() {
       case 'dist': {
         const ch = chapters[route.id as DistId];
         if (!ch) return <NotFound />;
-        return en && TRANSLATED_CHAPTERS.has(route.id) ? <ChapterPageEn key={route.id} ch={ch} scene={route.scene} /> : <ChapterPage key={route.id} ch={ch} scene={route.scene} />;
+        return en ? <ChapterPageEn key={route.id} ch={ch} scene={route.scene} /> : <ChapterPage key={route.id} ch={ch} scene={route.scene} />;
       }
-      case 'choose': return <ChooserPage />;
-      case 'cards': return <CardsPage />;
-      case 'refs': return <RefsPage />;
-      case 'exam': return <ExamNightPage />;
-      case 'drill': return <DrillPage />;
-      case 'mgf': return <MgfPage />;
-      case 'more': return <MorePage focus={route.id} />;
+      case 'choose': return en ? <ChooserPageEn /> : <ChooserPage />;
+      case 'cards': return en ? <CardsPageEn /> : <CardsPage />;
+      case 'refs': return en ? <RefsPageEn /> : <RefsPage />;
+      case 'exam': return en ? <ExamNightPageEn /> : <ExamNightPage />;
+      case 'drill': return en ? <DrillPageEn /> : <DrillPage />;
+      case 'mgf': return en ? <MgfPageEn /> : <MgfPage />;
+      case 'more': return en ? <MorePageEn focus={route.id} /> : <MorePage focus={route.id} />;
       default: return <NotFound />;
     }
   })();
@@ -101,9 +111,8 @@ export default function App() {
         <a href={href.home} className="brand">
           {en ? 'Hikayat Tawzee' : 'حكاية توزيع'}
         </a>
-        <button type="button" className="lang-btn" dir={en ? 'rtl' : 'ltr'} onClick={() => setLang(en ? 'ar' : 'en')} lang={en ? 'ar' : 'en'} aria-label={en ? 'التبديل إلى العربية' : 'Switch to English (beta)'}>
+        <button type="button" className="lang-btn" dir={en ? 'rtl' : 'ltr'} onClick={() => setLang(en ? 'ar' : 'en')} lang={en ? 'ar' : 'en'} aria-label={en ? 'التبديل إلى العربية' : 'Switch to English'}>
           {en ? 'عربي' : 'English'}
-          {!en && <span className="beta">beta</span>}
         </button>
         <nav aria-label={en ? 'Main navigation' : 'التنقل الرئيسي'}>
           <ul>
@@ -118,18 +127,7 @@ export default function App() {
       <main id="main">
         {/* مفتاح لكل صفحة: لا تبقى الصفحة السابقة مخفية في الشجرة أثناء تحميل الجديدة */}
         <Suspense key={pageKey} fallback={<p className="loading" role="status">{en ? 'Loading…' : 'جارٍ التحميل…'}</p>}>
-          {en && !isTranslated(route as { name: string; id?: string }) ? (
-            <>
-              <p className="lang-note" lang="en" dir="ltr">
-                This page is in Arabic only for now. The English beta covers the home page, the family tree, Exam night and all 12 chapters.
-              </p>
-              <div lang="ar" dir="rtl">
-                <ArabicOnlyScope value={true}>{page}</ArabicOnlyScope>
-              </div>
-            </>
-          ) : (
-            page
-          )}
+          {page}
         </Suspense>
       </main>
       <footer className="site-foot">

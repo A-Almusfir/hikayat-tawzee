@@ -4,7 +4,7 @@ import { binomial, choose, exponential, fmt, geometric, normal, sample } from '.
 import { BarChart, CurveChart, type Bin } from '../charts';
 import { Rich, Tex } from '../Tex';
 import { Scene } from './Scene';
-import { useUiLang } from '../../lib/lang';
+import { useLang } from '../../lib/lang';
 
 type Of<K extends TryIt['kind']> = Extract<TryIt, { kind: K }>;
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
@@ -13,14 +13,14 @@ const spins = (n: number) => (n === 0 ? 'أي دورة' : n === 1 ? 'دورة و
 const spinsEn = (n: number) => (n === 1 ? '1 spin' : `${n} spins`);
 
 function SimNoteLine() {
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   return <p className="sim-note">{en ? '◆ Simulation results are random and change from run to run; the theoretical values do not.' : '◆ نتائج المحاكاة عشوائية وتتغير من تشغيل لآخر؛ القيم النظرية لا تتغير.'}</p>;
 }
 
 // ———— برنولي: قانون الأعداد الكبيرة ————
 export function LlnTry({ t }: { t: Of<'lln'> }) {
   const MAX = 5000;
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const [draws, setDraws] = useState<number[]>([]);
   const add = (k: number) => setDraws((d) => d.concat(Array.from({ length: Math.min(k, MAX - d.length) }, () => sample.bernoulli(t.p))));
   const n = draws.length;
@@ -105,7 +105,7 @@ export function LlnTry({ t }: { t: Of<'lln'> }) {
 // ———— ذو الحدين: مسألة النقاط ————
 export function PointsTry({ t }: { t: Of<'points'> }) {
   const [b, setB] = useState(t.bStart);
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const a = t.aNeeds;
   const n = a + b - 1;
   const bars = range(0, n).map((k) => ({ x: k, p: binomial.pmf(k, n, 0.5) }));
@@ -150,7 +150,7 @@ export function PointsTry({ t }: { t: Of<'points'> }) {
 // ———— الأسي: أزمنة الانتظار بين المكالمات ————
 export function WaitsTry({ t }: { t: Of<'waits'> }) {
   const [theta, setTheta] = useState(t.theta.start);
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const [waits, setWaits] = useState<number[]>([]);
   useEffect(() => setWaits([]), [theta]);
   const xMax = exponential.quantile(0.99, theta);
@@ -214,7 +214,7 @@ export function WaitsTry({ t }: { t: Of<'waits'> }) {
 // ———— الهندسي: انعدام الذاكرة ————
 export function MemoryTry({ t }: { t: Of<'memory'> }) {
   const [s, setS] = useState(0);
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const p = t.p;
   const J = 8;
   // توزيع ما بقي بعد s إخفاقات: P(X = s + j | X > s)
@@ -270,7 +270,7 @@ export function MemoryTry({ t }: { t: Of<'memory'> }) {
 // ———— الطبيعي: لوح غالتون ————
 export function GaltonTry({ t }: { t: Of<'galton'> }) {
   const [rows, setRows] = useState(t.rows.start);
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const [sim, setSim] = useState<number[] | null>(null);
   useEffect(() => setSim(null), [rows]);
   const bars = range(0, rows).map((k) => ({ x: k, p: binomial.pmf(k, rows, 0.5) }));

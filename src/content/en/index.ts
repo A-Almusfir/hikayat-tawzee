@@ -14,7 +14,7 @@ import { normalEn } from './normal';
 import { chisquareEn } from './chisquare';
 import { tEn } from './t';
 
-// ترجمات الفصول (نصوص فقط فوق الفصل العربي). أي فصل هنا يجب أن يكون في TRANSLATED_CHAPTERS (lib/lang.ts) والعكس.
+// ترجمات الفصول (نصوص فقط فوق الفصل العربي). كل فصل عربي يجب أن تكون له ترجمة هنا (يفحصه en.test.ts).
 export const chaptersEn: Partial<Record<DistId, Tr<Chapter>>> = {
   bernoulli: bernoulliEn,
   binomial: binomialEn,

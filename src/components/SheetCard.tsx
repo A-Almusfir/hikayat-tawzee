@@ -1,11 +1,11 @@
 import { sheetById, type SheetId } from '../content/sheet';
 import { Rich, Tex } from './Tex';
-import { useUiLang } from '../lib/lang';
+import { useLang } from '../lib/lang';
 
 /** بطاقة توزيع مبنية من ورقة القوانين نفسها (للفصول التي لا بطاقة قديمة لها). */
 export function SheetCard({ id }: { id: SheetId }) {
   const s = sheetById[id];
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   return (
     <div className="dcard">
       <div className="dcard-head">

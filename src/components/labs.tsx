@@ -7,11 +7,11 @@ import { BarChart, CurveChart, Legend, type Bin } from './charts';
 import { Rich, Tex } from './Tex';
 import { ProbLine, SimNote, Slider, Stats } from './ui';
 import type { DistId } from '../content/types';
-import { useUiLang } from '../lib/lang';
+import { useLang } from '../lib/lang';
 
 /** نص بلغتين: العربي ثم الإنجليزي. */
 function useT() {
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   return { en, t: (ar: string, enS: string) => (en ? enS : ar) };
 }
 

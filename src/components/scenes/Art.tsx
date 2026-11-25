@@ -1,6 +1,6 @@
 import type { Art } from '../../content/chapterTypes';
 import { choose } from '../../lib/dist';
-import { useUiLang } from '../../lib/lang';
+import { useLang } from '../../lib/lang';
 
 type Of<K extends Art['kind']> = Extract<Art, { kind: K }>;
 
@@ -73,7 +73,7 @@ function Urn({ a }: { a: Of<'urn'> }) {
 
 /** أكواب الشاي: «ح» حليب أولًا (ممتلئ)، «ش» شاي أولًا (مفرغ) — الحرف والشكل لا اللون فقط. */
 function Cups({ a }: { a: Of<'cups'> }) {
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const n = a.milk + a.tea, S = 34, W = n * S + 8, H = 52;
   // ترتيب ثابت مختلط يوحي بالعشوائية
   const order = Array.from({ length: n }, (_, i) => ((i * 5 + 3) % n) < a.milk);
@@ -96,7 +96,7 @@ function Cups({ a }: { a: Of<'cups'> }) {
 
 /** جولات حتى الفوز رقم r: الفوز مربع ممتلئ برقمه، والخسارة مربع متقطع «خ»، والأخير مُبرز. */
 function Runs({ a }: { a: Of<'runs'> }) {
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const S = 34, W = a.trials.length * S + 4, H = S + 26;
   let wins = 0;
   return (
@@ -198,7 +198,7 @@ function Timeline({ a }: { a: Of<'timeline'> }) {
 
 /** سلسلة إخفاقات متتالية تنتهي بعلامة استفهام. */
 function Streak({ a }: { a: Of<'streak'> }) {
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const cols = 9, S = 30, rows = Math.ceil((a.length + 1) / cols);
   return (
     <svg viewBox={`0 0 ${cols * S + 4} ${rows * S + 4}`} role="img" aria-label={a.ariaLabel} direction="ltr">

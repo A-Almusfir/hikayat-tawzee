@@ -1,13 +1,13 @@
 import type { ReactNode } from 'react';
 import { sourceById } from '../../content/sources';
 import { scrollToId } from '../../lib/router';
-import { useUiLang } from '../../lib/lang';
+import { useLang } from '../../lib/lang';
 
 export const SCENES = ['الحكاية', 'جرّب', 'ابنِ القانون', 'مسألة الاختبار', 'ثبّت'];
 export const SCENES_EN = ['The story', 'Try it', 'Build the formula', 'Exam problem', 'Lock it in'];
 
 export function Scene({ n, title, art, artAfter, children }: { n: number; title: string; art?: ReactNode; artAfter?: boolean; children: ReactNode }) {
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   return (
     <section className={`scene ${n % 2 ? 'odd' : 'even'}`} id={`scene-${n}`} data-n={n} aria-labelledby={`scene-${n}-h`}>
       <header className="scene-head">
@@ -24,7 +24,7 @@ export function Scene({ n, title, art, artAfter, children }: { n: number; title:
 
 /** إشارة مصادر واحدة لكل جملة (زر واحد) تنقل إلى قائمة مصادر الفصل. */
 export function Cites({ ids, order }: { ids: string[]; order: string[] }) {
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const nums = ids.map((id) => order.indexOf(id) + 1);
   return (
     <button

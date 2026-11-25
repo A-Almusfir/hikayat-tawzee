@@ -1,6 +1,6 @@
-import { createContext, useContext, useSyncExternalStore } from 'react';
+import { useSyncExternalStore } from 'react';
 
-// لغة الواجهة: العربية افتراضيًا، والإنجليزية تجريبية (الرئيسية والشجرة وليلة الاختبار والفصول المترجمة).
+// لغة الواجهة: العربية افتراضيًا، والإنجليزية للموقع كله.
 // تُحفظ في المتصفح، وتضبط lang وdir على الصفحة كلها.
 export type Lang = 'ar' | 'en';
 
@@ -41,23 +41,4 @@ export function useLang(): Lang {
     () => current,
     () => 'ar',
   );
-}
-
-/** الصفحات المترجمة في النسخة التجريبية. */
-export const TRANSLATED = new Set(['home', 'exam']);
-
-/** الفصول المترجمة (تُفحص في الاختبارات مقابل content/en). */
-export const TRANSLATED_CHAPTERS = new Set(['bernoulli', 'binomial', 'hypergeometric', 'poisson', 'exponential', 'gamma', 'geometric', 'negbin', 'uniform', 'normal', 'chisquare', 't']);
-
-export const isTranslated = (route: { name: string; id?: string }) =>
-  TRANSLATED.has(route.name) || (route.name === 'dist' && !!route.id && TRANSLATED_CHAPTERS.has(route.id));
-
-/** صفحة غير مترجمة داخل الواجهة الإنجليزية: مكوناتها تبقى بالعربية حتى لا تختلط اللغتان. */
-const ArabicOnly = createContext(false);
-export const ArabicOnlyScope = ArabicOnly.Provider;
-
-/** لغة المحتوى الفعلية للمكوّن: الإنجليزية فقط إن كانت الصفحة مترجمة. */
-export function useUiLang(): Lang {
-  const lang = useLang();
-  return useContext(ArabicOnly) ? 'ar' : lang;
 }

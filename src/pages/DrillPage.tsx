@@ -10,17 +10,22 @@ import { seededRng } from '../lib/dist';
 import { href } from '../lib/router';
 import { parseNumber } from '../lib/shuffle';
 import { progress, useProgress } from '../lib/storage';
+import { useLang } from '../lib/lang';
+import { overlay, type Tr } from '../lib/i18n';
+
+export type DrillTr = { drill: Tr<typeof drill>; labels: Tr<typeof choiceLabels>; hint: Tr<typeof hint> };
+type Words = { labels: typeof choiceLabels; hint: typeof hint; en: boolean };
 
 const ORDER: Leaf[] = choiceOrder();
 
 /** الخطوة الأولى: أي توزيع؟ تفسير الخيارات الخاطئة يأتي من مخطط القرار (مصدر واحد). */
-function step1(item: DrillItem): Choice {
+function step1(item: DrillItem, w: Words): Choice {
   return {
-    prompt: 'أي توزيع يناسب؟',
+    prompt: w.en ? 'Which distribution fits?' : 'أي توزيع يناسب؟',
     options: ORDER.map((l) => ({
-      text: choiceLabels[l],
+      text: w.labels[l],
       correct: l === item.answer,
-      why: l === item.answer ? item.why : l === item.trap ? item.trapWhy : `هذا يناسب موقفًا آخر: ${hint[l]}`,
+      why: l === item.answer ? item.why : l === item.trap ? item.trapWhy : `${w.en ? 'This fits a different situation' : 'هذا يناسب موقفًا آخر'}: ${w.hint[l]}`,
     })),
   };
 }
@@ -37,7 +42,10 @@ function shuffle<T>(xs: T[], seed: number): T[] {
   return a;
 }
 
-export function DrillPage() {
+export function DrillPage({ tr }: { tr?: DrillTr }) {
+  const en = useLang() === 'en' && !!tr;
+  const items = useMemo(() => (en ? overlay(drill, tr!.drill) : drill), [en, tr]);
+  const words = useMemo<Words>(() => ({ en, labels: en ? overlay(choiceLabels, tr!.labels) : choiceLabels, hint: en ? overlay(hint, tr!.hint) : hint }), [en, tr]);
   const quiz = useProgress().quiz;
   const [mode, setMode] = useState<'all' | 'review'>('all');
   const [idx, setIdx] = useState(0);
@@ -56,11 +64,11 @@ export function DrillPage() {
     [quiz],
   );
   const list = useMemo(() => {
-    if (mode === 'all') return drill;
-    const pool = drill.filter((d) => d.answer === 'insufficient' || finished.includes(d.answer));
+    if (mode === 'all') return items;
+    const pool = items.filter((d) => d.answer === 'insufficient' || finished.includes(d.answer));
     return shuffle(pool, seed).slice(0, 3);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mode, seed, finished.join()]);
+  }, [mode, seed, finished.join(), items]);
   const i = Math.min(idx, Math.max(0, list.length - 1));
   const it = list[i];
   const done = list.filter((d) => isDone(d, quiz, prefix)).length;
@@ -74,42 +82,62 @@ export function DrillPage() {
   return (
     <article className="drill">
       <header className="page-head">
-        <h1 tabIndex={-1}>تدريب مختلط</h1>
-        <p className="lead">مسائل من كل الفصول معًا، كما في الاختبار. لكل مسألة ثلاث خطوات: أي توزيع؟ ثم المعلمات، ثم الحساب.</p>
+        <h1 tabIndex={-1}>{en ? 'Mixed practice' : 'تدريب مختلط'}</h1>
+        <p className="lead">
+          {en
+            ? 'Problems from all the chapters together, as in the exam. Each problem has 3 steps: which distribution? then the parameters, then the calculation.'
+            : 'مسائل من كل الفصول معًا، كما في الاختبار. لكل مسألة ثلاث خطوات: أي توزيع؟ ثم المعلمات، ثم الحساب.'}
+        </p>
       </header>
-      <div className="seg-tabs" role="group" aria-label="نوع التدريب">
+      <div className="seg-tabs" role="group" aria-label={en ? 'Type of practice' : 'نوع التدريب'}>
         <button type="button" className={`seg-tab ${mode === 'all' ? 'on' : ''}`} aria-pressed={mode === 'all'} onClick={() => (setMode('all'), setIdx(0))}>
-          كل المسائل ({drill.length})
+          {en ? `All problems (${drill.length})` : `كل المسائل (${drill.length})`}
         </button>
         <button type="button" className={`seg-tab ${mode === 'review' ? 'on' : ''}`} aria-pressed={mode === 'review'} onClick={() => (setMode('review'), setIdx(0), setSeed(seed + 1))}>
-          مراجعة سريعة: 3 مسائل من فصولك المنتهية
+          {en ? 'Quick review: 3 problems from chapters you have finished' : 'مراجعة سريعة: 3 مسائل من فصولك المنتهية'}
         </button>
       </div>
 
       {mode === 'review' && finished.length === 0 ? (
         <p className="empty">
-          للحين ما خلّصت ولا فصل. جاوب أسئلة «ثبّت» في آخر أي فصل، وارجع لهنا. <a href={href.dist('bernoulli')}>ابدأ من الفصل الأول</a>.
+          {en ? (
+            <>
+              You have not finished any chapter yet. Answer the “Lock it in” questions at the end of any chapter, then come back here. <a href={href.dist('bernoulli')}>Start from the first chapter</a>.
+            </>
+          ) : (
+            <>
+              للحين ما خلّصت ولا فصل. جاوب أسئلة «ثبّت» في آخر أي فصل، وارجع لهنا. <a href={href.dist('bernoulli')}>ابدأ من الفصل الأول</a>.
+            </>
+          )}
         </p>
       ) : it ? (
         <>
           <div className="progress-line">
-            <span>المسألة {i + 1} من {list.length}</span>
-            <span>أنهيت: {done} من {list.length}</span>
+            <span>{en ? `Problem ${i + 1} of ${list.length}` : `المسألة ${i + 1} من ${list.length}`}</span>
+            <span>{en ? `Done: ${done} of ${list.length}` : `أنهيت: ${done} من ${list.length}`}</span>
           </div>
-          <div className="progress-bar" role="progressbar" aria-label="التقدم" aria-valuemin={0} aria-valuemax={list.length} aria-valuenow={done}>
+          <div className="progress-bar" role="progressbar" aria-label={en ? 'Progress' : 'التقدم'} aria-valuemin={0} aria-valuemax={list.length} aria-valuenow={done}>
             <span style={{ width: `${(done / list.length) * 100}%` }} />
           </div>
-          <DrillCard key={prefix + it.id} it={it} prefix={prefix} n={i + 1} />
+          <DrillCard key={prefix + it.id} it={it} prefix={prefix} n={i + 1} w={words} />
           <div className="pager">
-            <button type="button" className="btn" aria-disabled={i === 0} onClick={() => i > 0 && setIdx(i - 1)}>→ السابقة</button>
+            <button type="button" className="btn" aria-disabled={i === 0} onClick={() => i > 0 && setIdx(i - 1)}>{en ? '← Previous' : '→ السابقة'}</button>
             {mode === 'review' && i === list.length - 1 ? (
-              <button type="button" className="btn" onClick={() => (setSeed(seed + 1), setIdx(0))}>عطني 3 مسائل ثانية ←</button>
+              <button type="button" className="btn" onClick={() => (setSeed(seed + 1), setIdx(0))}>{en ? 'Give me 3 more problems →' : 'عطني 3 مسائل ثانية ←'}</button>
             ) : (
-              <button type="button" className="btn" aria-disabled={i === list.length - 1} onClick={() => i < list.length - 1 && setIdx(i + 1)}>التالية ←</button>
+              <button type="button" className="btn" aria-disabled={i === list.length - 1} onClick={() => i < list.length - 1 && setIdx(i + 1)}>{en ? 'Next →' : 'التالية ←'}</button>
             )}
           </div>
           <p className="hint">
-            تبي تذكير؟ <a href={href.exam}>ليلة الاختبار</a> فيها كل القوانين ومخطط القرار.
+            {en ? (
+              <>
+                Need a reminder? <a href={href.exam}>Exam night</a> has all the formulas.
+              </>
+            ) : (
+              <>
+                تبي تذكير؟ <a href={href.exam}>ليلة الاختبار</a> فيها كل القوانين ومخطط القرار.
+              </>
+            )}
           </p>
         </>
       ) : null}
@@ -117,20 +145,25 @@ export function DrillPage() {
   );
 }
 
-function DrillCard({ it, prefix, n }: { it: DrillItem; prefix: string; n: number }) {
+function DrillCard({ it, prefix, n, w }: { it: DrillItem; prefix: string; n: number; w: Words }) {
+  const en = w.en;
   const quiz = useProgress().quiz;
   const k = (step: number) => `${prefix}${it.id}-${step}`;
   const s1 = quiz[k(1)] !== undefined;
   const s2 = quiz[k(2)] !== undefined;
   return (
     <div className="drill-card">
-      <div className="scenario" tabIndex={-1} aria-label={`المسألة ${n}`}>
+      <div className="scenario" tabIndex={-1} aria-label={en ? `Problem ${n}` : `المسألة ${n}`}>
         <Rich as="p" text={it.text} />
       </div>
-      <ChoiceCheck id={k(1)} q={step1(it)} kicker="الخطوة 1 · أي توزيع؟" />
-      {s1 && it.param && <ChoiceCheck id={k(2)} q={it.param} kicker="الخطوة 2 · المعلمات" />}
-      {s1 && s2 && it.calc && <NumericStep id={k(3)} calc={it.calc} />}
-      {s1 && !it.param && <p className="hint">هذه المسألة تنتهي عند الخطوة الأولى: الشروط لا تسمح باختيار أي من التوزيعات.</p>}
+      <ChoiceCheck id={k(1)} q={step1(it, w)} kicker={en ? 'Step 1 · Which distribution?' : 'الخطوة 1 · أي توزيع؟'} />
+      {s1 && it.param && <ChoiceCheck id={k(2)} q={it.param} kicker={en ? 'Step 2 · The parameters' : 'الخطوة 2 · المعلمات'} />}
+      {s1 && s2 && it.calc && <NumericStep id={k(3)} calc={it.calc} en={en} />}
+      {s1 && !it.param && (
+        <p className="hint">
+          {en ? 'This problem ends at the first step: the conditions do not allow any of the distributions.' : 'هذه المسألة تنتهي عند الخطوة الأولى: الشروط لا تسمح باختيار أي من التوزيعات.'}
+        </p>
+      )}
     </div>
   );
 }
@@ -143,7 +176,7 @@ const lastNumber = (t: string) => {
   return m ? Number(m[m.length - 1]) : null;
 };
 
-function NumericStep({ id, calc }: { id: string; calc: NonNullable<DrillItem['calc']> }) {
+function NumericStep({ id, calc, en }: { id: string; calc: NonNullable<DrillItem['calc']>; en: boolean }) {
   const saved = useProgress().quiz[id];
   const [txt, setTxt] = useState('');
   const [err, setErr] = useState('');
@@ -156,7 +189,7 @@ function NumericStep({ id, calc }: { id: string; calc: NonNullable<DrillItem['ca
   const trap = answered && !ok ? calc.options.find((o) => !o.correct && (() => { const n = lastNumber(o.text); return n !== null && Math.abs(n - saved) <= TOL; })()) : undefined;
   const check = () => {
     const v = parseNumber(txt);
-    if (v === null) return setErr('اكتب رقمًا، مثل 0.4060');
+    if (v === null) return setErr(en ? 'Type a number, such as 0.4060' : 'اكتب رقمًا، مثل 0.4060');
     setErr('');
     progress.setQuiz(id, v);
     window.setTimeout(() => fb.current?.focus(), 0);
@@ -164,8 +197,10 @@ function NumericStep({ id, calc }: { id: string; calc: NonNullable<DrillItem['ca
   const inputId = `${id}-in`;
   return (
     <div className="predict numeric">
-      <span className="pk">الخطوة 3 · الحساب</span>
-      <label htmlFor={inputId} className="pq"><Rich text={calc.prompt} /> <span className="hint">(اكتب الناتج بثلاث أو أربع منازل عشرية)</span></label>
+      <span className="pk">{en ? 'Step 3 · The calculation' : 'الخطوة 3 · الحساب'}</span>
+      <label htmlFor={inputId} className="pq">
+        <Rich text={calc.prompt} /> <span className="hint">{en ? '(type the answer to 3 or 4 decimal places)' : '(اكتب الناتج بثلاث أو أربع منازل عشرية)'}</span>
+      </label>
       {!answered ? (
         <>
           <div className="num-row">
@@ -181,17 +216,25 @@ function NumericStep({ id, calc }: { id: string; calc: NonNullable<DrillItem['ca
               onKeyDown={(e) => e.key === 'Enter' && check()}
               aria-describedby={err ? `${inputId}-err` : undefined}
             />
-            <button type="button" className="btn btn-c" onClick={check} disabled={!txt.trim()}>تحقّق</button>
+            <button type="button" className="btn btn-c" onClick={check} disabled={!txt.trim()}>{en ? 'Check' : 'تحقّق'}</button>
           </div>
           {err && <p className="num-err" id={`${inputId}-err`} role="alert">{err}</p>}
         </>
       ) : (
         <div className={`feedback ${ok ? 'ok' : 'no'}`} role="status" tabIndex={-1} ref={fb}>
-          <p><strong>{ok ? '✓ صحيح: ' : `✗ كتبت ${saved}. الصحيح: `}</strong><Rich text={correct.text} /> — <Rich text={correct.why} /></p>
-          {trap && <p><strong>من وين جاك هالرقم؟ </strong><Rich text={trap.why} /></p>}
+          <p>
+            <strong>{en ? (ok ? '✓ Correct: ' : `✗ You wrote ${saved}. The answer: `) : ok ? '✓ صحيح: ' : `✗ كتبت ${saved}. الصحيح: `}</strong>
+            <Rich text={correct.text} /> — <Rich text={correct.why} />
+          </p>
+          {trap && (
+            <p>
+              <strong>{en ? 'Where did your number come from? ' : 'من وين جاك هالرقم؟ '}</strong>
+              <Rich text={trap.why} />
+            </p>
+          )}
           {!ok && (
             <button type="button" className="link-btn" onClick={() => (progress.setQuiz(id, undefined), setTxt(''), window.setTimeout(() => inputRef.current?.focus(), 0))}>
-              جرّب مرة ثانية
+              {en ? 'Try again' : 'جرّب مرة ثانية'}
             </button>
           )}
         </div>

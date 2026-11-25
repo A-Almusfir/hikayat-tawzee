@@ -19,7 +19,7 @@ import { ZTable } from '../components/scenes/ZTable';
 import { DistCardView, FormulaSection, Quiz } from '../components/sections';
 import { Rich, Tex } from '../components/Tex';
 import { href, scrollToId } from '../lib/router';
-import { useUiLang } from '../lib/lang';
+import { useLang } from '../lib/lang';
 import { overlay, type Tr } from '../lib/i18n';
 import type { DistContent } from '../content/types';
 import { SCENES_EN } from '../components/scenes/Scene';
@@ -29,7 +29,7 @@ import { SCENES_EN } from '../components/scenes/Scene';
  * النصوص الإنجليزية تُوضع فوق الفصل العربي، والأرقام والفحوص من الأصل.
  */
 export function ChapterPage({ ch: chAr, scene, tr }: { ch: Chapter; scene?: number; tr?: { ch?: Tr<Chapter>; dist?: Tr<DistContent> } }) {
-  const en = useUiLang() === 'en' && !!tr?.ch;
+  const en = useLang() === 'en' && !!tr?.ch;
   const ch = useMemo(() => (en ? overlay(chAr, tr!.ch) : chAr), [chAr, en, tr]);
   const dAr = distById[chAr.id];
   const d = useMemo(() => (dAr && en ? overlay(dAr, tr!.dist) : dAr), [dAr, en, tr]);

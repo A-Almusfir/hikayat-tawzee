@@ -10,14 +10,14 @@ import { Glyph } from '../Glyph';
 import { Rich, Tex } from '../Tex';
 import { ChoiceCheck } from './ChoiceCheck';
 import { Scene } from './Scene';
-import { useUiLang } from '../../lib/lang';
+import { useLang } from '../../lib/lang';
 
 const BOX = String.raw`\boxed{\;?\;}`;
 
 export function AnchorScene({ ch, next, color }: { ch: Chapter; next?: DistId; color: string }) {
   const a = ch.anchor;
   const quiz = useProgress().quiz;
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   // أسئلة الاسترجاع تظهر بعد كتابة القانون (أو إن سبقت الإجابة عنها، أو بطلب الطالب)
   const [stage2, setStage2] = useState(() => a.recall.some((q) => quiz[q.id] !== undefined));
   return (
@@ -67,7 +67,7 @@ export function AnchorScene({ ch, next, color }: { ch: Chapter; next?: DistId; c
 function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onChecked: () => void }) {
   const law = ch.build.law;
   const n = law.slots.length;
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const [fill, setFill] = useState<(string | null)[]>(() => Array(n).fill(null));
   const [active, setActive] = useState(0);
   const [checked, setChecked] = useState(false);
@@ -186,7 +186,7 @@ function ComposeLaw({ ch, color, onChecked }: { ch: Chapter; color: string; onCh
 function Recall({ ch }: { ch: Chapter }) {
   const qs = ch.anchor.recall;
   const [i, setI] = useState(0);
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   return (
     <div className="recall">
       <ChoiceCheck key={qs[i].id} id={qs[i].id} q={qs[i]} kicker={en ? `From memory · ${i + 1} of ${qs.length}` : `من الذاكرة · ${i + 1} من ${qs.length}`} />

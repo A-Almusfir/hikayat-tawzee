@@ -3,14 +3,14 @@ import type { TryIt } from '../../content/chapterTypes';
 import { fmt } from '../../lib/dist';
 import { Rich, Tex } from '../Tex';
 import { Scene } from './Scene';
-import { useUiLang } from '../../lib/lang';
+import { useLang } from '../../lib/lang';
 
 type Fit = Extract<TryIt, { kind: 'fit' }>;
 
 /** المشهد ②: منزلق واحد يطابق القانون على بيانات حقيقية. */
 export function FitLab({ t }: { t: Fit }) {
   const [theta, setTheta] = useState(t.param.start);
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const [shown, setShown] = useState(false);
   const box = useRef<HTMLDivElement>(null);
   useEffect(() => {

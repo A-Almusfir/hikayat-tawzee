@@ -3,7 +3,7 @@ import { useProgress } from '../../lib/storage';
 import { Rich, Tex } from '../Tex';
 import { ChoiceCheck } from './ChoiceCheck';
 import { Scene } from './Scene';
-import { useUiLang } from '../../lib/lang';
+import { useLang } from '../../lib/lang';
 
 const BOX = String.raw`\boxed{\;?\;}`;
 
@@ -19,7 +19,7 @@ export function lawTex(law: LawTemplate, color: string, filled: (n: number) => b
 
 export function BuildScene({ id, headline, law, steps, note, color }: { id: string; headline: string; law: LawTemplate; steps: BuildStep[]; note: string; color: string }) {
   const quiz = useProgress().quiz;
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   const key = (i: number) => `${id}-build-${i}`;
   const done = (i: number) => !steps[i].predict || quiz[key(i)] !== undefined;
   // تظهر الخطوة التالية بعد الإجابة عن توقّع الخطوة الحالية

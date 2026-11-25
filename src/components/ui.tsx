@@ -1,7 +1,7 @@
 import { useId, type ReactNode } from 'react';
 import { fmt } from '../lib/dist';
 import { Rich, Tex } from './Tex';
-import { useUiLang } from '../lib/lang';
+import { useLang } from '../lib/lang';
 
 export function Slider({
   label,
@@ -67,7 +67,7 @@ export function Stats({
   sim?: { mean: number; variance: number; n: number } | null;
   unit?: string;
 }) {
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   return (
     <table className="stats">
       <caption className="sr-only">{en ? 'Mean and variance' : 'المتوسط والتباين'}</caption>
@@ -100,7 +100,7 @@ export function Stats({
 }
 
 export function SimNote({ count, max }: { count: number; max: number }) {
-  const en = useUiLang() === 'en';
+  const en = useLang() === 'en';
   if (en)
     return (
       <p className="sim-note" role="note">

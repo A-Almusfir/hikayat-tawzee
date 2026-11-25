@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import { flushSync } from 'react-dom';
 import type { DistId } from '../content/types';
 import { decisionNote, decisionTree, hint, type DecisionNode, type Leaf } from '../content/decision';
@@ -13,17 +13,51 @@ import { Glyph } from '../components/Glyph';
 import { Rich, Tex } from '../components/Tex';
 import { href, scrollToId } from '../lib/router';
 import { useLang } from '../lib/lang';
+import { overlay, type Tr } from '../lib/i18n';
+import type { Chapter } from '../content/chapterTypes';
+import type { DistContent } from '../content/types';
+
+/** ترجمة أقسام ليلة الاختبار المطوية (تمررها ExamNightPageEn فقط). */
+export type ExamTr = {
+  decision: Tr<DecisionNode>;
+  hint: Tr<typeof hint>;
+  note: string;
+  twins: Tr<typeof twins>;
+  labels: Tr<typeof choiceLabels>;
+  chapters: Partial<Record<DistId, Tr<Chapter>>>;
+  dist: Partial<Record<DistId, Tr<DistContent>>>;
+};
+
+type Loc = { en: boolean; hint: typeof hint; labels: typeof choiceLabels };
 
 // كل ما في هذه الصفحة يُقرأ من ورقة القوانين (sheet.ts) وبطاقات التوزيعات ومخطط القرار (مصدر واحد للحقيقة).
-export function ExamNightPage() {
+export function ExamNightPage({ tr }: { tr?: ExamTr }) {
   const en = useLang() === 'en';
+  // نصوص الأقسام المطوية: الترجمة فوق الأصل حين تكون الواجهة إنجليزية
+  const loc = useMemo(() => {
+    const t = en ? tr : undefined;
+    return {
+      en: !!t,
+      tree: t ? overlay(decisionTree, t.decision) : decisionTree,
+      hint: t ? overlay(hint, t.hint) : hint,
+      note: t ? t.note : decisionNote,
+      twins: t ? overlay(twins, t.twins) : twins,
+      labels: t ? overlay(choiceLabels, t.labels) : choiceLabels,
+      chapter: (id: DistId) => (t ? overlay(chapters[id]!, t.chapters[id]) : chapters[id]!),
+      dist: (id: DistId) => {
+        const d = distById[id];
+        return d && t ? overlay(d, t.dist[id]) : d;
+      },
+    };
+  }, [en, tr]);
+  const L = loc.en;
   return (
     <article className="exam-night">
       <header className="page-head">
         <h1 tabIndex={-1}>{en ? 'Exam night' : 'ليلة الاختبار'}</h1>
         <p className="lead">
           {en
-            ? `All the formulas as cards: ${sheet.length} distributions, each with when to use it, its formula, mean, variance and moment generating function. Then a glossary of symbols.`
+            ? `All the formulas as cards: ${sheet.length} distributions, each with when to use it, its formula, mean, variance and moment generating function. Then a glossary of symbols, and a chart that identifies the distribution from the wording of a problem.`
             : `كل القوانين في بطاقات: ${sheet.length} توزيعًا، لكل واحد متى نستعمله وقانونه ومتوسطه وتباينه ودالته المولدة. ثم قاموس الرموز، ومخطط يحدد التوزيع من نص المسألة.`}
         </p>
         <div className="btn-row no-print">
@@ -38,7 +72,7 @@ export function ExamNightPage() {
           >
             {en ? 'Print / save as PDF' : 'اطبع / احفظ PDF'}
           </button>
-          <a className="btn btn-quiet" href={href.drill}>{en ? 'Mixed practice (Arabic)' : 'تدرّب على مسائل مختلطة'}</a>
+          <a className="btn btn-quiet" href={href.drill}>{en ? 'Practise with mixed problems' : 'تدرّب على مسائل مختلطة'}</a>
         </div>
       </header>
 
@@ -55,7 +89,7 @@ export function ExamNightPage() {
             {sheet.map((s) => <option key={s.id} value={s.id}>{en ? s.nameEn : s.nameAr}</option>)}
           </select>
         </label>
-        {(en ? [['sym-h', 'Symbols']] : [['sym-h', 'الرموز'], ['decision-h', 'المخطط'], ['twins-h', 'التوائم']]).map(([id, t]) => (
+        {(en ? [['sym-h', 'Symbols'], ['decision-h', 'Chart'], ['twins-h', 'Twins']] : [['sym-h', 'الرموز'], ['decision-h', 'المخطط'], ['twins-h', 'التوائم']]).map(([id, t]) => (
           <button key={id} type="button" className="seg-tab" onClick={() => jump(id)}>{t}</button>
         ))}
       </nav>
@@ -73,55 +107,49 @@ export function ExamNightPage() {
         </dl>
       </section>
 
-      {en ? (
-        <p className="lang-note no-print">The decision chart, common traps and look-alike pairs are in Arabic only for now.</p>
-      ) : (
-        <>
-          <Fold title="وش يسأل كل توزيع؟ والفخ الشائع">
-            <ul className="traps">
-              {journey.map((id) => {
-                // الفصول الجديدة بلا بطاقة قديمة: السؤال والفخ من الفصل نفسه
-                const d = distById[id], ch = chapters[id]!;
-                return (
-                  <li key={id} style={{ '--c': identity[id].color } as CSSProperties}>
-                    <a href={href.dist(id)}><Glyph id={id} size={20} /> {sheetById[id].nameAr}</a>
-                    <span className="trap-q">{ch.question}</span>
-                    <Rich as="p" text={d ? d.card.mistake : ch.trap ?? ch.exam.tricks[0]} />
-                  </li>
-                );
-              })}
-            </ul>
-          </Fold>
+      <Fold title={L ? 'What each distribution asks, and the common trap' : 'وش يسأل كل توزيع؟ والفخ الشائع'}>
+        <ul className="traps">
+          {journey.map((id) => {
+            // الفصول الجديدة بلا بطاقة قديمة: السؤال والفخ من الفصل نفسه
+            const d = loc.dist(id), ch = loc.chapter(id);
+            return (
+              <li key={id} style={{ '--c': identity[id].color } as CSSProperties}>
+                <a href={href.dist(id)}><Glyph id={id} size={20} /> {L ? sheetById[id].nameEn : sheetById[id].nameAr}</a>
+                <span className="trap-q">{ch.question}</span>
+                <Rich as="p" text={d ? d.card.mistake : ch.trap ?? ch.exam.tricks[0]} />
+              </li>
+            );
+          })}
+        </ul>
+      </Fold>
 
-          <Fold id="decision-h" title="وش التوزيع؟ مخطط القرار">
-            <p className="hint">اسأل عن بنية الموقف لا عن كلمة مفتاحية.</p>
-            <div className="decision">
-              <Node n={decisionTree} />
-            </div>
-            <Rich as="p" className="callout" text={decisionNote} />
-          </Fold>
+      <Fold id="decision-h" title={L ? 'Which distribution? The decision chart' : 'وش التوزيع؟ مخطط القرار'}>
+        <p className="hint">{L ? 'Ask about the structure of the situation, not about a keyword.' : 'اسأل عن بنية الموقف لا عن كلمة مفتاحية.'}</p>
+        <div className="decision">
+          <Node n={loc.tree} loc={loc} />
+        </div>
+        <Rich as="p" className="callout" text={loc.note} />
+      </Fold>
 
-          <Fold id="twins-h" title="التوائم: لا تلخبط بينها">
-            <div className="twins">
-              {twins.map((t) => (
-                <div key={t.a + t.b} className="twin">
-                  <div className="twin-pair">
-                    {[t.a, t.b].map((id, i) => (
-                      <div key={id} className="twin-side" style={{ '--c': identity[id].color } as CSSProperties}>
-                        <p className="twin-name"><Glyph id={id} size={20} /> {sheetById[id].nameAr}</p>
-                        <Rich as="p" text={t.what[i]} />
-                        <Tex tex={sheetById[t.show?.[i] ?? id].f} />
-                        <p className="twin-mean"><Tex tex={sheetById[t.show?.[i] ?? id].mean} /></p>
-                      </div>
-                    ))}
+      <Fold id="twins-h" title={L ? 'Twins: don’t mix them up' : 'التوائم: لا تلخبط بينها'}>
+        <div className="twins">
+          {loc.twins.map((t) => (
+            <div key={t.a + t.b} className="twin">
+              <div className="twin-pair">
+                {[t.a, t.b].map((id, i) => (
+                  <div key={id} className="twin-side" style={{ '--c': identity[id].color } as CSSProperties}>
+                    <p className="twin-name"><Glyph id={id} size={20} /> {L ? sheetById[id].nameEn : sheetById[id].nameAr}</p>
+                    <Rich as="p" text={t.what[i]} />
+                    <Tex tex={sheetById[t.show?.[i] ?? id].f} />
+                    <p className="twin-mean"><Tex tex={sheetById[t.show?.[i] ?? id].mean} /></p>
                   </div>
-                  <p className="twin-tell"><strong>السؤال الفاصل: </strong><Rich text={t.tell} /></p>
-                </div>
-              ))}
+                ))}
+              </div>
+              <p className="twin-tell"><strong>{L ? 'The deciding question: ' : 'السؤال الفاصل: '}</strong><Rich text={t.tell} /></p>
             </div>
-          </Fold>
-        </>
-      )}
+          ))}
+        </div>
+      </Fold>
     </article>
   );
 }
@@ -170,7 +198,7 @@ function LawCards() {
       {view === 'mgf' && (
         <p className="hint">
           {en ? (
-            <>Want to derive the mean and variance from <Tex tex="M_X(t)" /> step by step? See the <a href={href.mgf}>MGF page</a> (Arabic).</>
+            <>Want to derive the mean and variance from <Tex tex="M_X(t)" /> step by step? See the <a href={href.mgf}>MGF page</a>.</>
           ) : (
             <>تبي تطلع المتوسط والتباين من <Tex tex="M_X(t)" /> خطوة خطوة؟ <a href={href.mgf}>صفحة الدالة المولدة</a>.</>
           )}
@@ -254,20 +282,20 @@ function LawCard({ s, view, en }: { s: SheetRow; view: View; en: boolean }) {
         <a
           className="law-link no-print"
           href={link}
-          aria-label={en ? `${more ? 'Full card' : 'Chapter'} for ${s.nameEn} (Arabic)` : more ? `البطاقة الكاملة لـ${s.nameAr}` : `افتح فصل ${s.nameAr}`}
+          aria-label={en ? (more ? `Full card for ${s.nameEn}` : `Open the chapter on ${s.nameEn}`) : more ? `البطاقة الكاملة لـ${s.nameAr}` : `افتح فصل ${s.nameAr}`}
         >
-          {en ? `${more ? 'Full card' : 'Open the chapter'} (Arabic) →` : `${more ? 'البطاقة الكاملة' : 'افتح الفصل'} ←`}
+          {en ? `${more ? 'Full card' : 'Open the chapter'} →` : `${more ? 'البطاقة الكاملة' : 'افتح الفصل'} ←`}
         </a>
       )}
     </article>
   );
 }
 
-function LeafView({ l }: { l: Leaf }) {
-  if (l === 'insufficient') return <span className="leaf">{choiceLabels.insufficient}</span>;
+function LeafView({ l, loc }: { l: Leaf; loc: Loc }) {
+  if (l === 'insufficient') return <span className="leaf">{loc.labels.insufficient}</span>;
   const body = (
     <>
-      <Glyph id={l} size={18} /> {sheetById[l].nameAr} <span className="leaf-h"><Rich text={hint[l]} /></span>
+      <Glyph id={l} size={18} /> {loc.en ? sheetById[l].nameEn : sheetById[l].nameAr} <span className="leaf-h"><Rich text={loc.hint[l]} /></span>
     </>
   );
   // ورقة بلا فصل منشور بعد: نص بلا رابط
@@ -278,15 +306,15 @@ function LeafView({ l }: { l: Leaf }) {
   );
 }
 
-function Node({ n }: { n: DecisionNode }) {
+function Node({ n, loc }: { n: DecisionNode; loc: Loc }) {
   return (
     <div className="dnode">
       <Rich as="p" className="dq" text={n.q} />
       <ul>
         {[n.yes, n.no].map((b) => (
           <li key={b.label}>
-            <span className="dl"><Rich text={b.label} /> ←</span>
-            {typeof b.next === 'string' ? <LeafView l={b.next} /> : <Node n={b.next} />}
+            <span className="dl"><Rich text={b.label} /> {loc.en ? '→' : '←'}</span>
+            {typeof b.next === 'string' ? <LeafView l={b.next} loc={loc} /> : <Node n={b.next} loc={loc} />}
           </li>
         ))}
       </ul>

@@ -22,6 +22,8 @@ export interface MoreCard {
   xMax: (p: P) => number;
   /** نص برياضيات بين $...$. */
   caption: (p: P) => string;
+  /** التعليق نفسه بالإنجليزية (للواجهة الإنجليزية). */
+  captionEn: (p: P) => string;
 }
 
 export const moreCards: MoreCard[] = [
@@ -51,6 +53,8 @@ export const moreCards: MoreCard[] = [
     pdf: (x, { al, be }) => weibull.pdf(x, al, be),
     xMax: ({ al, be }) => quantile((x) => weibull.cdf(x, al, be), 0.995, 0, 1e3),
     caption: ({ be }) => (be < 1 ? 'حين $\\beta < 1$ يقل الخطر مع العمر (أعطال مبكرة).' : Math.abs(be - 1) < 1e-9 ? 'حين $\\beta = 1$: الأسي، خطر ثابت.' : 'حين $\\beta > 1$ يزيد الخطر مع العمر (تآكل).'),
+    captionEn: ({ be }) =>
+      be < 1 ? 'When $\\beta < 1$ the risk falls with age (early failures).' : Math.abs(be - 1) < 1e-9 ? 'When $\\beta = 1$: the exponential, a constant risk.' : 'When $\\beta > 1$ the risk grows with age (wear-out).',
   },
   {
     id: 'beta',
@@ -79,6 +83,7 @@ export const moreCards: MoreCard[] = [
     pdf: (x, { a, b }) => betaDist.pdf(x, a, b),
     xMax: () => 1,
     caption: ({ a, b }) => `بيتا$(${a}, ${b})$: الاعتقاد في $p$ بعد المشاهدات (نجاحات: ${a - 1}، إخفاقات: ${b - 1})، ومتوسطه $${(a / (a + b)).toFixed(3)}$.`,
+    captionEn: ({ a, b }) => `Beta$(${a}, ${b})$: the belief about $p$ after the observations (successes: ${a - 1}, failures: ${b - 1}), with mean $${(a / (a + b)).toFixed(3)}$.`,
   },
   {
     id: 'f',
@@ -107,5 +112,6 @@ export const moreCards: MoreCard[] = [
     pdf: (x, { r: a, v }) => fisherF.pdf(x, a, v),
     xMax: () => 5,
     caption: ({ r: a, v }) => `$F(${a}, ${v})$${v > 2 ? `: المتوسط $${(v / (v - 2)).toFixed(3)}$${v >= 10 ? '، قريب من 1' : ''}` : ': لا متوسط حين $v \\le 2$'}.`,
+    captionEn: ({ r: a, v }) => `$F(${a}, ${v})$${v > 2 ? `: mean $${(v / (v - 2)).toFixed(3)}$${v >= 10 ? ', close to 1' : ''}` : ': no mean when $v \\le 2$'}.`,
   },
 ];

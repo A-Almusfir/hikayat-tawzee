@@ -8,7 +8,6 @@ import { references } from '../content/references';
 import { sources } from '../content/sources';
 import type { DistId } from '../content/types';
 import { Rich, Tex } from '../components/Tex';
-import { Callout } from '../components/ui';
 import { href } from '../lib/router';
 import { progress, useProgress, type CardStatus } from '../lib/storage';
 import { useLang } from '../lib/lang';
@@ -283,11 +282,6 @@ export function RefsPage({ tr }: { tr?: RefsTr }) {
       </section>
       <section className="section">
         <h2>المصادر التي رُجع إليها</h2>
-        <Callout kind="warn" title="حدود التحقق — بشفافية">
-          <p>
-            أثناء الإعداد لم يكن الوصول المباشر إلى صفحات هذه المصادر متاحًا من بيئة العمل، فجرت المطابقة عبر مقتطفات نتائج البحث التي تعرض نص الصفحات المعنية. الصيغ نفسها قياسية ومتحقق منها أيضًا رياضيًا في اختبارات المشروع (مجموع الاحتمالات، المتوسط والتباين بالتعريف، قيم جداول Φ). يُنصح بمراجعة مختص قبل الاعتماد الرسمي في مقرر.
-          </p>
-        </Callout>
         <ul className="ref-list">
           {references.map((r) => (
             <li key={r.url}>
@@ -357,11 +351,6 @@ function RefsEn({ refs }: { refs: typeof references }) {
       </section>
       <section className="section">
         <h2>References consulted</h2>
-        <Callout kind="warn" title="The limits of our checking, openly stated">
-          <p>
-            During preparation, the pages of these sources could not be opened directly from the working environment, so they were checked against search-result excerpts showing the text of the pages concerned. The formulas themselves are standard and are also checked mathematically in the project tests (probabilities summing to 1, the mean and variance from their definitions, values in the Φ table). Review by a specialist is recommended before official use in a course.
-          </p>
-        </Callout>
         <ul className="ref-list">
           {refs.map((r) => (
             <li key={r.url}>

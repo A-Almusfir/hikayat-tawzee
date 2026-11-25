@@ -184,10 +184,13 @@ export function FamilyTree({ initial = 'bin-poi' }: { initial?: string }) {
             {e.src && (
               <p className="tree-src">
                 {en ? 'Source:' : 'المصدر:'}{' '}
-                {e.src.map((s) => (
-                  <a key={s} href={sourceById[s].url} target="_blank" rel="noopener noreferrer">
-                    {sourceById[s].cite}
-                  </a>
+                {e.src.map((s, i) => (
+                  <span key={s}>
+                    {i > 0 && ' · '}
+                    <a href={sourceById[s].url} target="_blank" rel="noopener noreferrer">
+                      {(en && sourceById[s].citeEn) || sourceById[s].cite}
+                    </a>
+                  </span>
                 ))}
               </p>
             )}

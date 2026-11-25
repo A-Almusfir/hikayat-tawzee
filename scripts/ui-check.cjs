@@ -12,7 +12,7 @@ async function arabicLeaks(page) {
     const out = new Set();
     const own = (el) => { const c = el.closest('[lang="ar"]'); return c && c !== document.documentElement; };
     const w = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
-    for (let n; (n = w.nextNode()); ) if (/[\u0600-\u06FF]/.test(n.textContent) && !own(n.parentElement) && !n.parentElement.closest('script, style')) out.add(n.textContent.trim().slice(0, 50));
+    for (let n; (n = w.nextNode()); ) if (/[\u0600-\u06FF]/.test(n.textContent) && !own(n.parentElement) && !n.parentElement.closest('script, style, noscript')) out.add(n.textContent.trim().slice(0, 50));
     for (const el of document.querySelectorAll('[aria-label], [title], [placeholder]'))
       for (const a of ['aria-label', 'title', 'placeholder']) { const v = el.getAttribute(a); if (v && /[\u0600-\u06FF]/.test(v) && !own(el)) out.add(`@${a}: ${v.slice(0, 50)}`); }
     if (/[\u0600-\u06FF]/.test(document.title)) out.add(`@title: ${document.title}`);

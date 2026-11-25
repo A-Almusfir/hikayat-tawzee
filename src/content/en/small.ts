@@ -26,7 +26,7 @@ export const choiceLabelsEn: Tr<typeof choiceLabels> = {
   gamma: 'Gamma',
   uniform: 'Uniform',
   chisquare: 'Chi-square',
-  t: 't (Student)',
+  t: 'Student’s t',
   normal: 'Normal',
   insufficient: 'The data or conditions are not enough',
 };

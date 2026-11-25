@@ -117,7 +117,7 @@ export function ChooserPage({ tr }: { tr?: ChooserTr }) {
   );
 }
 
-// ———————— بطاقات من الذاكرة ————————
+// ———————— بطاقات المراجعة ————————
 const FIELDS = [
   { key: 'law', label: 'القانون', en: 'Formula' },
   { key: 'support', label: 'مجال X', en: 'Support of X' },
@@ -214,7 +214,7 @@ export function CardsPage({ tr }: { tr?: CardsTr }) {
   return (
     <article>
       <header className="page-head">
-        <h1 tabIndex={-1}>{en ? 'Cards from memory' : 'بطاقات من الذاكرة'}</h1>
+        <h1 tabIndex={-1}>{en ? 'Review cards' : 'بطاقات المراجعة'}</h1>
         <p className="lead">
           {en ? 'Try to recall each field before revealing it. Then sort the card: “I knew it” or “Review it”.' : 'حاول أن تتذكر كل حقل قبل كشفه. ثم صنّف البطاقة: «عرفتها» أو «أراجعها».'}
         </p>

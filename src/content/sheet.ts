@@ -363,7 +363,7 @@ export const sheet: SheetRow[] = [
   {
     id: 't',
     nameAr: 't (ستيودنت)',
-    nameEn: 'Student t',
+    nameEn: 'Student’s t',
     group: 'continuous',
     when: 'المتوسط المعياري لعينة من مجتمع طبيعي، $\\frac{\\bar{X}-\\mu}{S/\\sqrt{n}}$، حين $\\sigma$ مجهول.',
     en: { when: 'The standardized sample mean $\\frac{\\bar{X}-\\mu}{S/\\sqrt{n}}$ from a normal population when $\\sigma$ is unknown.', params: '$v$ a positive whole number: the degrees of freedom', mgf: '$E(e^{tX}) = \\infty$ for every $t \\ne 0$: the tails are heavier than any exponential.', cdf: 'From the t table.', warn: 'At $v = 1$, t is the Cauchy distribution, which has no mean.' },

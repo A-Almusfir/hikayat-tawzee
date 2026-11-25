@@ -64,7 +64,7 @@ async function texOverflow(page, tag, route) {
 
     // الفصول المترجمة: بعد كشف كل شيء، لا يبقى نص عربي إلا ما وُسم lang="ar" عمدًا (الاسم العربي بجانب الإنجليزي)
     if (tag === 'mobile') {
-      for (const ch of ['bernoulli', 'binomial', 'hypergeometric', 'poisson', 'exponential', 'gamma', 'geometric', 'negbin']) {
+      for (const ch of CHAPTERS) {
         await page.goto(BASE + '#/d/' + ch);
         await page.reload();
         await page.waitForSelector('main h1');

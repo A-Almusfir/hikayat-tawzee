@@ -3,12 +3,15 @@ import { fmt, normal } from '../../lib/dist';
 import { CurveChart, Legend } from '../charts';
 import { Rich, Tex } from '../Tex';
 import { Slider } from '../ui';
+import { useUiLang } from '../../lib/lang';
 
 const PHI = (z: number) => normal.cdf(z, 0, 1);
 const COLS = Array.from({ length: 10 }, (_, i) => i / 100);
 
 /** من x إلى z إلى Φ(z): التحويل إلى الطبيعي المعياري، ثم قراءة الجدول كما في الاختبار. */
 export function ZTable() {
+  const en = useUiLang() === 'en';
+  const tr = (ar: string, e: string) => (en ? e : ar);
   const [mu, setMu] = useState(100);
   const [sigma, setSigma] = useState(15);
   const [x, setX] = useState(120);
@@ -29,9 +32,9 @@ export function ZTable() {
   return (
     <div className="lab ztable">
       <div className="slider-grid">
-        <Slider label="المتوسط" symbol="\mu" value={mu} onChange={setMu} min={0} max={200} step={5} digits={0} />
-        <Slider label="الانحراف المعياري" symbol="\sigma" value={sigma} onChange={setSigma} min={1} max={40} step={1} digits={0} />
-        <Slider label="القيمة" symbol="x" value={xx} onChange={setX} min={Math.ceil(lo)} max={Math.floor(hi)} step={1} digits={0} />
+        <Slider label={tr('المتوسط', 'Mean')} symbol="\mu" value={mu} onChange={setMu} min={0} max={200} step={5} digits={0} />
+        <Slider label={tr('الانحراف المعياري', 'Standard deviation')} symbol="\sigma" value={sigma} onChange={setSigma} min={1} max={40} step={1} digits={0} />
+        <Slider label={tr('القيمة', 'Value')} symbol="x" value={xx} onChange={setX} min={Math.ceil(lo)} max={Math.floor(hi)} step={1} digits={0} />
       </div>
       <p className="prob-line">
         <Tex tex={`z = \\frac{x - \\mu}{\\sigma} = \\frac{${fmt(xx, 0)} - ${mu}}{${sigma}} = ${z.toFixed(2)}`} />
@@ -42,7 +45,7 @@ export function ZTable() {
         xMax={4}
         shade={[-4, z]}
         markers={[{ x: z, label: 'z' }]}
-        ariaLabel={`المنحنى الطبيعي المعياري، والمساحة المظللة يسار z = ${z.toFixed(2)} تساوي ${fmt(PHI(z), 4)}`}
+        ariaLabel={tr(`المنحنى الطبيعي المعياري، والمساحة المظللة يسار z = ${z.toFixed(2)} تساوي ${fmt(PHI(z), 4)}`, `The standard normal curve; the shaded area left of z = ${z.toFixed(2)} equals ${fmt(PHI(z), 4)}`)}
         xLabel="z"
         yLabel="φ(z)"
       />
@@ -52,12 +55,12 @@ export function ZTable() {
       </p>
       <p className="hint">
         {z < 0 ? (
-          <Rich text={`الجدول للقيم الموجبة: $\\Phi(${z.toFixed(2)}) = 1 - \\Phi(${a.toFixed(2)}) = 1 - ${PHI(a).toFixed(4)}$.`} />
+          <Rich text={`${tr('الجدول للقيم الموجبة', 'The table is for positive values')}: $\\Phi(${z.toFixed(2)}) = 1 - \\Phi(${a.toFixed(2)}) = 1 - ${PHI(a).toFixed(4)}$.`} />
         ) : (
-          <Rich text={`اقرأ الصف $${row.toFixed(1)}$ والعمود $${col.toFixed(2)}$.`} />
+          <Rich text={tr(`اقرأ الصف $${row.toFixed(1)}$ والعمود $${col.toFixed(2)}$.`, `Read row $${row.toFixed(1)}$ and column $${col.toFixed(2)}$.`)} />
         )}
       </p>
-      <div className="ztable-wrap" ref={wrap} dir="ltr" tabIndex={0} role="region" aria-label="مقتطف من جدول الطبيعي المعياري حول قيمة z الحالية">
+      <div className="ztable-wrap" ref={wrap} dir="ltr" tabIndex={0} role="region" aria-label={tr('مقتطف من جدول الطبيعي المعياري حول قيمة z الحالية', 'An excerpt of the standard normal table around the current z')}>
         <table className="ztab">
           <thead>
             <tr>
@@ -86,7 +89,7 @@ export function ZTable() {
       </div>
       <ul className="z-rules">
         <Rich as="li" text="$P(X > x) = 1 - \Phi(z)$" />
-        <Rich as="li" text="$\Phi(-z) = 1 - \Phi(z)$: يكفي جدول القيم الموجبة." />
+        <Rich as="li" text={tr('$\\Phi(-z) = 1 - \\Phi(z)$: يكفي جدول القيم الموجبة.', '$\\Phi(-z) = 1 - \\Phi(z)$: a table of positive values is enough.')} />
         <Rich as="li" text="$P(a < X < b) = \Phi(z_b) - \Phi(z_a)$" />
       </ul>
     </div>

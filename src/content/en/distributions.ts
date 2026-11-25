@@ -301,4 +301,68 @@ export const distEn: Partial<Record<DistId, Tr<DistContent>>> = {
       },
     ],
   },
+
+  normal: {
+    question: 'What is the probability that a value falls in an interval around the mean?',
+    formula: {
+      fnName: 'Probability density function (PDF)',
+      parts: [
+        { label: 'The normalizing constant', explain: 'It makes the total area under the curve 1. The smaller $\\sigma$ is, the higher the peak and the narrower the curve.' },
+        { label: 'The bell shape', explain: 'Largest at $z=0$ (at the mean), and falls off quickly and symmetrically as we move away.' },
+        { label: 'The standardized distance', explain: 'How many standard deviations $x$ is from the mean. With it we turn any normal distribution into $N(0,1)$.' },
+      ],
+      intuition: [
+        '**An intuitive explanation, not a derivation:** when a value is the result of the sum of many small, independent (or weakly dependent) influences, each with a finite variance and none dominating the rest, the distribution of the sum, once standardized, approaches the normal. That is what the central limit theorem says.',
+        'This does **not** mean that any large data set becomes normal. More observations do not change the shape of their distribution; household income, for example, stays skewed however much data there is. The theorem is about the distribution of the **sum or the mean**.',
+        'The height of the curve is not a probability. A probability is an area over an interval, and $P(X = x) = 0$ for any single value.',
+      ],
+      derivation: [
+        '**What can easily be proved here:** the total area is 1, using the well-known Gaussian integral $\\int_{-\\infty}^{\\infty} e^{-z^2/2}\\,dz = \\sqrt{2\\pi}$ and the substitution $z = (x-\\mu)/\\sigma$, $dx = \\sigma\\,dz$:',
+        undefined,
+        'Symmetry about $\\mu$ gives $E[X] = \\mu$, and integration by parts gives $\\mathrm{Var}(X) = \\sigma^2$.',
+        'Standardizing: if $X \\sim N(\\mu, \\sigma^2)$ then $Z = (X - \\mu)/\\sigma \\sim N(0, 1)$, and so:',
+        undefined,
+        'where $\\Phi$ is the cumulative distribution function of the standard normal, which has no closed form in elementary functions; it is computed numerically or read from tables.',
+        '**What we do not present here:** why is the shape $e^{-z^2/2}$ exactly the limit of standardized sums? Proving the central limit theorem needs tools beyond an introductory course (such as generating or characteristic functions), and we will not offer an incorrect “simplified derivation” in its place.',
+      ],
+    },
+    card: {
+      params: [
+        { meaning: 'The mean (the centre of symmetry), in the same units as $X$.' },
+        { meaning: 'The standard deviation, $\\sigma > 0$, in the units of $X$. The variance $\\sigma^2$ is in squared units.' },
+      ],
+      fnLabel: 'Probability density function (PDF)',
+      conditions: ['A continuous variable.', 'A symmetric bell-shaped model suits the data (this should be checked).', 'Probability is an area over an interval: $P(a<X<b)$.'],
+      mistake: 'Dividing by $\\sigma^2$ instead of $\\sigma$ when computing $z$, or reading $N(500, 16)$ as $\\sigma = 16$.',
+    },
+    quiz: [
+      {
+        prompt: 'If $X \\sim N(70, 25)$ is written in the convention $N(\\mu, \\sigma^2)$, what is the standard deviation $\\sigma$?',
+        options: [
+          { why: 'The second parameter is the variance, $\\sigma^2 = 25$, so $\\sigma = 5$.' },
+          { why: 'In the convention used, 25 is the variance, not the standard deviation.' },
+          { why: '70 is the mean $\\mu$.' },
+          { why: 'That is $25^2$, which has no meaning here.' },
+        ],
+      },
+      {
+        prompt: 'If $X \\sim N(500, 4^2)$, what is $P(X < 508)$, approximately?',
+        options: [
+          { why: '$z = (508 - 500)/4 = 2$, and $\\Phi(2) \\approx 0.9772$.' },
+          { why: 'It divides by the variance 16 instead of the standard deviation 4.' },
+          { why: 'That is $P(X > 508)$, the right tail.' },
+          { why: 'That is the probability of the interval $\\mu \\pm 2\\sigma$ on both sides, not $P(X < \\mu + 2\\sigma)$.' },
+        ],
+      },
+      {
+        prompt: 'A student said: “We have 10,000 observations of household income, so income follows a normal distribution by the central limit theorem.” What is correct?',
+        options: [
+          { text: 'Wrong: the theorem is about the distribution of the sum or mean of independent variables with finite variance, not the shape of the data themselves; more observations do not change the skew of income.', why: 'A larger sample makes the distribution of the **sample mean** closer to normal, but the individual observations keep their distribution.' },
+          { text: 'Right: any data with more than 30 observations become normal.', why: 'That is a common but false rule; the data themselves do not turn normal.' },
+          { text: 'Right, provided the values are positive.', why: 'Being positive has nothing to do with it; and income is usually skewed to the right.' },
+          { text: 'Wrong, because the normal distribution needs at least 100,000 observations.', why: 'The problem is not the number; the number of observations does not decide the shape of their distribution.' },
+        ],
+      },
+    ],
+  },
 };

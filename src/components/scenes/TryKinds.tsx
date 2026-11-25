@@ -270,6 +270,7 @@ export function MemoryTry({ t }: { t: Of<'memory'> }) {
 // ———— الطبيعي: لوح غالتون ————
 export function GaltonTry({ t }: { t: Of<'galton'> }) {
   const [rows, setRows] = useState(t.rows.start);
+  const en = useUiLang() === 'en';
   const [sim, setSim] = useState<number[] | null>(null);
   useEffect(() => setSim(null), [rows]);
   const bars = range(0, rows).map((k) => ({ x: k, p: binomial.pmf(k, rows, 0.5) }));
@@ -281,18 +282,20 @@ export function GaltonTry({ t }: { t: Of<'galton'> }) {
       title={t.headline}
       art={
         <figure className="hk-chart">
-          <BarChart bars={bars} sim={simBars} curve={(x) => normal.pdf(x, mu, sigma)} ariaLabel={`لوح غالتون بـ ${rows} صفًا: ذو الحدين مع منحنى طبيعي متوسطه ${mu} وانحرافه ${fmt(sigma, 2)}`} xLabel="رقم الحجرة (عدد مرات الانحراف يمينًا)" />
+          <BarChart bars={bars} sim={simBars} curve={(x) => normal.pdf(x, mu, sigma)} ariaLabel={en ? `A Galton board with ${rows} rows: the binomial with a normal curve of mean ${mu} and standard deviation ${fmt(sigma, 2)}` : `لوح غالتون بـ ${rows} صفًا: ذو الحدين مع منحنى طبيعي متوسطه ${mu} وانحرافه ${fmt(sigma, 2)}`}
+            xLabel={en ? 'Bin number (times knocked to the right)' : 'رقم الحجرة (عدد مرات الانحراف يمينًا)'}
+          />
           <figcaption>
-            <span className="lg"><i className="lg-exp" /> ما يتوقعه ذو الحدين</span>
-            <span className="lg"><i className="lg-curve" /> منحنى الجرس</span>
-            {simBars && <span className="lg"><i className="lg-dia" /> كرات المحاكاة</span>}
+            <span className="lg"><i className="lg-exp" /> {en ? 'Expected by the binomial' : 'ما يتوقعه ذو الحدين'}</span>
+            <span className="lg"><i className="lg-curve" /> {en ? 'The bell curve' : 'منحنى الجرس'}</span>
+            {simBars && <span className="lg"><i className="lg-dia" /> {en ? 'Simulated balls' : 'كرات المحاكاة'}</span>}
           </figcaption>
         </figure>
       }
     >
       <Rich as="p" text={t.prompt} />
       <div className="one-control">
-        <label htmlFor="g-rows">عدد صفوف المسامير</label>
+        <label htmlFor="g-rows">{en ? 'Rows of pins' : 'عدد صفوف المسامير'}</label>
         <div className="slider-row">
           <input id="g-rows" type="range" min={t.rows.min} max={t.rows.max} step={1} value={rows} onChange={(e) => setRows(Number(e.target.value))} dir="ltr" />
           <output htmlFor="g-rows" className="num big-out" dir="ltr">{rows}</output>
@@ -300,11 +303,12 @@ export function GaltonTry({ t }: { t: Of<'galton'> }) {
       </div>
       <div className="btn-row">
         <button type="button" className="btn btn-c" onClick={() => setSim(Array.from({ length: t.balls }, () => sample.binomial(rows, 0.5)))}>
-          أسقط {t.balls} كرة
+          {en ? `Drop ${t.balls} balls` : `أسقط ${t.balls} كرة`}
         </button>
       </div>
       <p className="fit" aria-live="polite">
-        المنحنى: <Tex tex={`N\\!\\left(${fmt(mu, 1)},\\ ${fmt(sigma, 2)}^2\\right)`} />. كلما زادت الصفوف اقتربت الأعمدة من الجرس.
+        {en ? 'The curve: ' : 'المنحنى: '}<Tex tex={`N\\!\\left(${fmt(mu, 1)},\\ ${fmt(sigma, 2)}^2\\right)`} />
+        {en ? '. The more rows, the closer the bars come to the bell.' : '. كلما زادت الصفوف اقتربت الأعمدة من الجرس.'}
       </p>
       {sim && <SimNoteLine />}
     </Scene>

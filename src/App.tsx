@@ -121,7 +121,7 @@ export default function App() {
           {en && !isTranslated(route as { name: string; id?: string }) ? (
             <>
               <p className="lang-note" lang="en" dir="ltr">
-                This page is in Arabic only for now. The English beta covers the home page, the family tree, Exam night and the first eight chapters.
+                This page is in Arabic only for now. The English beta covers the home page, the family tree, Exam night and all 12 chapters.
               </p>
               <div lang="ar" dir="rtl">
                 <ArabicOnlyScope value={true}>{page}</ArabicOnlyScope>

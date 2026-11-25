@@ -9,6 +9,10 @@ import { exponentialEn } from './exponential';
 import { gammaEn } from './gamma';
 import { geometricEn } from './geometric';
 import { negbinEn } from './negbin';
+import { uniformEn } from './uniform';
+import { normalEn } from './normal';
+import { chisquareEn } from './chisquare';
+import { tEn } from './t';
 
 // ترجمات الفصول (نصوص فقط فوق الفصل العربي). أي فصل هنا يجب أن يكون في TRANSLATED_CHAPTERS (lib/lang.ts) والعكس.
 export const chaptersEn: Partial<Record<DistId, Tr<Chapter>>> = {
@@ -20,4 +24,8 @@ export const chaptersEn: Partial<Record<DistId, Tr<Chapter>>> = {
   gamma: gammaEn,
   geometric: geometricEn,
   negbin: negbinEn,
+  uniform: uniformEn,
+  normal: normalEn,
+  chisquare: chisquareEn,
+  t: tEn,
 };

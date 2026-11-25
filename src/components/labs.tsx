@@ -407,6 +407,7 @@ export function ExponentialLab() {
 
 // ———————— الطبيعي ————————
 export function NormalLab() {
+  const { t: tr } = useT();
   const [mu, setMu] = useState(500);
   const [sigma, setSigma] = useState(4);
   const [a, setA] = useState(495);
@@ -420,33 +421,46 @@ export function NormalLab() {
   return (
     <div className="lab">
       <div className="slider-grid">
-        <Slider label="المتوسط" symbol="\mu" value={mu} onChange={setMu} {...RANGES.normalMu} unit="مل" digits={0} />
-        <Slider label="الانحراف المعياري" symbol="\sigma" value={sigma} onChange={setSigma} {...RANGES.normalSigma} unit="مل" digits={1} />
-        <Slider label="بداية الفترة" symbol="a" value={a} onChange={setA} min={450} max={550} step={0.5} unit="مل" digits={1} />
-        <Slider label="نهاية الفترة" symbol="b" value={b} onChange={setB} min={450} max={550} step={0.5} unit="مل" digits={1} />
+        <Slider label={tr('المتوسط', 'Mean')} symbol="\mu" value={mu} onChange={setMu} {...RANGES.normalMu} unit={tr('مل', 'ml')} digits={0} />
+        <Slider label={tr('الانحراف المعياري', 'Standard deviation')} symbol="\sigma" value={sigma} onChange={setSigma} {...RANGES.normalSigma} unit={tr('مل', 'ml')} digits={1} />
+        <Slider label={tr('بداية الفترة', 'Start of the interval')} symbol="a" value={a} onChange={setA} min={450} max={550} step={0.5} unit={tr('مل', 'ml')} digits={1} />
+        <Slider label={tr('نهاية الفترة', 'End of the interval')} symbol="b" value={b} onChange={setB} min={450} max={550} step={0.5} unit={tr('مل', 'ml')} digits={1} />
       </div>
       <p className="lambda-line">
         <Tex tex={`X \\sim N(\\mu,\\sigma^2) = N(${fmt(mu)},\\ ${fmt(sigma)}^2) = N(${fmt(mu)},\\ ${fmt(sigma * sigma, 2)})`} />
       </p>
-      {a > b && <p className="hint">بدأت الفترة بعد نهايتها، فعكسنا الحدّين تلقائيًا.</p>}
+      {a > b && <p className="hint">{tr('بدأت الفترة بعد نهايتها، فعكسنا الحدّين تلقائيًا.', 'The interval started after its end, so we swapped the 2 limits automatically.')}</p>}
       <CurveChart
         f={(x) => normal.pdf(x, mu, sigma)}
         xMin={xMin}
         xMax={xMax}
         shade={[lo, hi]}
         markers={[{ x: mu, label: 'μ' }]}
-        ariaLabel={`كثافة طبيعية بمتوسط ${fmt(mu)} وانحراف معياري ${fmt(sigma)}. P(${fmt(lo)} < X < ${fmt(hi)}) = ${fmt(pr)}`}
-        xLabel="حجم العبوة x (مل)"
+        ariaLabel={tr(
+          `كثافة طبيعية بمتوسط ${fmt(mu)} وانحراف معياري ${fmt(sigma)}. P(${fmt(lo)} < X < ${fmt(hi)}) = ${fmt(pr)}`,
+          `Normal density with mean ${fmt(mu)} and standard deviation ${fmt(sigma)}. P(${fmt(lo)} < X < ${fmt(hi)}) = ${fmt(pr)}`,
+        )}
+        xLabel={tr('حجم العبوة x (مل)', 'Bottle volume x (ml)')}
       />
       <Legend items={['curve', 'shade']} />
       <ProbLine tex={`P(${fmt(lo)} < X < ${fmt(hi)}) = \\Phi(${fmt(z2, 2)}) - \\Phi(${fmt(z1, 2)})`} value={pr} />
       <p className="hint">
-        <Rich text={`$z = \\dfrac{x-\\mu}{\\sigma}$: الحد الأدنى يبعد $${fmt(z1, 2)}$ والحد الأعلى $${fmt(z2, 2)}$ انحرافًا معياريًا عن المتوسط. القسمة على $\\sigma = ${fmt(sigma)}$ لا على $\\sigma^2 = ${fmt(sigma * sigma, 2)}$.`} />
+        <Rich
+          text={tr(
+            `$z = \\dfrac{x-\\mu}{\\sigma}$: الحد الأدنى يبعد $${fmt(z1, 2)}$ والحد الأعلى $${fmt(z2, 2)}$ انحرافًا معياريًا عن المتوسط. القسمة على $\\sigma = ${fmt(sigma)}$ لا على $\\sigma^2 = ${fmt(sigma * sigma, 2)}$.`,
+            `$z = \\dfrac{x-\\mu}{\\sigma}$: the lower limit is $${fmt(z1, 2)}$ and the upper limit $${fmt(z2, 2)}$ standard deviations from the mean. Divide by $\\sigma = ${fmt(sigma)}$, not by $\\sigma^2 = ${fmt(sigma * sigma, 2)}$.`,
+          )}
+        />
       </p>
       <p className="trunc-note">
-        <Rich text={`الرسم يعرض $\\mu \\pm 4\\sigma$ فقط؛ المساحة خارجه $\\approx ${fmt(outside, 5)}$ غير معروضة. أعلى نقطة في المنحنى $f(\\mu) \\approx ${fmt(peak, 4)}$ كثافة وليست احتمالًا، و$P(X = x) = 0$ لأي قيمة مفردة.`} />
+        <Rich
+          text={tr(
+            `الرسم يعرض $\\mu \\pm 4\\sigma$ فقط؛ المساحة خارجه $\\approx ${fmt(outside, 5)}$ غير معروضة. أعلى نقطة في المنحنى $f(\\mu) \\approx ${fmt(peak, 4)}$ كثافة وليست احتمالًا، و$P(X = x) = 0$ لأي قيمة مفردة.`,
+            `The chart shows only $\\mu \\pm 4\\sigma$; the area outside it, $\\approx ${fmt(outside, 5)}$, is not shown. The highest point of the curve, $f(\\mu) \\approx ${fmt(peak, 4)}$, is a density, not a probability, and $P(X = x) = 0$ for any single value.`,
+          )}
+        />
       </p>
-      <Stats mean={mu} variance={sigma * sigma} meanTex="\mu" varTex="\sigma^2" unit="مل" />
+      <Stats mean={mu} variance={sigma * sigma} meanTex="\mu" varTex="\sigma^2" unit={tr('مل', 'ml')} />
     </div>
   );
 }
@@ -652,26 +666,27 @@ export function GammaLab() {
 // ———————— مربع كاي: مطابقة بواسون لركلات الخيل ————————
 
 export function ChiSquareLab() {
+  const { t: tr } = useT();
   const [l, setL] = useState(1.0);
   // λ المقدّرة من البيانات تُنقص درجة حرية؛ λ المفروضة مسبقًا لا تُنقصها
   const est = Math.abs(l - LAMBDA_HAT) < 0.005;
   const df = est ? 1 : 2, crit = est ? CHI1_95 : CHI2_95;
   const f = chiFit(l, df);
-  const labels = ['0', '1', '2 فأكثر'];
+  const labels = ['0', '1', tr('2 فأكثر', '2 or more')];
   const reject = f.stat > crit;
   return (
     <div className="lab">
-      <Slider label="متوسط الوفيات في الفيلق-السنة" symbol="\lambda" value={l} onChange={setL} min={0.3} max={1.3} step={0.01} />
+      <Slider label={tr('متوسط الوفيات في الفيلق-السنة', 'Mean deaths per corps-year')} symbol="\lambda" value={l} onChange={setL} min={0.3} max={1.3} step={0.01} />
       <div className="btn-row">
         <button type="button" className="btn btn-quiet" onClick={() => setL(LAMBDA_HAT)} disabled={est}>
-          استعمل المقدَّرة من البيانات <Tex tex={`\\hat\\lambda = ${LAMBDA_HAT}`} />
+          {tr('استعمل المقدَّرة من البيانات ', 'Use the estimate from the data ')}<Tex tex={`\\hat\\lambda = ${LAMBDA_HAT}`} />
         </button>
       </div>
       <table className="obs-exp">
-        <caption className="hint"><Rich text="ما وقع ($O$) وما يتوقعه بواسون ($E$) في كل فئة" /></caption>
+        <caption className="hint"><Rich text={tr('ما وقع ($O$) وما يتوقعه بواسون ($E$) في كل فئة', 'Observed ($O$) and expected under the Poisson ($E$) in each category')} /></caption>
         <thead>
           <tr>
-            <th scope="col">الوفيات</th>
+            <th scope="col">{tr('الوفيات', 'Deaths')}</th>
             <th scope="col"><Tex tex="O" /></th>
             <th scope="col"><Tex tex="E" /></th>
             <th scope="col"><Tex tex="\tfrac{(O-E)^2}{E}" /></th>
@@ -690,9 +705,22 @@ export function ChiSquareLab() {
       </table>
       <ProbLine tex={`\\chi^{2} = \\sum \\tfrac{(O-E)^{2}}{E}`} value={f.stat} />
       <p className={`verdict ${reject ? 'no' : 'ok'}`} aria-live="polite">
-        <Rich text={reject ? `$${fmt(f.stat, 3)} > ${crit}$: البعد كبير؛ نرفض أن البيانات من بواسون بهذا المتوسط.` : `$${fmt(f.stat, 3)} \\le ${crit}$: البعد صغير؛ لا دليل ضد بواسون بهذا المتوسط.`} />
+        <Rich
+          text={
+            reject
+              ? tr(`$${fmt(f.stat, 3)} > ${crit}$: البعد كبير؛ نرفض أن البيانات من بواسون بهذا المتوسط.`, `$${fmt(f.stat, 3)} > ${crit}$: the distance is large; we reject that the data come from a Poisson with this mean.`)
+              : tr(`$${fmt(f.stat, 3)} \\le ${crit}$: البعد صغير؛ لا دليل ضد بواسون بهذا المتوسط.`, `$${fmt(f.stat, 3)} \\le ${crit}$: the distance is small; no evidence against a Poisson with this mean.`)
+          }
+        />
       </p>
-      <Rich as="p" className="hint" text={`${est ? `درجات الحرية $3 - 1 - 1 = 1$: ثلاث فئات، ناقص واحد لأن المجموع ثابت (200)، وناقص واحد لأننا قدّرنا $\\lambda$ من البيانات.` : `هنا $\\lambda$ مفروضة مسبقًا لا مقدّرة، فدرجات الحرية $3 - 1 = 2$. وعند $\\hat\\lambda = ${LAMBDA_HAT}$ المقدّرة تصبح 1.`} والقيمة الحرجة عند $0.05$ هي $${crit}$. احتمال بعد كهذا أو أكبر لو صح النموذج: ${f.p < 0.001 ? 'أقل من $0.001$' : `$${fmt(f.p, 3)}$`}.`} />
+      <Rich
+        as="p"
+        className="hint"
+        text={tr(
+          `${est ? `درجات الحرية $3 - 1 - 1 = 1$: ثلاث فئات، ناقص واحد لأن المجموع ثابت (200)، وناقص واحد لأننا قدّرنا $\\lambda$ من البيانات.` : `هنا $\\lambda$ مفروضة مسبقًا لا مقدّرة، فدرجات الحرية $3 - 1 = 2$. وعند $\\hat\\lambda = ${LAMBDA_HAT}$ المقدّرة تصبح 1.`} والقيمة الحرجة عند $0.05$ هي $${crit}$. احتمال بعد كهذا أو أكبر لو صح النموذج: ${f.p < 0.001 ? 'أقل من $0.001$' : `$${fmt(f.p, 3)}$`}.`,
+          `${est ? `Degrees of freedom $3 - 1 - 1 = 1$: 3 categories, minus 1 because the total is fixed (200), and minus 1 because we estimated $\\lambda$ from the data.` : `Here $\\lambda$ is set in advance, not estimated, so the degrees of freedom are $3 - 1 = 2$. At the estimate $\\hat\\lambda = ${LAMBDA_HAT}$ they become 1.`} The critical value at $0.05$ is $${crit}$. The probability of a distance this large or larger if the model were right: ${f.p < 0.001 ? 'less than $0.001$' : `$${fmt(f.p, 3)}$`}.`,
+        )}
+      />
     </div>
   );
 }
@@ -702,6 +730,7 @@ export function ChiSquareLab() {
 const gauss = (rng: Rng = Math.random) => Math.sqrt(-2 * Math.log(1 - rng())) * Math.cos(2 * Math.PI * rng());
 
 export function TLab() {
+  const { t: tr } = useT();
   const [n, setN] = useState(5);
   const [ts, setTs] = useState<number[]>([]);
   useEffect(() => setTs([]), [n]);
@@ -723,27 +752,30 @@ export function TLab() {
   const theory = 2 * (1 - studentT.cdf(1.96, v));
   return (
     <div className="lab">
-      <Slider label="حجم العينة" symbol="n" value={n} onChange={setN} min={3} max={30} step={1} digits={0} />
+      <Slider label={tr('حجم العينة', 'Sample size')} symbol="n" value={n} onChange={setN} min={3} max={30} step={1} digits={0} />
       <CurveChart
         f={(x) => studentT.pdf(x, v)}
         xMin={-X}
         xMax={X}
         hist={hist}
         markers={[{ x: -1.96, label: '−1.96' }, { x: 1.96, label: '1.96' }]}
-        ariaLabel={`كثافة t بدرجات حرية v = ${v}، ومدرّج قيم T من المحاكاة`}
+        ariaLabel={tr(`كثافة t بدرجات حرية v = ${v}، ومدرّج قيم T من المحاكاة`, `The t density with v = ${v} degrees of freedom, and a histogram of simulated T values`)}
         xLabel="T = (X̄ − μ) / (S/√n)"
       />
       <Legend items={hist ? ['curve', 'hist'] : ['curve']} />
       <div className="btn-row">
         <button type="button" className="btn" onClick={() => setTs((a) => a.concat(Array.from({ length: SIM_BATCH }, tStat)).slice(0, SIM_MAX))} disabled={ts.length >= SIM_MAX}>
-          ▶▶ اسحب {SIM_BATCH} عينة بحجم {n}
+          ▶▶ {tr(`اسحب ${SIM_BATCH} عينة بحجم ${n}`, `Draw ${SIM_BATCH} samples of size ${n}`)}
         </button>
-        <button type="button" className="btn btn-quiet" onClick={() => setTs([])} disabled={!ts.length}>مسح المحاكاة</button>
+        <button type="button" className="btn btn-quiet" onClick={() => setTs([])} disabled={!ts.length}>{tr('مسح المحاكاة', 'Clear the simulation')}</button>
       </div>
       <Rich
         as="p"
         className="prob-line"
-        text={`الطبيعي يقول $P(|T| > 1.96) = 0.05$. لكن t بدرجات الحرية $v = ${v}$ يقول $${fmt(theory, 3)}$${far !== null ? `، والمحاكاة $${fmt(far, 3)}$` : ''}.`}
+        text={tr(
+          `الطبيعي يقول $P(|T| > 1.96) = 0.05$. لكن t بدرجات الحرية $v = ${v}$ يقول $${fmt(theory, 3)}$${far !== null ? `، والمحاكاة $${fmt(far, 3)}$` : ''}.`,
+          `The normal says $P(|T| > 1.96) = 0.05$. But t with $v = ${v}$ degrees of freedom says $${fmt(theory, 3)}$${far !== null ? `, and the simulation $${fmt(far, 3)}$` : ''}.`,
+        )}
       />
       <SimNote count={ts.length} max={SIM_MAX} />
     </div>
@@ -752,6 +784,7 @@ export function TLab() {
 
 // ———————— المنتظم: إبرة بوفون ————————
 export function BuffonLab() {
+  const { t: tr } = useT();
   const d = 40, W = 300, rows = 4;
   const [ratio, setRatio] = useState(0.8);
   const l = ratio * d;
@@ -769,22 +802,27 @@ export function BuffonLab() {
   const est = count.n ? count.hits / count.n : null;
   return (
     <div className="lab">
-      <Slider label="طول الإبرة نسبة إلى المسافة بين الخطين" symbol="l/d" value={ratio} onChange={setRatio} min={0.2} max={1} step={0.05} />
+      <Slider label={tr('طول الإبرة نسبة إلى المسافة بين الخطين', 'Needle length relative to the gap between lines')} symbol="l/d" value={ratio} onChange={setRatio} min={0.2} max={1} step={0.05} />
       <div className="needle-box">
-        <NeedleField needles={needles} l={l} d={d} W={W} rows={rows} label={`${count.n} إبرة مرمية، قطعت منها ${count.hits} خطًا`} />
+        <NeedleField needles={needles} l={l} d={d} W={W} rows={rows} label={tr(`${count.n} إبرة مرمية، قطعت منها ${count.hits} خطًا`, `${count.n} needles thrown, ${count.hits} of them crossing a line`)} />
       </div>
       <div className="btn-row">
-        <button type="button" className="btn" onClick={() => drop(10)} disabled={count.n >= SIM_MAX}>▶ ارمِ 10 إبر</button>
-        <button type="button" className="btn" onClick={() => drop(SIM_BATCH)} disabled={count.n >= SIM_MAX}>▶▶ ارمِ {SIM_BATCH}</button>
-        <button type="button" className="btn btn-quiet" onClick={() => (setNeedles([]), setCount({ n: 0, hits: 0 }))} disabled={!count.n}>مسح</button>
+        <button type="button" className="btn" onClick={() => drop(10)} disabled={count.n >= SIM_MAX}>▶ {tr('ارمِ 10 إبر', 'Throw 10 needles')}</button>
+        <button type="button" className="btn" onClick={() => drop(SIM_BATCH)} disabled={count.n >= SIM_MAX}>▶▶ {tr(`ارمِ ${SIM_BATCH}`, `Throw ${SIM_BATCH}`)}</button>
+        <button type="button" className="btn btn-quiet" onClick={() => (setNeedles([]), setCount({ n: 0, hits: 0 }))} disabled={!count.n}>{tr('مسح', 'Clear')}</button>
       </div>
-      <ProbLine tex={`\\tfrac{2l}{\\pi d} = \\tfrac{2 \\times ${fmt(ratio)}}{\\pi}`} value={theory} label="النظرية:" />
+      <ProbLine tex={`\\tfrac{2l}{\\pi d} = \\tfrac{2 \\times ${fmt(ratio)}}{\\pi}`} value={theory} label={tr('النظرية:', 'Theory:')} />
       {est !== null && (
         <p className="prob-line" aria-live="polite">
-          <Rich text={`المحاكاة: $${count.hits} / ${count.n} = ${fmt(est, 3)}$${count.hits ? `، ومنها تقدير $\\pi \\approx \\frac{2l}{d \\cdot ${fmt(est, 3)}} = ${fmt((2 * ratio) / est, 3)}$` : ''}.`} />
+          <Rich
+            text={tr(
+              `المحاكاة: $${count.hits} / ${count.n} = ${fmt(est, 3)}$${count.hits ? `، ومنها تقدير $\\pi \\approx \\frac{2l}{d \\cdot ${fmt(est, 3)}} = ${fmt((2 * ratio) / est, 3)}$` : ''}.`,
+              `Simulation: $${count.hits} / ${count.n} = ${fmt(est, 3)}$${count.hits ? `, which gives the estimate $\\pi \\approx \\frac{2l}{d \\cdot ${fmt(est, 3)}} = ${fmt((2 * ratio) / est, 3)}$` : ''}.`,
+            )}
+          />
         </p>
       )}
-      <Rich as="p" className="hint" text="الرسم يعرض آخر 120 إبرة. كل رمية: موضع المركز منتظم، والزاوية منتظمة على $(0, \pi)$، ومستقلان." />
+      <Rich as="p" className="hint" text={tr('الرسم يعرض آخر 120 إبرة. كل رمية: موضع المركز منتظم، والزاوية منتظمة على $(0, \\pi)$، ومستقلان.', 'The drawing shows the last 120 needles. Each throw: the position of the centre is uniform, the angle is uniform on $(0, \\pi)$, and the 2 are independent.')} />
     </div>
   );
 }

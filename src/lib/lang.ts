@@ -47,7 +47,7 @@ export function useLang(): Lang {
 export const TRANSLATED = new Set(['home', 'exam']);
 
 /** الفصول المترجمة (تُفحص في الاختبارات مقابل content/en). */
-export const TRANSLATED_CHAPTERS = new Set(['bernoulli', 'binomial', 'hypergeometric', 'poisson', 'exponential', 'gamma', 'geometric', 'negbin']);
+export const TRANSLATED_CHAPTERS = new Set(['bernoulli', 'binomial', 'hypergeometric', 'poisson', 'exponential', 'gamma', 'geometric', 'negbin', 'uniform', 'normal', 'chisquare', 't']);
 
 export const isTranslated = (route: { name: string; id?: string }) =>
   TRANSLATED.has(route.name) || (route.name === 'dist' && !!route.id && TRANSLATED_CHAPTERS.has(route.id));

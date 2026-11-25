@@ -136,8 +136,19 @@ export function ChapterPage({ ch: chAr, scene, tr }: { ch: Chapter; scene?: numb
       <ExamScene headline={ch.exam.headline} problems={ch.exam.problems} tricks={ch.exam.tricks} />
       {ch.extra === 'ztable' && (
         <section className="ch-extra" data-n={4} aria-labelledby="z-h">
-          <h2 id="z-h">الطبيعي المعياري: من <Tex tex="x" /> إلى <Tex tex="z" /> إلى <Tex tex="\Phi(z)" /></h2>
-          <Rich as="p" text="كل توزيع طبيعي يتحول إلى $Z \sim N(0, 1)$ بطرح المتوسط والقسمة على الانحراف المعياري. ثم نقرأ المساحة من جدول واحد." />
+          <h2 id="z-h">
+            {en ? 'The standard normal: from ' : 'الطبيعي المعياري: من '}<Tex tex="x" />
+            {en ? ' to ' : ' إلى '}<Tex tex="z" />
+            {en ? ' to ' : ' إلى '}<Tex tex="\Phi(z)" />
+          </h2>
+          <Rich
+            as="p"
+            text={
+              en
+                ? 'Every normal distribution turns into $Z \\sim N(0, 1)$ by subtracting the mean and dividing by the standard deviation. Then we read the area from a single table.'
+                : 'كل توزيع طبيعي يتحول إلى $Z \\sim N(0, 1)$ بطرح المتوسط والقسمة على الانحراف المعياري. ثم نقرأ المساحة من جدول واحد.'
+            }
+          />
           <ZTable />
         </section>
       )}

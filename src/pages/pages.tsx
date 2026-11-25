@@ -306,7 +306,7 @@ export function RefsPage({ tr }: { tr?: RefsTr }) {
         <p>لا تسجيل دخول، ولا تحليلات تتبع، ولا خوادم. التقدم (البطاقات والإجابات) يُحفظ في متصفحك على هذا الجهاز فقط، ويمكنك مسحه من أسفل الصفحة.</p>
       </section>
       <section className="section">
-        <h2>من أعدّ الموقع؟</h2>
+        <h2>إعداد</h2>
         <p>
           عبدالله المسفر، طالب إحصاء. لقيت خطأ أو عندك اقتراح؟ راسلني على{' '}
           <a href="https://www.linkedin.com/in/abdullah-a-365a082b3" target="_blank" rel="noopener noreferrer" lang="en" dir="ltr">LinkedIn</a>.
@@ -374,7 +374,7 @@ function RefsEn({ refs }: { refs: typeof references }) {
         <p>No sign-in, no tracking analytics, no servers. Your progress (cards and answers) is saved in your browser on this device only, and you can clear it from the bottom of the page.</p>
       </section>
       <section className="section">
-        <h2>Who made this site?</h2>
+        <h2>Prepared by</h2>
         <p>
           Abdullah Almusfir, a statistics student. Found a mistake or have a suggestion? Message me on{' '}
           <a href="https://www.linkedin.com/in/abdullah-a-365a082b3" target="_blank" rel="noopener noreferrer">LinkedIn</a>.

@@ -54,7 +54,7 @@ export const binomialEn: Tr<Chapter> = {
         predict: {
           prompt: 'In 4 rounds, how many ways contain exactly 2 wins?',
           options: [
-            { why: 'WWLL, WLWL, WLLW, LWWL, LWLW, LLWW: we choose the positions of the 2 wins out of 4, that is $\\binom{4}{2} = 6$.' },
+            { why: 'WWLL, WLWL, WLLW, LWWL, LWLW, LLWW: we choose the positions of the two wins out of 4, that is $\\binom{4}{2} = 6$.' },
             { why: 'That is the number of rounds, not the number of ways to choose 2 positions among them.' },
             { why: 'It is not $2 \\times 4$; count the 6 orderings one by one.' },
             { why: 'That is the number of wins, not the number of ways.' },
@@ -123,7 +123,7 @@ export const binomialEn: Tr<Chapter> = {
       {
         prompt: 'In 5 coin tosses, why is $P(X = 2) = 10 \\times (0.5)^5$ and not just $(0.5)^5$?',
         options: [
-          { text: 'Because there are $\\binom{5}{2} = 10$ orderings for the positions of the 2 heads, each with the same probability.', why: '$(0.5)^5$ is the probability of only one ordering.' },
+          { text: 'Because there are $\\binom{5}{2} = 10$ orderings for the positions of the two heads, each with the same probability.', why: '$(0.5)^5$ is the probability of only one ordering.' },
           { text: 'Because the tosses are not independent.', why: 'The tosses are independent, which is why we multiply the probabilities in the first place.' },
           { text: 'Because $p$ changes between tosses.', why: 'It is the same coin, and $p = 0.5$ is constant.' },
           { text: 'Because the mean is 10.', why: 'The mean here is $2.5$; 10 is the number of orderings.' },

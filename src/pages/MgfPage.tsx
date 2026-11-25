@@ -38,7 +38,7 @@ export function MgfPage({ tr }: { tr?: MgfTr }) {
           className="lead"
           text={
             en
-              ? 'From $M_X(t)$ to the mean and variance, and from the form of $M_X(t)$ to the name of the distribution: 2 skills that come up again and again in exams. First the rules, then derivations step by step, then problems on recognizing the distribution.'
+              ? 'From $M_X(t)$ to the mean and variance, and from the form of $M_X(t)$ to the name of the distribution: two skills that come up again and again in exams. First the rules, then derivations step by step, then problems on recognizing the distribution.'
               : 'من $M_X(t)$ إلى المتوسط والتباين، ومن شكل $M_X(t)$ إلى اسم التوزيع: مهارتان تتكرران في الاختبار. القواعد أولًا، ثم اشتقاق خطوة خطوة، ثم مسائل للتعرّف على التوزيع.'
           }
         />

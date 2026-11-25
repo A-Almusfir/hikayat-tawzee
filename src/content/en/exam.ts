@@ -7,7 +7,7 @@ import type { twins } from '../twins';
 export const decisionTreeEn: Tr<typeof decisionTree> = unflatten({
   q: 'Is the variable a continuous measurement (time, length, weight…)?',
   'yes.label': 'Continuous',
-  'yes.next.q': 'Is it a waiting time, with events occurring at a constant rate?',
+  'yes.next.q': 'Is it a waiting time for events that occur at random and independently, at a constant rate (a Poisson process)?',
   'yes.next.yes.label': 'Yes',
   'yes.next.yes.next.q': 'Are we waiting for the next (first) event only?',
   'yes.next.yes.next.yes.label': 'Yes',

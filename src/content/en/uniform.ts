@@ -9,7 +9,7 @@ export const uniformEn: Tr<Chapter> = {
     headline: "Buffon's needle",
     art: {
       ariaLabel: '18 needles thrown on a floor with parallel horizontal lines; the dark needles cross a line',
-      caption: 'Needles thrown at random (a simulation) onto parallel lines. The dark ones cross a line. The needle is shorter than the distance between 2 lines.',
+      caption: 'Needles thrown at random (a simulation) onto parallel lines. The dark ones cross a line. The needle is shorter than the distance between two lines.',
     },
     claims: [
       {
@@ -116,7 +116,7 @@ export const uniformEn: Tr<Chapter> = {
         prompt: "Why does the solution to Buffon's needle need two uniform variables, not one?",
         options: [
           { text: 'Because crossing a line depends on both the position of the centre and the angle.', why: 'A needle close to a line may not cross it if it lies parallel to it.' },
-          { text: 'Because the needle has 2 ends.', why: 'The 2 ends are determined by the centre and the angle.' },
+          { text: 'Because the needle has two ends.', why: 'The two ends are determined by the centre and the angle.' },
           { text: 'Because the lines are parallel.', why: 'Being parallel means the distance to the nearest line is enough for the position, but the angle remains.' },
           { text: 'It does not: the distance alone is enough.', why: 'A horizontal needle does not cross a line however close its centre is, unless it lies on it.' },
         ],

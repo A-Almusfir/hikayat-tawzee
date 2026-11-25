@@ -84,7 +84,7 @@ export const exponentialEn: Tr<Chapter> = {
       {
         label: 'Course style',
         given: "A customer's service time follows an exponential distribution with a mean of 4 minutes. What is the probability that the service takes between 2 and 6 minutes?",
-        steps: [{ title: 'From the mean to the rate' }, { title: 'The probability of an interval = the difference of 2 tails' }, { title: 'Compute' }],
+        steps: [{ title: 'From the mean to the rate' }, { title: 'The probability of an interval = the difference of two tails' }, { title: 'Compute' }],
         answer: '$P(2 < X < 6) \\approx 0.3834$',
       },
     ],
@@ -126,7 +126,7 @@ export const exponentialEn: Tr<Chapter> = {
           { text: 'How many calls arrive in 10 minutes?', why: 'Counting events in an interval: Poisson with mean $10\\theta$.' },
           { text: 'How long do we wait until the next call?', why: 'A continuous waiting time: exponential.' },
           { text: 'What is the probability that we wait more than a minute?', why: 'A question about time: exponential.' },
-          { text: 'What is the mean time between 2 calls?', why: 'The time between 2 events: exponential, with mean $1/\\theta$.' },
+          { text: 'What is the mean time between two calls?', why: 'The time between two events: exponential, with mean $1/\\theta$.' },
         ],
       },
     ],

@@ -131,7 +131,7 @@ export function DrillPage({ tr }: { tr?: DrillTr }) {
           <p className="hint">
             {en ? (
               <>
-                Need a reminder? <a href={href.exam}>Exam night</a> has all the formulas.
+                Need a reminder? <a href={href.exam}>Exam night</a> has all the formulas and the decision chart.
               </>
             ) : (
               <>
@@ -171,8 +171,8 @@ function DrillCard({ it, prefix, n, w }: { it: DrillItem; prefix: string; n: num
 /** الخطوة 3: يكتب الطالب الناتج رقمًا. إن طابق رقمًا من أخطاء شائعة نشرح ذلك الخطأ بعينه. */
 const TOL = 0.0006;
 const lastNumber = (t: string) => {
-  // آخر عدد عشري في نص الخيار هو الناتج (مثل «$e^{-2} \\approx 0.1353$»)
-  const m = t.match(/\d*\.\d+/g);
+  // آخر عدد في نص الخيار هو الناتج (مثل «$e^{-2} \\approx 0.1353$» أو «$\\frac{4}{0.25} = 16$»)
+  const m = t.match(/-?\d+(?:\.\d+)?/g);
   return m ? Number(m[m.length - 1]) : null;
 };
 

@@ -58,7 +58,7 @@ export const tEn: Tr<Chapter> = {
         },
       },
     ],
-    note: 'The general definition: $T = \\frac{Z}{\\sqrt{V/v}}$ where $Z$ is standard normal and $V \\sim \\chi^{2}_{v}$, and the two are **independent**. The t density is not usually substituted into in an exam; we use the table of critical values. As $v$ grows, t approaches the standard normal, and at $v = 1$ it is the Cauchy distribution, which has no mean. Its square is $T^{2} \\sim F(1, v)$.',
+    note: 'The general definition: $T = \\frac{Z}{\\sqrt{V/v}}$ where $Z$ is standard normal and $V \\sim \\chi^{2}_{v}$, and the two are **independent**. In an exam you rarely substitute into the t density; you use the table of critical values. As $v$ grows, t approaches the standard normal, and at $v = 1$ it is the Cauchy distribution, which has no mean. Its square is $T^{2} \\sim F(1, v)$.',
   },
   exam: {
     headline: 'The exam problem',
@@ -70,12 +70,12 @@ export const tEn: Tr<Chapter> = {
           { title: 'The statistic', body: 'The population is normal and $\\sigma$ is unknown: t with $9$ degrees of freedom.' },
           { title: 'The critical value', body: 'One-tailed (greater than zero):' },
         ],
-        answer: '$2.53 > 1.833$: we reject that the increase is zero. Had we wrongly used $Z$, the critical value would have been $1.645$.',
+        answer: '$2.53 > 1.833$: we reject the hypothesis that the increase is zero. Had we wrongly used $Z$, the critical value would have been $1.645$.',
       },
       {
         label: 'Course style',
         given: 'A sample of 16 bottles from a normal population: $\\bar{x} = 498$ ml and $s = 4$ ml. Find a 95% confidence interval for the population mean $\\mu$.',
-        steps: [{ title: 'The critical value', body: '$\\sigma$ is unknown, $v = 15$, and the 2 tails together are $0.05$:' }, { title: 'The interval' }],
+        steps: [{ title: 'The critical value', body: '$\\sigma$ is unknown, $v = 15$, and the two tails together are $0.05$:' }, { title: 'The interval' }],
         answer: 'The interval is $498 \\pm 2.131$, that is, from $495.869$ to $500.131$ ml.',
       },
     ],

@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { PART_COLORS } from '../content/distributions';
 import type { DistContent, QuizQuestion } from '../content/types';
 import { displayOrder } from '../lib/shuffle';
@@ -101,6 +102,15 @@ function QuizItem({ q, index }: { q: QuizQuestion; index: number }) {
   const isRight = chosen === correctIdx;
   const name = `q-${q.id}`;
   const en = useLang() === 'en';
+  // التنقل بالأسهم يغيّر الاختيار فقط؛ الإجابة تُسجَّل بزر «تحقّق»
+  const [pick, setPick] = useState<number | null>(null);
+  const fb = useRef<HTMLDivElement>(null);
+  const checked = useRef(false);
+  useEffect(() => {
+    setPick(null);
+    if (answered && checked.current) fb.current?.focus();
+    checked.current = false;
+  }, [answered]);
   return (
     <fieldset className="quiz-q">
       <legend>
@@ -113,15 +123,20 @@ function QuizItem({ q, index }: { q: QuizQuestion; index: number }) {
           const state = !answered ? '' : i === correctIdx ? 'is-correct' : i === chosen ? 'is-wrong' : '';
           return (
             <label key={i} className={`option ${state}`}>
-              <input type="radio" name={name} checked={chosen === i} onChange={() => progress.setQuiz(q.id, i)} disabled={answered} />
+              <input type="radio" name={name} checked={answered ? chosen === i : pick === i} onChange={() => setPick(i)} disabled={answered} />
               <span className="opt-mark" aria-hidden="true">{state === 'is-correct' ? '✓' : state === 'is-wrong' ? '✗' : ''}</span>
               <Rich text={o.text} />
             </label>
           );
         })}
       </div>
+      {!answered && (
+        <button type="button" className="btn btn-c check-btn" disabled={pick === null} onClick={() => { if (pick !== null) { checked.current = true; progress.setQuiz(q.id, pick); } }}>
+          {en ? 'Check' : 'تحقّق'}
+        </button>
+      )}
       {answered && (
-        <div className={`feedback ${isRight ? 'ok' : 'no'}`} role="status">
+        <div className={`feedback ${isRight ? 'ok' : 'no'}`} role="status" tabIndex={-1} ref={fb}>
           <p className="verdict">{en ? (isRight ? '✓ Correct.' : '✗ Not the correct answer.') : isRight ? '✓ إجابة صحيحة.' : '✗ ليست الإجابة الصحيحة.'}</p>
           <p>
             <strong>{en ? 'Why the correct answer is correct: ' : 'لماذا الصحيحة صحيحة؟ '}</strong>

@@ -13,7 +13,7 @@ export const hypergeometricEn: Tr<Chapter> = {
     },
     claims: [
       {
-        text: 'In his book The Design of Experiments (1935), Fisher told of a lady who said she could tell by taste whether the milk or the tea had been poured first.',
+        text: 'In his book “The Design of Experiments” (1935), Fisher told of a lady who said she could tell by taste whether the milk or the tea had been poured first.',
         links: r`The population: $N = 8$ cups, of which $k = 4$ are “milk first”.`,
       },
       {
@@ -26,7 +26,7 @@ export const hypergeometricEn: Tr<Chapter> = {
       },
     ],
     more: [
-      { text: 'The lady is said to have been the algae scientist Muriel Bristol, and it was William Roach, who later married her, who suggested testing her.' },
+      { text: 'The lady is said to have been Muriel Bristol, a scientist who studied algae, and it was William Roach, who later married her, who suggested testing her.' },
       { text: 'Fisher did not report the outcome of the experiment in his book, and the accounts of it came later and conflict with one another.' },
       { text: "The test Fisher built on this calculation is known today as Fisher's exact test, and its probabilities come from the hypergeometric distribution." },
     ],

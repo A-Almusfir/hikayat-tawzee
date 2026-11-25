@@ -6,6 +6,7 @@ import { chapters } from './content/chapters';
 import { sheetById } from './content/sheet';
 import type { DistId } from './content/types';
 import { HomePage } from './pages/HomePage';
+import { CardsPageEn, ChooserPageEn, DrillPageEn, ExamNightPageEn, MgfPageEn, MorePageEn, RefsPageEn } from './pages/en';
 
 // الصفحات غير الرئيسية تُحمَّل عند الحاجة فقط، فتصغر الحزمة الأولى على الجوال
 const ChapterPage = lazy(() => import('./pages/ChapterPage').then((m) => ({ default: m.ChapterPage })));
@@ -18,16 +19,7 @@ const CardsPage = lazy(() => import('./pages/pages').then((m) => ({ default: m.C
 const ChooserPage = lazy(() => import('./pages/pages').then((m) => ({ default: m.ChooserPage })));
 const RefsPage = lazy(() => import('./pages/pages').then((m) => ({ default: m.RefsPage })));
 const NotFound = lazy(() => import('./pages/pages').then((m) => ({ default: m.NotFound })));
-// النسخ الإنجليزية: تحمل ترجماتها في حزمة منفصلة لا يحمّلها قارئ العربية
-const enPage = <K extends 'ExamNightPageEn' | 'MgfPageEn' | 'DrillPageEn' | 'MorePageEn' | 'ChooserPageEn' | 'CardsPageEn' | 'RefsPageEn'>(k: K) =>
-  lazy(() => import('./pages/en').then((m) => ({ default: m[k] })));
-const ExamNightPageEn = enPage('ExamNightPageEn');
-const MgfPageEn = enPage('MgfPageEn');
-const DrillPageEn = enPage('DrillPageEn');
-const MorePageEn = enPage('MorePageEn');
-const ChooserPageEn = enPage('ChooserPageEn');
-const CardsPageEn = enPage('CardsPageEn');
-const RefsPageEn = enPage('RefsPageEn');
+// النسخ الإنجليزية للصفحات العامة: كل منها يحمّل ترجمته وحده (pages/en.tsx)
 
 
 const LINKEDIN = 'https://www.linkedin.com/in/abdullah-a-365a082b3';
@@ -52,14 +44,16 @@ export default function App() {
   const pageKey = route.name === 'dist' ? `dist:${route.id}` : route.name;
   useEffect(() => {
     const titles: Record<string, string> = { choose: 'أي توزيع أختار؟', cards: 'بطاقات المراجعة', refs: 'المراجع والمنهج', exam: 'ليلة الاختبار', drill: 'تدريب مختلط', mgf: 'الدالة المولدة للعزوم', more: 'توزيعات أخرى' };
+    const titlesEn: Record<string, string> = { choose: 'Which distribution?', cards: 'Review cards', refs: 'Sources and method', exam: 'Exam night', drill: 'Mixed practice', mgf: 'The moment generating function', more: 'Other distributions' };
     // الصفحة قد تُحمَّل لاحقًا (lazy): ننتظر ظهور عنوانها قبل ضبط العنوان والتركيز
     const ready = () => {
       const h1 = document.querySelector<HTMLElement>('main h1');
       if (!h1) return false;
       const brand = en ? 'Hikayat Tawzee' : 'حكاية توزيع';
       // عنوان الفصل في الوضع الإنجليزي بالاسم الإنجليزي وحده (العنوان الظاهر ثنائي اللغة)
-      const chapterEn = en && route.name === 'dist' ? sheetById[route.id as DistId]?.nameEn : undefined;
-      document.title = route.name === 'home' ? (en ? 'Hikayat Tawzee — the story behind each distribution' : 'حكاية توزيع — افهم الحكاية… يثبت القانون') : `${chapterEn || (en && h1.textContent) || titles[route.name] || h1.textContent || ''} · ${brand}`;
+      const d = route.name === 'dist' ? sheetById[route.id as DistId] : undefined;
+      const name = d ? (en ? d.nameEn : d.nameAr) : (en ? titlesEn : titles)[route.name];
+      document.title = route.name === 'home' ? (en ? 'Hikayat Tawzee — the story behind each distribution' : 'حكاية توزيع — افهم الحكاية… يثبت القانون') : `${name || h1.textContent || ''} · ${brand}`;
       // رابط مشهد مباشر أو بطاقة في «توزيعات أخرى»: الصفحة تتولى التمرير
       if ((route.name === 'dist' && route.scene) || (route.name === 'more' && route.id)) return true;
       window.scrollTo(0, 0);

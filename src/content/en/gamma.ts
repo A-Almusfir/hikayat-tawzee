@@ -19,7 +19,7 @@ export const gammaEn: Tr<Chapter> = {
     claims: [
       {
         text: 'Erlang showed (1909) that calls arrive according to a Poisson process, so the waits between them are exponential.',
-        links: r`Each gap between 2 calls: exponential with rate $\beta$ (the $\theta$ of the exponential).`,
+        links: r`Each gap between two calls: exponential with rate $\beta$ (the $\theta$ of the exponential).`,
       },
       {
         text: 'When the exponential did not fit call durations, Erlang split a call into successive stages, each with an independent exponential duration.',

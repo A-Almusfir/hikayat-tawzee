@@ -14,7 +14,7 @@ export const distEn: Partial<Record<DistId, Tr<DistContent>>> = {
         { label: 'Probability it does not happen', explain: 'When $x=0$ it becomes $1-p$, and when $x=1$ it becomes $1$, so it has no effect.' },
       ],
       intuition: [
-        'The formula is a short way of writing 2 lines: $P(X=1)=p$ and $P(X=0)=1-p$. The exponent works like a switch that turns the right part on and the other off.',
+        'The formula is a short way of writing two lines: $P(X=1)=p$ and $P(X=0)=1-p$. The exponent works like a switch that turns the right part on and the other off.',
         'The mean $p$ is not a value $X$ takes; it is the proportion of times $X=1$ if we repeat the trial many times.',
       ],
       derivation: [
@@ -28,14 +28,14 @@ export const distEn: Partial<Record<DistId, Tr<DistContent>>> = {
     card: {
       params: [{ meaning: 'The probability of “success” in a single trial, $0 \\le p \\le 1$ (no unit).' }],
       fnLabel: PMF,
-      conditions: ['A single trial.', 'Only 2 outcomes.', 'The probability of the event we watch for is a known $p$.'],
+      conditions: ['A single trial.', 'Only two outcomes.', 'The probability of the event we watch for is a known $p$.'],
       mistake: 'Thinking the mean $p$ is a possible value of $X$. The only possible values are 0 and 1.',
     },
     quiz: [
       {
         prompt: 'Which of the following variables follows a Bernoulli distribution?',
         options: [
-          { text: 'The result of testing one memory card: 1 if it is faulty, 0 if it works.', why: 'A single trial with 2 outcomes: that is the definition of a Bernoulli variable.' },
+          { text: 'The result of testing one memory card: 1 if it is faulty, 0 if it works.', why: 'A single trial with two outcomes: that is the definition of a Bernoulli variable.' },
           { text: 'The number of faulty cards among 20 cards tested.', why: 'This is a count over several trials; it suits the binomial if its conditions hold, not the Bernoulli.' },
           { text: 'The number of cards tested until the first faulty one appears.', why: 'This is the number of trials until the first success; it suits the geometric.' },
           { text: 'The time needed to test one card, in seconds.', why: 'Time is a continuous variable, while a Bernoulli variable takes only 0 or 1.' },
@@ -92,7 +92,7 @@ export const distEn: Partial<Record<DistId, Tr<DistContent>>> = {
         { meaning: 'The probability of success in each trial, $0 \\le p \\le 1$.' },
       ],
       fnLabel: PMF,
-      conditions: ['A fixed number of trials $n$.', '2 outcomes per trial.', 'A constant probability of success $p$.', 'Independent trials.'],
+      conditions: ['A fixed number of trials $n$.', 'Two outcomes per trial.', 'A constant probability of success $p$.', 'Independent trials.'],
       mistake: 'Forgetting the number of orderings $\\binom{n}{k}$ and computing the probability of a single ordering only.',
     },
     quiz: [
@@ -110,7 +110,7 @@ export const distEn: Partial<Record<DistId, Tr<DistContent>>> = {
         options: [
           { why: '$\\binom{5}{3}(0.5)^3(0.5)^2 = 10 \\times 0.03125 = 0.3125$.' },
           { why: 'That is the probability of a single ordering, $(0.5)^5$; it forgets the 10 orderings.' },
-          { why: 'That is only $(0.5)^3$; it ignores the probability of the 2 failures.' },
+          { why: 'That is only $(0.5)^3$; it ignores the probability of the two failures.' },
           { why: 'That is $k/n$, a proportion, not a probability from the formula.' },
         ],
       },
@@ -210,7 +210,7 @@ export const distEn: Partial<Record<DistId, Tr<DistContent>>> = {
     card: {
       params: [{ meaning: 'The probability of success in each trial, $0 < p \\le 1$.' }],
       fnLabel: PMF,
-      conditions: ['Independent trials.', '2 outcomes per trial.', 'A constant probability of success $p$.', 'We count the trials until the first success (there is no fixed $n$).'],
+      conditions: ['Independent trials.', 'Two outcomes per trial.', 'A constant probability of success $p$.', 'We count the trials until the first success (there is no fixed $n$).'],
       mistake: 'Confusing counting the trials (mean $1/p$) with counting the failures before the success (mean $(1-p)/p$).',
     },
     quiz: [

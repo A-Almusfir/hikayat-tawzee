@@ -20,7 +20,7 @@ export interface Edge {
   /** تفصيل إضافي يظهر في «للمزيد». */
   detail?: string;
   src?: string[];
-  /** النسخة الإنجليزية (تجريبية). */
+  /** النسخة الإنجليزية. */
   en: { short: string; title: string; body: string; condition: string; detail?: string };
 }
 

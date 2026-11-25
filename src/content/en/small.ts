@@ -32,15 +32,15 @@ export const choiceLabelsEn: Tr<typeof choiceLabels> = {
 };
 
 export const hintEn: Tr<typeof hint> = {
-  bernoulli: 'A single trial with 2 outcomes.',
+  bernoulli: 'A single trial with two outcomes.',
   binomial: 'A fixed number $n$ of independent trials with a constant probability $p$; we count the successes.',
   hypergeometric: 'We draw $n$ without replacement from a finite population with $k$ “successes”, and count the successes drawn.',
   geometric: 'We repeat independent trials until the first success, and count the trials.',
   negbin: 'We repeat independent trials until success number $r$, and count the trials.',
   poisson: 'We count events in an interval (of time or space) at a constant rate, with no set number of trials.',
-  exponential: 'A continuous waiting time until the next event, in a process with a constant rate.',
-  gamma: 'A continuous waiting time until event number $\\alpha$, in a process with a constant rate (the sum of $\\alpha$ independent exponential waits).',
-  normal: 'A continuous, bell-shaped measurement, symmetric about a mean, where the data support it. It is also used as a computational approximation to the binomial (when $np$ and $n(1-p)$ are both large, with a continuity correction) or to a sum of many independent variables. And the mean of a sample from a normal population is normal too when $\\sigma$ is **known**.',
+  exponential: 'A continuous waiting time until the next event in a Poisson process: random, independent events at a constant rate.',
+  gamma: 'A continuous waiting time until event number $\\alpha$ in a Poisson process (the sum of $\\alpha$ independent exponential waits).',
+  normal: 'A continuous, bell-shaped measurement, symmetric about a mean, where the data support it. It is also used as a computational approximation to the binomial (when $np$ and $n(1-p)$ are both large, with a continuity correction) or to a sum of many independent variables. The mean of a sample from a normal population is also normal, and when $\\sigma$ is **known**, $\\frac{\\bar{X}-\\mu}{\\sigma/\\sqrt{n}}$ is standard normal.',
   uniform: 'A continuous measurement on a given interval $(a, b)$, where all parts of equal length are equally likely.',
   chisquare: 'A sum of squares of independent standard normal variables; behind $\\frac{(n-1)S^{2}}{\\sigma^{2}}$ and the goodness-of-fit test $\\sum \\frac{(O-E)^{2}}{E}$.',
   t: 'The mean of a sample from a normal population when $\\sigma$ is unknown and we use $S$: $\\frac{\\bar{X} - \\mu}{S/\\sqrt{n}}$.',

@@ -16,7 +16,7 @@ export const normalEn: Tr<Chapter> = {
       },
       {
         text: 'In it there appeared for the first time the formula we now call the normal approximation, and he took $\\sqrt{n}$ as the unit for measuring the distance from the mean.',
-        links: 'Its modern name: the standard deviation $\\sigma$.',
+        links: 'In modern terms, $\\tfrac12\\sqrt{n}$ is the standard deviation $\\sigma$ of the number of heads.',
       },
       {
         text: 'Gauss then used it to describe errors in astronomical observations (1809), and Laplace gave the first general form of the central limit theorem (1810–1812).',
@@ -24,9 +24,9 @@ export const normalEn: Tr<Chapter> = {
       },
     ],
     more: [
-      { text: 'Galton designed a board in which balls fall between pins and form bars in the shape of a bell, and described it in his book Natural Inheritance (1889).' },
+      { text: 'Galton designed a board in which balls fall between pins and form bars in the shape of a bell, and described it in his book “Natural Inheritance” (1889).' },
       { text: 'Rigorous proofs of the central limit theorem, with its modern conditions, came later, with Lyapunov and Lindeberg.' },
-      { text: "The English version of de Moivre's result was published in the second edition of his book The Doctrine of Chances (1738)." },
+      { text: "The English version of de Moivre's result was published in the second edition of his book “The Doctrine of Chances” (1738)." },
       { text: 'Not every large data set is normal: the theorem is about the distribution of a sum or mean of independent variables with finite variance, not about the shape of the data themselves.' },
     ],
   },
@@ -96,7 +96,7 @@ export const normalEn: Tr<Chapter> = {
   },
   anchor: {
     headline: 'Lock in the story',
-    hook: 'Every calculation goes through $z$. And about 68%, 95% and 99.7% of values lie within 1, 2 and 3 standard deviations, roughly.',
+    hook: 'Every calculation goes through $z$. And about 68%, 95% and 99.7% of values lie within 1, 2 and 3 standard deviations.',
     hookNote: 'In the notation $N(\\mu, \\sigma^2)$, the second parameter is the variance.',
     compose: {
       meanings: ['A constant that makes the total area 1', 'The shape of the bell: it falls off with the square of the distance from $\\mu$'],

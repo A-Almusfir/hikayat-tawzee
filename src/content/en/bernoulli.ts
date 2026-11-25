@@ -13,7 +13,7 @@ export const bernoulliEn: Tr<Chapter> = {
     },
     claims: [
       {
-        text: 'Jacob Bernoulli (died 1705) left his book Ars Conjectandi (“The Art of Conjecturing”) unfinished; his nephew Nicolaus published it in 1713.',
+        text: 'Jacob Bernoulli (died 1705) left his book “Ars Conjectandi” (The Art of Conjecturing) unfinished; his nephew Nicolaus published it in 1713.',
       },
       {
         text: 'In it he imagined an urn with 3000 white pebbles and 2000 black ones: you draw a pebble, record its colour, then put it back.',

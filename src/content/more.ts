@@ -46,7 +46,7 @@ export const moreCards: MoreCard[] = [
       check: { compute: () => 1 - weibull.cdf(2, 0.5, 2), shown: 0.1353, digits: 4 },
     },
     sliders: [
-      { key: 'al', symbol: r`\alpha`, label: 'معامل المعدل', min: 0.2, max: 2, step: 0.1, start: 0.5 },
+      { key: 'al', symbol: r`\alpha`, label: 'يحدد المقياس', min: 0.2, max: 2, step: 0.1, start: 0.5 },
       { key: 'be', symbol: r`\beta`, label: 'الشكل', min: 0.5, max: 4, step: 0.1, start: 2 },
     ],
     toParams: (s) => s,
@@ -91,7 +91,7 @@ export const moreCards: MoreCard[] = [
     where: 'نسبة تبايني عينتين **مستقلتين** من مجتمعين **طبيعيين**: $\\frac{S_1^{2}/\\sigma_1^{2}}{S_2^{2}/\\sigma_2^{2}} \\sim F(n_1 - 1,\\ n_2 - 1)$. وهو أساس تحليل التباين.',
     relation: 'إذا كان $U \\sim \\chi^{2}_{r}$ و$V \\sim \\chi^{2}_{v}$ مستقلين فإن $\\frac{U/r}{V/v} \\sim F(r, v)$. ومربع t: $T^{2} \\sim F(1, v)$. ومقلوبه: $\\frac{1}{F} \\sim F(v, r)$.',
     history: {
-      text: 'قدّم فيشر عام 1924 إحصاءة $z = \\frac{1}{2}\\ln F$، ثم جدولها سنيدكور عام 1934 وسمّاها F تكريمًا لفيشر.',
+      text: 'قدّم فيشر عام 1924 إحصاءة $z = \\frac{1}{2}\\ln F$، ثم جدول سنيدكور عام 1934 النسبة نفسها $F = e^{2z}$ وسمّاها F تكريمًا لفيشر.',
       src: ['f-proofwiki'],
     },
     example: {
@@ -111,7 +111,7 @@ export const moreCards: MoreCard[] = [
     toParams: (s) => s,
     pdf: (x, { r: a, v }) => fisherF.pdf(x, a, v),
     xMax: () => 5,
-    caption: ({ r: a, v }) => `$F(${a}, ${v})$${v > 2 ? `: المتوسط $${(v / (v - 2)).toFixed(3)}$${v >= 10 ? '، قريب من 1' : ''}` : ': لا متوسط حين $v \\le 2$'}.`,
-    captionEn: ({ r: a, v }) => `$F(${a}, ${v})$${v > 2 ? `: mean $${(v / (v - 2)).toFixed(3)}$${v >= 10 ? ', close to 1' : ''}` : ': no mean when $v \\le 2$'}.`,
+    caption: ({ r: a, v }) => `$F(${a}, ${v})$${v > 2 ? `: المتوسط $${(v / (v - 2)).toFixed(3)}$${v >= 20 ? '، قريب من 1' : ''}` : ': لا متوسط حين $v \\le 2$'}.`,
+    captionEn: ({ r: a, v }) => `$F(${a}, ${v})$${v > 2 ? `: mean $${(v / (v - 2)).toFixed(3)}$${v >= 20 ? ', close to 1' : ''}` : ': no mean when $v \\le 2$'}.`,
   },
 ];

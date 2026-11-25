@@ -377,7 +377,7 @@ export const derive: DeriveItem[] = [
         options: [
           { text: r`$\dfrac{v}{1 - 2t}$`, correct: true, why: '$-\\frac{v}{2} \\times \\frac{-2}{1 - 2t}$.', fn: (t, { v }) => v / (1 - 2 * t) },
           { text: r`$\dfrac{v}{2(1 - 2t)}$`, why: 'نسيت مشتقة ما داخل اللوغاريتم: $-2$.', fn: (t, { v }) => v / (2 * (1 - 2 * t)) },
-          { text: r`$-\dfrac{v}{1 - 2t}$`, why: 'سالبان يتضاعفان: $-\\frac{v}{2}$ في $-2$.', fn: (t, { v }) => -v / (1 - 2 * t) },
+          { text: r`$-\dfrac{v}{1 - 2t}$`, why: 'حاصل ضرب سالبين موجب: $-\\frac{v}{2}$ في $-2$.', fn: (t, { v }) => -v / (1 - 2 * t) },
           { text: r`$\dfrac{2v}{(1 - 2t)^{2}}$`, why: 'هذه $R\'\'(t)$.', fn: (t, { v }) => (2 * v) / (1 - 2 * t) ** 2 },
         ],
       },
@@ -666,7 +666,7 @@ export const identify: IdentifyItem[] = [
       options: [
         { text: '$\\frac{3^{2}}{12} = 0.75$', correct: true, why: '$\\frac{(b-a)^{2}}{12}$.' },
         { text: '$3.5$', why: 'هذا المتوسط $\\frac{a+b}{2}$.' },
-        { text: '$0.25$', why: 'القسمة على $12$ لا على $36$.' },
+        { text: '$0.25$', why: 'هذا $\\frac{b-a}{12} = \\frac{3}{12}$: نسيت تربيع $b - a$.' },
       ],
       check: { compute: () => 9 / 12, shown: 0.75, digits: 2 },
     },

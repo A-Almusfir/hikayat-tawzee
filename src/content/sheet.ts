@@ -61,7 +61,7 @@ export interface SheetRow {
   when: string;
   /** تنبيه داخل البطاقة نفسها، يظهر مع الحقل الذي يخصه. */
   warn?: { text: string; on: SheetField };
-  /** النسخة الإنجليزية (تجريبية): mgf هو المجال أو الملاحظة، وcdf ملاحظة التراكمي غير المغلق. */
+  /** النسخة الإنجليزية: mgf هو المجال أو الملاحظة، وcdf ملاحظة التراكمي غير المغلق. */
   en: { when: string; params: string; mgf: string; cdf?: string; warn?: string };
   /** نص عربي برياضيات بين $...$. */
   params: string;
@@ -120,11 +120,11 @@ export const sheet: SheetRow[] = [
   {
     id: 'negbin',
     nameAr: 'ذو الحدين السالب',
-    nameEn: 'Negative Binomial',
+    nameEn: 'Negative binomial',
     group: 'discrete',
     when: 'نكرر محاولات مستقلة حتى النجاح رقم $r$، ونعدّ المحاولات.',
     en: { when: 'Repeat independent trials until the $r$-th success; we count the trials.', params: '$r$ = the number of successes needed, $0 < p < 1$', mgf: '$t < -\\ln q$', warn: 'Some books and software count the **failures** before the $r$-th success instead of the trials, which makes the mean $\\frac{rq}{p}$. Check what the problem counts.' },
-    warn: { text: 'بعض الكتب والبرامج تعدّ **الإخفاقات** قبل النجاح رقم $r$ بدل المحاولات، فيصير المتوسط $\\frac{rq}{p}$. شف وش تعدّ المسألة.', on: 'law' },
+    warn: { text: 'بعض الكتب والبرامج تعدّ **الإخفاقات** قبل النجاح رقم $r$ بدل المحاولات، فيصير المتوسط $\\frac{rq}{p}$. فتأكّد مما تعدّه المسألة.', on: 'law' },
     params: '$r$ رقم النجاح المطلوب، $0 < p < 1$',
     f: r`\binom{x-1}{r-1} p^{r} q^{x-r}`,
     support: r`x = r, r+1, r+2, \dots`,
@@ -250,7 +250,7 @@ export const sheet: SheetRow[] = [
   {
     id: 'stdnormal',
     nameAr: 'الطبيعي المعياري',
-    nameEn: 'Standard Normal',
+    nameEn: 'Standard normal',
     group: 'continuous',
     when: 'الطبيعي بعد التحويل $Z = \\frac{X-\\mu}{\\sigma}$، ومنه نقرأ جدول $\\Phi$.',
     en: { when: 'The normal after the transformation $Z = \\frac{X-\\mu}{\\sigma}$; the $\\Phi$ table is read from it.', params: '$Z = \\frac{X-\\mu}{\\sigma}$, no parameters', mgf: 'for all $t$' },
@@ -367,7 +367,7 @@ export const sheet: SheetRow[] = [
     group: 'continuous',
     when: 'المتوسط المعياري لعينة من مجتمع طبيعي، $\\frac{\\bar{X}-\\mu}{S/\\sqrt{n}}$، حين $\\sigma$ مجهول.',
     en: { when: 'The standardized sample mean $\\frac{\\bar{X}-\\mu}{S/\\sqrt{n}}$ from a normal population when $\\sigma$ is unknown.', params: '$v$ a positive whole number: the degrees of freedom', mgf: '$E(e^{tX}) = \\infty$ for every $t \\ne 0$: the tails are heavier than any exponential.', cdf: 'From the t table.', warn: 'At $v = 1$, t is the Cauchy distribution, which has no mean.' },
-    warn: { text: 'عند $v = 1$ يصير t توزيع كوشي، وما له متوسط.', on: 'moments' },
+    warn: { text: 'عند $v = 1$ يصير t توزيع كوشي، وليس له متوسط.', on: 'moments' },
     params: '$v$ عدد صحيح موجب: درجات الحرية',
     f: r`\dfrac{\Gamma\!\left(\frac{v+1}{2}\right)}{\sqrt{v\pi}\,\Gamma\!\left(\frac{v}{2}\right)}\left(1 + \dfrac{x^{2}}{v}\right)^{-\frac{v+1}{2}}`,
     support: r`-\infty < x < \infty`,

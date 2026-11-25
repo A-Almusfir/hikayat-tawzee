@@ -2,7 +2,7 @@ import type { Chapter } from '../chapterTypes';
 import type { Tr } from '../../lib/i18n';
 
 export const chisquareEn: Tr<Chapter> = {
-  question: 'Does the model fit the data? And what is the distribution of a sum of squares of standard normal variables?',
+  question: 'Does the model fit the data? And what is the distribution of a sum of squares of independent standard normal variables?',
   story: {
     headline: 'Pearson measures how far a model is from the data',
     art: {
@@ -45,7 +45,7 @@ export const chisquareEn: Tr<Chapter> = {
       {
         story: 'And we divide by $E_i$: a difference of 5 in a category expecting 100 matters less than a difference of 5 in a category expecting 10. If the model is right, the sum follows a chi-square approximately.',
         predict: {
-          prompt: '3 categories, and we estimated 1 parameter ($\\lambda$) from the data. How many degrees of freedom?',
+          prompt: 'There are 3 categories, and we estimated 1 parameter ($\\lambda$) from the data. How many degrees of freedom?',
           options: [
             { why: '$3 - 1 - 1$: one is lost because the total is fixed, and one for the estimated parameter.' },
             { why: 'You forgot to subtract the parameter estimated from the data.' },
@@ -62,7 +62,7 @@ export const chisquareEn: Tr<Chapter> = {
     problems: [
       {
         label: 'From the story',
-        given: 'With mean kicks $\\lambda = 0.61$, and after merging the categories (0, 1, 2 or more): observed $109, 65, 26$. Do the data fit a Poisson at the $0.05$ level?',
+        given: 'With $\\lambda = 0.61$ deaths per corps-year, and after merging the categories (0, 1, 2 or more), the observed counts are $109, 65, 26$. Do the data fit a Poisson at the $0.05$ level?',
         steps: [{ title: 'The expected counts', body: '$E = 200\\,P(X = k)$:' }, { title: 'The statistic' }, { title: 'Compare', body: 'The degrees of freedom are $3 - 1 - 1 = 1$, and the critical value is $\\chi^{2}_{1,\\,0.05} = 3.841$.' }],
         answer: '$\\chi^{2} \\approx 0.063 < 3.841$: no evidence against the Poisson. The data are very close to the formula.',
       },
@@ -97,7 +97,7 @@ export const chisquareEn: Tr<Chapter> = {
           { why: 'The sum of the squares of $v$ independent standard normal variables: $\\chi^{2}_{v}$.' },
           { why: 'That is the distribution of $Z_1 + Z_2 + Z_3$, not of the sum of squares.' },
           { why: 'That is for a single square.' },
-          { why: 't is a ratio of a normal to the root of a chi-square, not a sum of squares.' },
+          { why: 't is a standard normal divided by the square root of an independent chi-square over its degrees of freedom, not a sum of squares.' },
         ],
       },
       {

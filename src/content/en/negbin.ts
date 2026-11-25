@@ -33,7 +33,7 @@ export const negbinEn: Tr<Chapter> = {
     headline: 'The last round is a win, and the others fall anywhere before it',
     steps: [
       {
-        story: 'Take one sequence in which the third win comes in round 5, such as: loss, win, win, loss, win (writing “L” for a loss and “W” for a win). The rounds are independent, so we multiply.',
+        story: 'Take one sequence in which the third win comes in round 5, such as: loss, win, win, loss, win. The rounds are independent, so we multiply.',
         predict: {
           prompt: 'What is the probability of a specific sequence with $r$ wins and $x - r$ losses?',
           options: [
@@ -103,7 +103,7 @@ export const negbinEn: Tr<Chapter> = {
           { text: 'Binomial: the number of trials is fixed and we count the successes. Negative binomial: the number of successes is fixed and we count the trials.', why: 'What is fixed and what varies trade places between the two.' },
           { text: 'The negative binomial gives negative probabilities.', why: 'Probabilities are never negative; the name comes from an algebraic form of its coefficients.' },
           { text: 'The negative binomial is for drawing without replacement.', why: 'That is the hypergeometric.' },
-          { text: 'There is no difference; they are 2 names for one distribution.', why: 'The variable is different: a number of successes versus a number of trials.' },
+          { text: 'There is no difference; they are two names for one distribution.', why: 'The variable is different: a number of successes versus a number of trials.' },
         ],
       },
       {

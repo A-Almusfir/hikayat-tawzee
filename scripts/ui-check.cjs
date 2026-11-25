@@ -179,6 +179,20 @@ async function texOverflow(page, tag, route) {
     await page.reload();
 
     if (tag === 'mobile') {
+      // «أي توزيع أختار؟»: الأسهم بين الخيارات لا تسجّل إجابة
+      await page.goto(BASE + '#/');
+      await page.evaluate(() => localStorage.clear());
+      await page.goto(BASE + '#/choose');
+      await page.waitForSelector('main h1');
+      await page.locator('.choices input[type=radio]').first().focus();
+      await page.keyboard.press('ArrowDown');
+      const ch0 = await page.evaluate(() => JSON.parse(localStorage.getItem('hikayat-tawzee:v1') || '{}').chooser || {});
+      if (Object.keys(ch0).length) fail('[mobile] #/choose: التنقل بالأسهم سجّل إجابة قبل «تحقّق»');
+      if (await page.locator('.choices input[type=radio]:disabled').count()) fail('[mobile] #/choose: الخيارات قُفلت قبل «تحقّق»');
+      await page.locator('.chooser .check-btn').click();
+      const fc = await page.evaluate(() => document.activeElement?.className || document.activeElement?.tagName);
+      if (!String(fc).includes('feedback')) fail(`[mobile] #/choose: التركيز بعد «تحقّق» على ${fc}`);
+
       for (const ch of CHAPTERS) {
         await page.goto(BASE + '#/');
         await page.evaluate(() => localStorage.clear());
@@ -199,6 +213,21 @@ async function texOverflow(page, tag, route) {
         await page.locator('#scene-3 .check-btn').first().click();
         const focused = await page.evaluate(() => document.activeElement?.className || document.activeElement?.tagName);
         if (!String(focused).includes('feedback')) fail(`[mobile] ${ch}: التركيز بعد «تحقّق» على ${focused}`);
+        // والأمر نفسه في «أسئلة إضافية» (في الفصول التي لها بطاقة قديمة)
+        const qq = page.locator('.quiz-q').first();
+        if (await qq.count()) {
+          await qq.evaluate((e) => (e.closest('details').open = true));
+          const n0 = await page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('hikayat-tawzee:v1') || '{}').quiz || {}).length);
+          await qq.locator('input[type=radio]').first().focus();
+          await page.keyboard.press('ArrowDown');
+          const n1 = await page.evaluate(() => Object.keys(JSON.parse(localStorage.getItem('hikayat-tawzee:v1') || '{}').quiz || {}).length);
+          if (n1 !== n0) fail(`[mobile] ${ch}: الأسهم في «أسئلة إضافية» سجّلت إجابة قبل «تحقّق»`);
+          await page.keyboard.press('Space');
+          await qq.locator('.check-btn').click();
+          const f = await page.evaluate(() => document.activeElement?.className || document.activeElement?.tagName);
+          if (!String(f).includes('feedback')) fail(`[mobile] ${ch}: التركيز بعد «تحقّق» في «أسئلة إضافية» على ${f}`);
+          await qq.evaluate((e) => (e.closest('details').open = false));
+        }
 
         // كشف كامل: كل التوقعات، والمسألة الأولى، و«املأ القانون» (أسوأ حالة)، وسؤال الاسترجاع الأول
         for (let i = 0; i < 3; i++) {

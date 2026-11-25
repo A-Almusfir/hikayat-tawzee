@@ -73,7 +73,7 @@ function ExamBlock({ p }: { p: ExamProblem }) {
         {shown < p.steps.length ? (
           <>
             <button type="button" className="btn btn-c" onClick={() => reveal(shown + 1)}>
-              {shown === 0 ? (en ? 'Tried it? Show the first step' : 'جرّبت؟ ورّني أول خطوة') : `${en ? 'Next step' : 'الخطوة التالية'}: ${p.steps[shown].title}`}
+              {shown === 0 ? (en ? 'Tried it? Show the first step' : 'جرّبت؟ ورّني أول خطوة') : <>{en ? 'Next step' : 'الخطوة التالية'}: <Rich text={p.steps[shown].title} /></>}
             </button>
             <button type="button" className="btn btn-quiet" onClick={() => reveal(p.steps.length)}>
               {en ? 'Show the full solution' : 'ورّني الحل كامل'}

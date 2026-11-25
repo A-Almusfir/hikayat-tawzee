@@ -6,6 +6,9 @@ import { Rich, Tex } from '../Tex';
 import { Scene } from './Scene';
 import { useLang } from '../../lib/lang';
 
+// عدد الجولات بالعربية: المثنى ثم الجمع (3–10) ثم المفرد
+const roundsAr = (n: number) => (n === 2 ? 'جولتين' : n <= 10 ? `${n} جولات` : `${n} جولة`);
+
 type Of<K extends TryIt['kind']> = Extract<TryIt, { kind: K }>;
 const range = (a: number, b: number) => Array.from({ length: b - a + 1 }, (_, i) => a + i);
 /** «دورة واحدة / دورتين / 3 دورات / 11 دورة» */
@@ -115,7 +118,7 @@ export function PointsTry({ t }: { t: Of<'points'> }) {
     <Scene
       n={2}
       title={t.headline}
-      art={<BarChart bars={bars} highlight={(k) => k >= a} ariaLabel={en ? `In ${n} rounds: A wins with ${a} or more, with probability ${fmt(share, 4)}` : `في ${n} جولات: يفوز أ إن ربح ${a} أو أكثر، باحتمال ${fmt(share, 4)}`}
+      art={<BarChart bars={bars} highlight={(k) => k >= a} ariaLabel={en ? `In ${n} rounds: A wins with ${a} or more, with probability ${fmt(share, 4)}` : `في ${roundsAr(n)}: يفوز أ إن ربح ${a} أو أكثر، باحتمال ${fmt(share, 4)}`}
           xLabel={en ? `Number of rounds A wins out of ${n}` : `عدد الجولات التي يفوز بها أ من ${n}`}
         />
       }
@@ -138,7 +141,7 @@ export function PointsTry({ t }: { t: Of<'points'> }) {
       ) : (
         <>
           <p className="fit" aria-live="polite">
-            أ يحتاج {a} وب يحتاج {b}: تنتهي اللعبة خلال <strong className="num">{n}</strong> جولات على الأكثر، ففيها <Tex tex={`2^{${n}} = ${2 ** n}`} /> طريقًا متساوي الاحتمال. يفوز أ في <strong className="num">{ways}</strong> منها، فنصيبه العادل <Tex tex={`\\tfrac{${ways}}{${2 ** n}} \\approx ${fmt(share, 4)}`} /> من الرهان.
+            أ يحتاج {a} وب يحتاج {b}: تنتهي اللعبة خلال {n === 2 ? 'جولتين' : <><strong className="num">{n}</strong> {n <= 10 ? 'جولات' : 'جولة'}</>} على الأكثر، ففيها <Tex tex={`2^{${n}} = ${2 ** n}`} /> طريقًا متساوي الاحتمال. يفوز أ في <strong className="num">{ways}</strong> منها، فنصيبه العادل <Tex tex={`\\tfrac{${ways}}{${2 ** n}} \\approx ${fmt(share, 4)}`} /> من الرهان.
           </p>
           <p className="hint">الأعمدة المظللة: الطرق التي يفوز فيها أ. ارتفاع كل عمود = عدد الطرق ÷ <Tex tex={`2^{${n}}`} />.</p>
         </>

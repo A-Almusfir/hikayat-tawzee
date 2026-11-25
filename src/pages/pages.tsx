@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { choiceLabels, choiceOrder, scenarios, type ChoiceId } from '../content/chooser';
 import { distById } from '../content/distributions';
 import { hint } from '../content/decision';
@@ -34,6 +34,15 @@ export function ChooserPage({ tr }: { tr?: ChooserTr }) {
   const s = list[idx];
   const choice = saved[s.id] as ChoiceId | undefined;
   const answered = choice !== undefined;
+  // التنقل بالأسهم يغيّر الاختيار فقط؛ الإجابة تُسجَّل بزر «تحقّق»
+  const [pick, setPick] = useState<ChoiceId | null>(null);
+  const fb = useRef<HTMLDivElement>(null);
+  const checked = useRef(false);
+  useEffect(() => setPick(null), [idx, answered]);
+  useEffect(() => {
+    if (answered && checked.current) fb.current?.focus();
+    checked.current = false;
+  }, [answered]);
   const right = choice === s.answer;
   const doneCount = scenarios.filter((x) => saved[x.id]).length;
   const correctCount = scenarios.filter((x) => saved[x.id] === x.answer).length;
@@ -66,15 +75,20 @@ export function ChooserPage({ tr }: { tr?: ChooserTr }) {
             const st = !answered ? '' : c === s.answer ? 'is-correct' : c === choice ? 'is-wrong' : '';
             return (
               <label key={c} className={`option ${st}`}>
-                <input type="radio" name={`ch-${s.id}`} checked={choice === c} disabled={answered} onChange={() => progress.setChooser(s.id, c)} />
+                <input type="radio" name={`ch-${s.id}`} checked={answered ? choice === c : pick === c} disabled={answered} onChange={() => setPick(c)} />
                 <span className="opt-mark" aria-hidden="true">{st === 'is-correct' ? '✓' : st === 'is-wrong' ? '✗' : ''}</span>
                 {labels[c]}
               </label>
             );
           })}
         </fieldset>
+        {!answered && (
+          <button type="button" className="btn btn-primary check-btn" disabled={pick === null} onClick={() => { if (pick) { checked.current = true; progress.setChooser(s.id, pick); } }}>
+            {en ? 'Check' : 'تحقّق'}
+          </button>
+        )}
         {answered && (
-          <div className={`feedback ${right ? 'ok' : 'no'}`} role="status">
+          <div className={`feedback ${right ? 'ok' : 'no'}`} role="status" tabIndex={-1} ref={fb}>
             <p className="verdict">
               {en ? (right ? '✓ Correct.' : `✗ You chose “${labels[choice!]}”.`) : right ? '✓ صحيح.' : `✗ اخترت «${labels[choice!]}».`} {en ? 'The answer: ' : 'الإجابة: '}
               <strong>{labels[s.answer]}</strong>

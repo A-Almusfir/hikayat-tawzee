@@ -40,7 +40,7 @@ export const geometricEn: Tr<Chapter> = {
     headline: 'Failures in a row, then one success',
     steps: [
       {
-        story: 'The first red on spin $k$ means: the first $k-1$ spins are all not red, each with probability $1 - p = \\tfrac{19}{37}$.',
+        story: 'The first red on spin $k$ means that none of the first $k-1$ spins is red, and each of them misses red with probability $1 - p = \\tfrac{19}{37}$.',
         predict: {
           prompt: 'What is the probability that $k-1$ independent spins pass with no red?',
           options: [
@@ -84,7 +84,7 @@ export const geometricEn: Tr<Chapter> = {
         given: 'A login attempt succeeds with probability $0.3$, and attempts are independent. What is the probability of needing **exactly 3 attempts**? And what is the mean number of attempts?',
         steps: [
           { title: 'Define the variable', body: '$X$ = the number of attempts until the first success (including the successful one), and $X \\sim \\mathrm{Geom}(0.3)$.' },
-          { title: 'Substitute', body: '2 failures, then a success:' },
+          { title: 'Substitute', body: 'Two failures, then a success:' },
           { title: 'The mean' },
         ],
         answer: '$P(X = 3) = 0.147$, and the mean is $\\approx 3.33$ attempts.',

@@ -429,7 +429,7 @@ export function NormalLab() {
       <p className="lambda-line">
         <Tex tex={`X \\sim N(\\mu,\\sigma^2) = N(${fmt(mu)},\\ ${fmt(sigma)}^2) = N(${fmt(mu)},\\ ${fmt(sigma * sigma, 2)})`} />
       </p>
-      {a > b && <p className="hint">{tr('بدأت الفترة بعد نهايتها، فعكسنا الحدّين تلقائيًا.', 'The interval started after its end, so we swapped the 2 limits automatically.')}</p>}
+      {a > b && <p className="hint">{tr('بدأت الفترة بعد نهايتها، فعكسنا الحدّين تلقائيًا.', 'The interval started after its end, so we swapped the two limits automatically.')}</p>}
       <CurveChart
         f={(x) => normal.pdf(x, mu, sigma)}
         xMin={xMin}

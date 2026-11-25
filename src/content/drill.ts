@@ -932,7 +932,7 @@ export const drill: DrillItem[] = [
         { text: '$\\sqrt{0.002 \\times 0.998} \\approx 0.0447$', correct: true, why: 'جذر التباين $p(1-p)$.' },
         { text: '$0.002 \\times 0.998 \\approx 0.0020$', why: 'هذا التباين لا الانحراف المعياري.' },
         { text: '$0.002$', why: 'هذا المتوسط.' },
-        { text: '$\\sqrt{0.002} \\approx 0.0447$ بالمصادفة', why: 'يقارب الجواب هنا لأن $1-p \\approx 1$، لكنه ليس القانون.' },
+        { text: '$\\sqrt{0.998} \\approx 0.9990$', why: 'هذا جذر $1-p$، لا جذر التباين $p(1-p)$.' },
       ],
       check: { compute: () => Math.sqrt(0.002 * 0.998), shown: 0.0447, digits: 4 },
     },

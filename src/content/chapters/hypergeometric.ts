@@ -106,7 +106,7 @@ export const hypergeometricChapter: Chapter = {
         check: { compute: () => hypergeometric.pmf(3, 8, 4, 4) + hypergeometric.pmf(4, 8, 4, 4), shown: 0.2429, digits: 4 },
       },
       {
-        label: 'بصيغة المقرر',
+        label: 'بصيغة الاختبار',
         given: 'في قسم 12 موظفًا، منهم 5 نساء. تُختار لجنة من 4 موظفين عشوائيًا. ما احتمال أن تضم امرأتين بالضبط؟ وما متوسط عدد النساء في اللجنة؟',
         steps: [
           { title: 'عرّف المتغير', body: '$X$ = عدد النساء في اللجنة. اختيار دون إرجاع من مجتمع صغير: $N = 12$، $k = 5$، $n = 4$.' },

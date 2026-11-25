@@ -115,7 +115,7 @@ export const normalChapter: Chapter = {
         check: { compute: () => normal.interval(44.5, 55.5, 50, 5), shown: 0.7287, digits: 4 },
       },
       {
-        label: 'بصيغة المقرر',
+        label: 'بصيغة الاختبار',
         given: 'أطوال الطلاب في جامعة (مثال افتراضي) $N(170, 8^2)$ سم. ما نسبة من يقع طوله بين 162 و186 سم؟',
         steps: [
           { title: 'حوّل إلى $z$', body: 'اقسم على $\\sigma = 8$ لا على $\\sigma^2 = 64$:', tex: [r`z_1 = \frac{162 - 170}{8} = -1`, r`z_2 = \frac{186 - 170}{8} = 2`] },

@@ -80,7 +80,7 @@ export const hypergeometricEn: Tr<Chapter> = {
         answer: "$P(X \\ge 3) \\approx 0.2429$: about once in every 4 tries by guessing alone. That is why 3 correct cups would not have convinced Fisher.",
       },
       {
-        label: 'Course style',
+        label: 'Exam style',
         given: 'A department has 12 employees, 5 of them women. A committee of 4 employees is chosen at random. What is the probability that it includes exactly 2 women? And what is the mean number of women on the committee?',
         steps: [
           { title: 'Define the variable', body: '$X$ = the number of women on the committee. Choosing without replacement from a small population: $N = 12$, $k = 5$, $n = 4$.' },

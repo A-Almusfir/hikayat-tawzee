@@ -258,8 +258,7 @@ export function RefsPage({ tr }: { tr?: RefsTr }) {
       <section className="section">
         <h2>كيف كُتب المحتوى؟</h2>
         <ul>
-          <li>الشروح مكتوبة بصياغة أصلية. الحكايات تاريخية موثقة بمصادرها، وبيانات ركلات الخيل حقيقية؛ أما أمثلة «بصيغة المقرر» والرسوم المولّدة من نماذج فهي <strong>تعليمية مصطنعة</strong> ومعلنة.</li>
-          <li>كل رقم في الأمثلة المحلولة والأسئلة الحسابية يُعاد حسابه آليًا في اختبارات المشروع، ويُرفض البناء إن لم يطابق الحساب النص المعروض.</li>
+          <li>الحكايات التاريخية موثقة بمصادرها، وبيانات ركلات الخيل حقيقية؛ أما بقية الأمثلة فتعليمية، وكل أرقامها متحقق منها حسابيًا.</li>
           <li>الرسوم مبنية مباشرة من القوانين؛ والمحاكاة تستخدم مولّد أعداد عشوائية في المتصفح، ونتائجها تتغير من تشغيل لآخر.</li>
           <li>للتوزيع الطبيعي قدّمنا حدسًا وحقائق قابلة للإثبات، ولم نقدم «اشتقاقًا مبسطًا» لأنه يحتاج أدوات أعلى من المقرر التمهيدي.</li>
         </ul>
@@ -293,7 +292,7 @@ export function RefsPage({ tr }: { tr?: RefsTr }) {
       </section>
       <section className="section">
         <h2>مصادر الحكايات</h2>
-        <p className="hint">كل جملة تاريخية في الفصول مربوطة بمصدر من هذه القائمة، واختبارات المشروع تفشل إن وُجدت جملة بلا مصدر.</p>
+        <p className="hint">كل جملة تاريخية في الفصول مربوطة بمصدر من هذه القائمة.</p>
         <ul className="ref-list">
           {sources.map((s) => (
             <li key={s.id}>
@@ -327,8 +326,7 @@ function RefsEn({ refs }: { refs: typeof references }) {
       <section className="section">
         <h2>How was the content written?</h2>
         <ul>
-          <li>The explanations are written in original wording. The stories are historical and documented with their sources, and the horse-kick data are real; the “course style” examples and the drawings generated from models are <strong>made up for teaching</strong>, and labelled as such.</li>
-          <li>Every number in the worked examples and calculation questions is recomputed automatically in the project tests, and the build is rejected if a calculation does not match the text shown.</li>
+          <li>The historical stories are documented with their sources, and the horse-kick data are real; the other examples are for teaching, and every number in them has been checked by calculation.</li>
           <li>The charts are built directly from the formulas; the simulations use a random number generator in the browser, and their results change from run to run.</li>
           <li>For the normal distribution we give intuition and provable facts, but no “simplified derivation”, because a real one needs tools beyond an introductory course.</li>
         </ul>
@@ -362,7 +360,7 @@ function RefsEn({ refs }: { refs: typeof references }) {
       </section>
       <section className="section">
         <h2>Sources for the stories</h2>
-        <p className="hint">Every historical sentence in the chapters is linked to a source from this list, and the project tests fail if any sentence has no source.</p>
+        <p className="hint">Every historical sentence in the chapters is linked to a source from this list.</p>
         <ul className="ref-list">
           {sources.map((s) => (
             <li key={s.id}>

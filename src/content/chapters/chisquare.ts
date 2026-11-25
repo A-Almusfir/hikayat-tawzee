@@ -98,7 +98,7 @@ export const chisquareChapter: Chapter = {
         check: { compute: () => chiFit(0.61).stat, shown: 0.063, digits: 3 },
       },
       {
-        label: 'بصيغة المقرر',
+        label: 'بصيغة الاختبار',
         given: 'عينة من 10 عبوات من مجتمع طبيعي، وتباينها $s^{2} = 4.5$. هل يدل ذلك على أن تباين المجتمع أكبر من $\\sigma^{2} = 2$، عند مستوى $0.05$؟',
         steps: [
           { title: 'الإحصاءة', body: 'من نظرية المعاينة (المجتمع طبيعي):', tex: [r`\frac{(n-1)s^{2}}{\sigma^{2}} = \frac{9 \times 4.5}{2} = 20.25`] },

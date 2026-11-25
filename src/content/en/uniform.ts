@@ -70,7 +70,7 @@ export const uniformEn: Tr<Chapter> = {
         answer: '$P \\approx 0.5093$: about half of the throws cross a line.',
       },
       {
-        label: 'Course style',
+        label: 'Exam style',
         given: 'A bus arrives at a uniformly random time between 7:00 and 7:30. You reached the stop at 7:00. What is the probability that you wait more than 10 minutes? And what are the mean and variance of the wait?',
         steps: [
           { title: 'Define the variable', body: '$X$ = the minutes you wait, and $X \\sim U(0, 30)$.' },

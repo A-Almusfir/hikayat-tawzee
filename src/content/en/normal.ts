@@ -79,7 +79,7 @@ export const normalEn: Tr<Chapter> = {
         answer: '$P(45 \\le X \\le 55) \\approx 0.7287$, and the exact value from the binomial is also $\\approx 0.7287$.',
       },
       {
-        label: 'Course style',
+        label: 'Exam style',
         given: "Students' heights at a university (a hypothetical example) are $N(170, 8^2)$ cm. What proportion of students are between 162 and 186 cm tall?",
         steps: [
           { title: 'Convert to $z$', body: 'Divide by $\\sigma = 8$, not by $\\sigma^2 = 64$:' },

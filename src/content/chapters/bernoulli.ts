@@ -106,7 +106,7 @@ export const bernoulliChapter: Chapter = {
         check: { compute: () => bernoulli.variance(0.6), shown: 0.24, digits: 2 },
       },
       {
-        label: 'بصيغة المقرر',
+        label: 'بصيغة الاختبار',
         given: 'احتمال أن يكون منتج معيبًا $0.05$. نفحص منتجًا واحدًا، و$X = 1$ إن كان معيبًا. ما $E[X]$ و$\\mathrm{Var}(X)$؟',
         steps: [
           { title: 'عرّف «النجاح»', body: 'الحدث المرصود هنا هو العيب، فـ $p = 0.05$ (النجاح اسم لا حكم).' },

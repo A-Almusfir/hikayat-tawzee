@@ -106,7 +106,7 @@ export const binomialChapter: Chapter = {
         check: { compute: () => 1 - binomial.cdf(1, 4, 0.5), shown: 0.6875, digits: 4 },
       },
       {
-        label: 'بصيغة المقرر',
+        label: 'بصيغة الاختبار',
         given: 'يخمّن طالب إجابات 8 أسئلة «صح أو خطأ». ما احتمال أن يجيب عن 6 أسئلة **على الأقل** إجابة صحيحة؟',
         steps: [
           { title: 'عرّف المتغير', body: '$X \\sim \\mathrm{Bin}(8, \\tfrac12)$: عدد ثابت من المحاولات المستقلة، و$p$ ثابت.' },

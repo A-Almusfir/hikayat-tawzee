@@ -106,7 +106,7 @@ export const gammaChapter: Chapter = {
         check: { compute: () => poisson.cdf(2, 4), shown: 0.2381, digits: 4 },
       },
       {
-        label: 'بصيغة المقرر',
+        label: 'بصيغة الاختبار',
         given: 'زمن إصلاح آلة (بالساعات) يتبع غاما بـ $\\alpha = 3$ و$\\beta = 0.5$. أوجد المتوسط والتباين، واحتمال أن ينتهي الإصلاح خلال 4 ساعات.',
         steps: [
           { title: 'المتوسط والتباين', body: '', tex: [r`E(X) = \frac{\alpha}{\beta} = \frac{3}{0.5} = 6,\qquad \mathrm{Var}(X) = \frac{\alpha}{\beta^{2}} = 12`] },

@@ -78,7 +78,7 @@ export const binomialEn: Tr<Chapter> = {
         answer: "A's share is $\\tfrac{11}{16} = 0.6875$ of the stake, and B's share is $\\tfrac{5}{16}$.",
       },
       {
-        label: 'Course style',
+        label: 'Exam style',
         given: 'A student guesses the answers to 8 true-or-false questions. What is the probability of answering **at least** 6 questions correctly?',
         steps: [
           { title: 'Define the variable', body: '$X \\sim \\mathrm{Bin}(8, \\tfrac12)$: a fixed number of independent trials, with a constant $p$.' },

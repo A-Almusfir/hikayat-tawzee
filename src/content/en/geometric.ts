@@ -80,7 +80,7 @@ export const geometricEn: Tr<Chapter> = {
         answer: '$P(X > 10) \\approx 0.0013$',
       },
       {
-        label: 'Course style',
+        label: 'Exam style',
         given: 'A login attempt succeeds with probability $0.3$, and attempts are independent. What is the probability of needing **exactly 3 attempts**? And what is the mean number of attempts?',
         steps: [
           { title: 'Define the variable', body: '$X$ = the number of attempts until the first success (including the successful one), and $X \\sim \\mathrm{Geom}(0.3)$.' },

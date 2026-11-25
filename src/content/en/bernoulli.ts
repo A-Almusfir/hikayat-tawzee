@@ -81,7 +81,7 @@ export const bernoulliEn: Tr<Chapter> = {
         answer: '$E[X] = 0.6$ and $\\mathrm{Var}(X) = 0.24$',
       },
       {
-        label: 'Course style',
+        label: 'Exam style',
         given: 'The probability that a product is defective is $0.05$. We inspect one product, and $X = 1$ if it is defective. What are $E[X]$ and $\\mathrm{Var}(X)$?',
         steps: [
           { title: 'Define the “success”', body: 'The event we watch for here is a defect, so $p = 0.05$ (“success” is a name, not a judgement).' },

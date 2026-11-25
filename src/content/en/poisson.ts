@@ -89,7 +89,7 @@ export const poissonEn: Tr<Chapter> = {
         answer: '$P(X = 0) \\approx 0.5434$',
       },
       {
-        label: 'Course style',
+        label: 'Exam style',
         given: 'Messages reach a technical-support inbox at a rate of 4 messages per hour (a Poisson process). What is the probability that **at least** 2 messages arrive within **30 minutes**?',
         steps: [
           { title: 'Convert the interval first', body: 'The rate is per hour, and the interval is half an hour:' },

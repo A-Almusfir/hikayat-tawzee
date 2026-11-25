@@ -73,7 +73,7 @@ export const tEn: Tr<Chapter> = {
         answer: '$2.53 > 1.833$: we reject the hypothesis that the increase is zero. Had we wrongly used $Z$, the critical value would have been $1.645$.',
       },
       {
-        label: 'Course style',
+        label: 'Exam style',
         given: 'A sample of 16 bottles from a normal population: $\\bar{x} = 498$ ml and $s = 4$ ml. Find a 95% confidence interval for the population mean $\\mu$.',
         steps: [{ title: 'The critical value', body: '$\\sigma$ is unknown, $v = 15$, and the two tails together are $0.05$:' }, { title: 'The interval' }],
         answer: 'The interval is $498 \\pm 2.131$, that is, from $495.869$ to $500.131$ ml.',

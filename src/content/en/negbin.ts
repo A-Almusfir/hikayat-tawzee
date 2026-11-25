@@ -72,7 +72,7 @@ export const negbinEn: Tr<Chapter> = {
         answer: '$P(X = 5) = 0.1875$',
       },
       {
-        label: 'Course style',
+        label: 'Exam style',
         given: 'A salesperson succeeds on each call with probability $0.2$, independently of other calls. What is the probability of making the second sale on the fifth call? And how many calls are needed on average for 2 sales?',
         steps: [
           { title: 'Define the variable', body: '$X$ = the call on which the second sale is made: $r = 2$, $p = 0.2$.' },

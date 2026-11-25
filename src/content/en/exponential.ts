@@ -82,7 +82,7 @@ export const exponentialEn: Tr<Chapter> = {
         answer: '$P(X > 0.5) \\approx 0.3679$',
       },
       {
-        label: 'Course style',
+        label: 'Exam style',
         given: "A customer's service time follows an exponential distribution with a mean of 4 minutes. What is the probability that the service takes between 2 and 6 minutes?",
         steps: [{ title: 'From the mean to the rate' }, { title: 'The probability of an interval = the difference of two tails' }, { title: 'Compute' }],
         answer: '$P(2 < X < 6) \\approx 0.3834$',

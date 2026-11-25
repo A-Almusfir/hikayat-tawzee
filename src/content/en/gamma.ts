@@ -83,7 +83,7 @@ export const gammaEn: Tr<Chapter> = {
         answer: '$P(X > 2) \\approx 0.2381$',
       },
       {
-        label: 'Course style',
+        label: 'Exam style',
         given: 'The time to repair a machine (in hours) follows a gamma distribution with $\\alpha = 3$ and $\\beta = 0.5$. Find the mean and variance, and the probability that the repair is finished within 4 hours.',
         steps: [
           { title: 'The mean and variance' },

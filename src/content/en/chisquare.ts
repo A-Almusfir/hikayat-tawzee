@@ -67,7 +67,7 @@ export const chisquareEn: Tr<Chapter> = {
         answer: '$\\chi^{2} \\approx 0.063 < 3.841$: no evidence against the Poisson. The data are very close to the formula.',
       },
       {
-        label: 'Course style',
+        label: 'Exam style',
         given: 'A sample of 10 packages from a normal population has variance $s^{2} = 4.5$. Does this show that the population variance is greater than $\\sigma^{2} = 2$, at the $0.05$ level?',
         steps: [
           { title: 'The statistic', body: 'From the sampling result (the population is normal):' },
